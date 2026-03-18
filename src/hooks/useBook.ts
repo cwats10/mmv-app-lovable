@@ -33,7 +33,7 @@ export function useBook(vaultId: string | undefined) {
   async function saveDeliveryAddress(bookId: string, address: DeliveryAddress) {
     const { data, error } = await supabase
       .from('books')
-      .update({ delivery_address: address as unknown as Record<string, unknown> })
+      .update({ delivery_address: address as unknown as null })
       .eq('id', bookId)
       .select()
       .single();

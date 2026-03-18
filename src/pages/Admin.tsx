@@ -40,7 +40,7 @@ export default function Admin() {
         .from('books')
         .select('*, vaults(missionary_name, mission_name)')
         .order('created_at', { ascending: false });
-      setBooks((data as AdminBook[]) || []);
+      setBooks((data as unknown as AdminBook[]) || []);
     } catch (err) {
       console.error(err);
     } finally {
