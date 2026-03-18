@@ -13,7 +13,7 @@ export const HeirloomButton = forwardRef<HTMLButtonElement, HeirloomButtonProps>
     const base = 'inline-flex items-center justify-center font-inter font-medium tracking-wide transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
 
     const variants = {
-      primary: 'bg-dark-text text-white hover:bg-[#3a3a3a] active:bg-[#111]',
+      primary: 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800',
       secondary: 'bg-transparent text-dark-text border border-dark-text hover:bg-dark-text hover:text-white',
       ghost: 'bg-transparent text-muted-text hover:text-dark-text hover:bg-border-light',
       danger: 'bg-transparent text-red-600 border border-red-300 hover:bg-red-50',
