@@ -69,115 +69,136 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <form
-        onSubmit={submit}
-        className="relative w-full max-w-lg border border-border-light bg-white p-8"
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
+    >
+      <div
+        className="w-full max-w-lg relative"
+        style={{ backgroundColor: '#ffffff', border: '1px solid #e0deda' }}
       >
-        <button type="button" onClick={onClose} className="absolute right-4 top-4 text-muted-text hover:text-dark-text">
-          <X className="h-5 w-5" />
-        </button>
-
-        <PageTag>New Vault</PageTag>
-        <h2 className="mt-2 font-playfair text-2xl font-semibold text-dark-text">
-          Create a Mission Memory Vault
-        </h2>
-
-        <Divider className="my-5" />
-
-        {/* Vault type toggle */}
-        <div className="mb-5">
-          <label className="mb-2 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-            Vault Type
-          </label>
-          <div className="flex">
-            {(['post', 'pre'] as const).map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => set('vault_type', type)}
-                className="flex-1 py-2.5 font-inter text-sm transition-colors"
-                style={{
-                  backgroundColor: form.vault_type === type ? '#222222' : 'transparent',
-                  color: form.vault_type === type ? '#ffffff' : '#555555',
-                  border: '1px solid #e0deda',
-                  borderRight: type === 'post' ? 'none' : '1px solid #e0deda',
-                }}
-              >
-                {type === 'post' ? 'Post-Mission' : 'Pre-Mission'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Fields */}
-        <div className="mb-4">
-          <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-            Missionary Name *
-          </label>
-          <input
-            value={form.missionary_name}
-            onChange={(e) => set('missionary_name', e.target.value)}
-            className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-            Mission Name
-          </label>
-          <input
-            value={form.mission_name}
-            onChange={(e) => set('mission_name', e.target.value)}
-            className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
-          />
-        </div>
-
-        <div className="mb-4 grid grid-cols-2 gap-4">
+        {/* Header */}
+        <div className="flex items-start justify-between p-8 pb-0">
           <div>
-            <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-              Start Date
-            </label>
-            <input
-              type="date"
-              value={form.mission_start}
-              onChange={(e) => set('mission_start', e.target.value)}
-              className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
-            />
+            <PageTag className="block mb-3">New Vault</PageTag>
+            <h2 className="font-playfair text-3xl font-normal text-[#222222]">
+              Create a Memory Vault
+            </h2>
           </div>
-          <div>
-            <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={form.mission_end}
-              onChange={(e) => set('mission_end', e.target.value)}
-              className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
-            />
-          </div>
-        </div>
-
-        {/* Cover photo */}
-        <div className="mb-6">
-          <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-            Cover Photo
-          </label>
-          <input type="file" ref={fileRef} className="hidden" accept="image/*" onChange={handleCoverUpload} />
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="w-full border border-dashed border-border-light bg-stone-bg py-3 font-inter text-sm text-muted-text transition-colors hover:text-dark-text"
-          >
-            {uploading ? 'Uploading…' : coverUrl ? '✓ Cover uploaded' : 'Upload cover photo'}
+          <button onClick={onClose} className="text-[#555555] hover:text-[#222222] mt-1">
+            <X size={20} strokeWidth={1.5} />
           </button>
         </div>
 
-        <HeirloomButton type="submit" loading={loading} className="w-full">
-          Create Vault
-        </HeirloomButton>
-      </form>
+        <Divider className="mx-8 mt-6 mb-6" />
+
+        <form onSubmit={submit} className="px-8 pb-8 space-y-5">
+          {/* Vault type toggle */}
+          <div>
+            <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
+              Vault Type
+            </label>
+            <div className="flex gap-0">
+              {(['post', 'pre'] as const).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => set('vault_type', type)}
+                  className="flex-1 py-2.5 text-sm font-inter transition-colors"
+                  style={{
+                    backgroundColor: form.vault_type === type ? '#222222' : 'transparent',
+                    color: form.vault_type === type ? '#ffffff' : '#555555',
+                    border: '1px solid #e0deda',
+                    borderRight: type === 'post' ? 'none' : '1px solid #e0deda',
+                  }}
+                >
+                  {type === 'post' ? 'Post-Mission' : 'Pre-Mission'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Missionary name */}
+          <div>
+            <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
+              Missionary Name *
+            </label>
+            <input
+              required
+              type="text"
+              placeholder="Elder John Doe"
+              value={form.missionary_name}
+              onChange={(e) => set('missionary_name', e.target.value)}
+              className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none"
+              style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+            />
+          </div>
+
+          {/* Mission name */}
+          <div>
+            <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
+              Mission Name
+            </label>
+            <input
+              type="text"
+              placeholder="Japan Tokyo South Mission"
+              value={form.mission_name}
+              onChange={(e) => set('mission_name', e.target.value)}
+              className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none"
+              style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+            />
+          </div>
+
+          {/* Dates */}
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={form.mission_start}
+                onChange={(e) => set('mission_start', e.target.value)}
+                className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none"
+                style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+              />
+            </div>
+            <div className="flex-1">
+              <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
+                End Date
+              </label>
+              <input
+                type="date"
+                value={form.mission_end}
+                onChange={(e) => set('mission_end', e.target.value)}
+                className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none"
+                style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+              />
+            </div>
+          </div>
+
+          {/* Cover photo */}
+          <div>
+            <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
+              Cover Photo
+            </label>
+            <input ref={fileRef} type="file" accept="image/*" onChange={handleCoverUpload} className="hidden" />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              className="w-full py-3 text-sm font-inter text-[#555555] transition-colors hover:text-[#222222]"
+              style={{ border: '1px dashed #e0deda', backgroundColor: '#f4f2ef' }}
+            >
+              {uploading ? 'Uploading…' : coverUrl ? '✓ Cover uploaded' : 'Upload cover photo'}
+            </button>
+          </div>
+
+          <HeirloomButton type="submit" loading={loading} size="lg" className="w-full mt-2">
+            Create Vault
+          </HeirloomButton>
+        </form>
+      </div>
     </div>
   );
 }

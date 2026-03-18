@@ -1,0 +1,874 @@
+/**
+ * generate-pdf — Supabase Edge Function
+ *
+ * Produces a press-ready PDF for a Memory Vault memory book.
+ *
+ * ── Print spec ─────────────────────────────────────────────────────────────
+ *   Book size  : 11 × 11 inch square (configurable via payload.book_inches)
+ *   Bleed      : 0.125" per side   (industry standard)
+ *   Safe margin: 0.5"  from trim edge (so 0.625" from PDF edge)
+ *   PDF page   : (11 + 2×0.125) × 72 = 810 × 810 pt  [includes bleed]
+ *   Content box: 810 − 2×(0.625×72) = 720 × 720 pt
+ *
+ *   Vector text & shapes render at the printer's native DPI (typically 1200 Dpi).
+ *   Raster images are embedded at their original pixel resolution; contributors
+ *   should upload images ≥ 1500 px wide for clean 5.5" print reproduction.
+ *
+ * ── Background fill ─────────────────────────────────────────────────────────
+ *   Backgrounds flood-fill the entire 810×810 page so colour reaches into the
+ *   bleed zone — no white slivers at the trim edge.
+ *
+ * ── Fonts ───────────────────────────────────────────────────────────────────
+ *   Playfair Display (Regular + Italic + Bold) fetched from Google Fonts CDN.
+ *   Space Mono Regular fetched from Google Fonts CDN.
+ *   Helvetica / Helvetica-Bold used as built-in PDF fallback.
+ *
+ * ── Output ──────────────────────────────────────────────────────────────────
+ *   Uploads PDF bytes to Supabase Storage (bucket: book-pdfs).
+ *   Returns { pdf_url, page_count }.
+ */
+
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import {
+  PDFDocument,
+  rgb,
+  StandardFonts,
+  type PDFFont,
+  type PDFImage,
+  type PDFPage,
+  type Color,
+} from 'https://esm.sh/pdf-lib@1.17.1';
+
+// ─── Dimension constants ────────────────────────────────────────────────────
+
+const PT = 72;                     // points per inch
+
+function dims(bookIn: number) {
+  const bleedIn  = 0.125;
+  const safeIn   = 0.5;            // from trim edge
+  const pagePt   = Math.round((bookIn + 2 * bleedIn) * PT);  // e.g. 810 for 11"
+  const bleedPt  = Math.round(bleedIn * PT);                   // 9
+  const safePt   = Math.round((bleedIn + safeIn) * PT);        // 45
+  const contSize = pagePt - 2 * safePt;                        // 720
+  return { pagePt, bleedPt, safePt, contSize };
+}
+
+// ─── Colors ──────────────────────────────────────────────────────────────────
+
+const C = {
+  cream   : rgb(0.957, 0.949, 0.937),  // #f4f2ef
+  white   : rgb(1,     1,     1    ),
+  dark    : rgb(0.133, 0.133, 0.133),  // #222222
+  mid     : rgb(0.333, 0.333, 0.333),  // #555555
+  light   : rgb(0.878, 0.871, 0.855),  // #e0deda
+  warmGray: rgb(0.820, 0.812, 0.800),  // #d1cfcb
+};
+
+// ─── CORS ────────────────────────────────────────────────────────────────────
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+// ─── Font helpers ─────────────────────────────────────────────────────────────
+
+/** Fetch a Google Font as a TTF Uint8Array by requesting with an old UA (forces TTF). */
+async function fetchGoogleFont(
+  family: string,
+  weight: number,
+  italic = false,
+): Promise<Uint8Array | null> {
+  try {
+    const ital = italic ? 'ital,' : '';
+    const wt   = italic ? `1,${weight}` : `${weight}`;
+    const url  = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:${ital}wght@${wt}`;
+    const css  = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)' },
+    }).then((r) => r.text());
+
+    // CSS will contain a src line with a .ttf URL when served to old UA
+    const match = css.match(/url\((https:\/\/fonts\.gstatic\.com[^)]+\.ttf)\)/);
+    if (!match) return null;
+
+    const bytes = await fetch(match[1]).then((r) => r.arrayBuffer());
+    return new Uint8Array(bytes);
+  } catch {
+    return null;
+  }
+}
+
+// ─── Image helpers ────────────────────────────────────────────────────────────
+
+async function embedImageFromUrl(pdfDoc: PDFDocument, url: string): Promise<PDFImage | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const bytes = new Uint8Array(await res.arrayBuffer());
+
+    // Detect by magic bytes
+    const isJpeg = bytes[0] === 0xFF && bytes[1] === 0xD8;
+    const isPng  = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E;
+
+    if (isJpeg) return await pdfDoc.embedJpg(bytes);
+    if (isPng)  return await pdfDoc.embedPng(bytes);
+
+    // Try both as fallback (some services strip headers)
+    try { return await pdfDoc.embedJpg(bytes); } catch (_) { /* ignore */ }
+    try { return await pdfDoc.embedPng(bytes); } catch (_) { /* ignore */ }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Scale an image to fit within a bounding box while preserving aspect ratio.
+ * Returns { x, y, width, height } centred in the box.
+ */
+function scaleToFit(
+  img: PDFImage,
+  boxW: number,
+  boxH: number,
+  anchorX: number,
+  anchorY: number,  // bottom-left of the box (pdf-lib y-up)
+): { x: number; y: number; width: number; height: number } {
+  const { width: iW, height: iH } = img;
+  const scale = Math.min(boxW / iW, boxH / iH);
+  const w = iW * scale;
+  const h = iH * scale;
+  return {
+    x: anchorX + (boxW - w) / 2,
+    y: anchorY + (boxH - h) / 2,
+    width: w,
+    height: h,
+  };
+}
+
+/**
+ * Scale an image to COVER a bounding box (no empty space, may crop).
+ */
+function scaleToCover(
+  img: PDFImage,
+  boxW: number,
+  boxH: number,
+  anchorX: number,
+  anchorY: number,
+): { x: number; y: number; width: number; height: number } {
+  const { width: iW, height: iH } = img;
+  const scale = Math.max(boxW / iW, boxH / iH);
+  const w = iW * scale;
+  const h = iH * scale;
+  return {
+    x: anchorX - (w - boxW) / 2,
+    y: anchorY - (h - boxH) / 2,
+    width: w,
+    height: h,
+  };
+}
+
+// ─── Text helpers ─────────────────────────────────────────────────────────────
+
+/** Word-wrap text to fit within maxWidth at given font + size. */
+function wrapText(
+  text: string,
+  font: PDFFont,
+  size: number,
+  maxWidth: number,
+): string[] {
+  const words  = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current  = '';
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (font.widthOfTextAtSize(candidate, size) <= maxWidth) {
+      current = candidate;
+    } else {
+      if (current) lines.push(current);
+      // Handle a single word longer than maxWidth by character-splitting
+      if (font.widthOfTextAtSize(word, size) > maxWidth) {
+        let partial = '';
+        for (const ch of word) {
+          if (font.widthOfTextAtSize(partial + ch, size) <= maxWidth) {
+            partial += ch;
+          } else {
+            if (partial) lines.push(partial);
+            partial = ch;
+          }
+        }
+        current = partial;
+      } else {
+        current = word;
+      }
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+/** Draw wrapped text, returning the y position after the last line. */
+function drawWrappedText(
+  page: PDFPage,
+  text: string,
+  font: PDFFont,
+  size: number,
+  lineHeight: number,
+  x: number,
+  yStart: number,   // top of first baseline (y-down logic: we subtract each line)
+  maxWidth: number,
+  color: Color = C.mid,
+): number {
+  const lines = wrapText(text, font, size, maxWidth);
+  let y = yStart;
+  for (const line of lines) {
+    page.drawText(line, { x, y, size, font, color });
+    y -= lineHeight;
+  }
+  return y;  // y position after last line
+}
+
+// ─── Page background ──────────────────────────────────────────────────────────
+
+function fillBackground(page: PDFPage, pagePt: number, color: Color) {
+  page.drawRectangle({ x: 0, y: 0, width: pagePt, height: pagePt, color });
+}
+
+/** Draw a subtle horizontal grid (editorial texture) on cream pages. */
+function drawCreamGrid(page: PDFPage, pagePt: number, safePt: number, contSize: number) {
+  const spacing = 18;  // pt between lines
+  const linesCount = Math.ceil(contSize / spacing) + 1;
+  for (let i = 0; i <= linesCount; i++) {
+    const y = safePt + i * spacing;
+    if (y > pagePt) break;
+    page.drawLine({
+      start     : { x: 0, y },
+      end       : { x: pagePt, y },
+      thickness : 0.2,
+      color     : C.dark,
+      opacity   : 0.04,
+    });
+  }
+}
+
+/** Draw a thin horizontal rule line. */
+function drawRule(
+  page: PDFPage,
+  x: number,
+  y: number,
+  width: number,
+  color: Color = C.light,
+  thickness = 0.5,
+) {
+  page.drawLine({ start: { x, y }, end: { x: x + width, y }, thickness, color });
+}
+
+// ─── Page number ──────────────────────────────────────────────────────────────
+
+function drawPageNumber(
+  page: PDFPage,
+  pageNum: number,
+  pagePt: number,
+  safePt: number,
+  font: PDFFont,
+) {
+  const label = String(pageNum).padStart(2, '0');
+  const size  = 7;
+  const w     = font.widthOfTextAtSize(label, size);
+  page.drawText(label, {
+    x: (pagePt - w) / 2,
+    y: safePt - 20,           // 20pt below the safe boundary (inside bleed)
+    size,
+    font,
+    color: C.light,
+  });
+}
+
+// ─── Small caps label ─────────────────────────────────────────────────────────
+
+function drawLabel(
+  page: PDFPage,
+  text: string,
+  font: PDFFont,
+  x: number,
+  y: number,
+  color: Color = C.mid,
+) {
+  page.drawText(text.toUpperCase(), { x, y, size: 7, font, color });
+}
+
+// ─── Cover page ───────────────────────────────────────────────────────────────
+
+async function drawCoverPage(
+  page: PDFPage,
+  pagePt: number,
+  safePt: number,
+  contSize: number,
+  pdfDoc: PDFDocument,
+  fonts: FontSet,
+  payload: GoldenPayload,
+) {
+  // Background — flood-fill entire page including bleed zone
+  fillBackground(page, pagePt, C.cream);
+  drawCreamGrid(page, pagePt, safePt, contSize);
+
+  const cx = safePt;            // content left
+  const cTop = pagePt - safePt; // content top (y-up)
+
+  // ── Top label ────────────────────────────────────────────────────────────────
+  drawLabel(page, 'Memory Vault · Heirloom Book', fonts.mono, cx, cTop - 10, C.mid);
+
+  // ── Thin rule below label ─────────────────────────────────────────────────────
+  drawRule(page, cx, cTop - 22, contSize, C.light, 0.5);
+
+  // ── Cover image (upper 54% of content height) ─────────────────────────────────
+  const imgH     = Math.round(contSize * 0.54);
+  const imgTop   = cTop - 36;
+  const imgBotY  = imgTop - imgH;  // bottom-left y for image box
+
+  if (payload.cover_image_url) {
+    const img = await embedImageFromUrl(pdfDoc, payload.cover_image_url);
+    if (img) {
+      // Clip to the image box by drawing image then overlaying a warm tint
+      const fit = scaleToFit(img, contSize, imgH, cx, imgBotY);
+      page.drawImage(img, fit);
+
+      // Warm sepia-tone overlay (semi-transparent cream rectangle)
+      page.drawRectangle({
+        x: fit.x, y: fit.y, width: fit.width, height: fit.height,
+        color: C.cream,
+        opacity: 0.18,
+      });
+    }
+  } else {
+    // Placeholder rectangle when no cover image
+    page.drawRectangle({
+      x: cx, y: imgBotY, width: contSize, height: imgH,
+      color: C.warmGray,
+    });
+    page.drawText('[ No Cover Image ]', {
+      x: cx + contSize / 2 - 60,
+      y: imgBotY + imgH / 2 - 5,
+      size: 10,
+      font: fonts.mono,
+      color: C.mid,
+    });
+  }
+
+  // ── Thin rule below image ─────────────────────────────────────────────────────
+  drawRule(page, cx, imgBotY - 6, contSize, C.light, 0.5);
+
+  // ── Missionary name (large Playfair) ──────────────────────────────────────────
+  const nameSize   = 44;
+  const nameY      = imgBotY - 6 - nameSize - 18;
+  const nameFit    = wrapText(payload.missionary_name, fonts.serif, nameSize, contSize);
+  let ny = nameY;
+  for (const line of nameFit) {
+    page.drawText(line, { x: cx, y: ny, size: nameSize, font: fonts.serif, color: C.dark });
+    ny -= nameSize * 1.15;
+  }
+
+  // ── Mission name (Space Mono, smaller) ────────────────────────────────────────
+  const msnSize = 9.5;
+  const msnY    = ny - 18;
+  page.drawText(payload.mission_name.toUpperCase(), {
+    x: cx, y: msnY, size: msnSize, font: fonts.mono, color: C.mid,
+  });
+
+  // ── Service dates ─────────────────────────────────────────────────────────────
+  if (payload.service_dates) {
+    page.drawText(payload.service_dates, {
+      x: cx, y: msnY - 18, size: 8.5, font: fonts.mono, color: C.mid,
+    });
+  }
+
+  // ── Bottom decorative rule ────────────────────────────────────────────────────
+  drawRule(page, cx, safePt + 14, contSize, C.light, 0.5);
+  drawLabel(page, 'A Collection of Memories · Service · Stories', fonts.mono, cx, safePt + 4, C.light);
+}
+
+// ─── Content pages ────────────────────────────────────────────────────────────
+
+interface FontSet {
+  serif     : PDFFont;  // Playfair Display Regular
+  serifItal : PDFFont;  // Playfair Display Italic
+  serifBold : PDFFont;  // Playfair Display Bold or Helvetica-Bold fallback
+  mono      : PDFFont;  // Space Mono Regular
+  body      : PDFFont;  // Helvetica (body / fallback)
+  bodyBold  : PDFFont;  // Helvetica-Bold
+}
+
+/** Render a single contributor page. Returns nothing (mutates page). */
+async function drawContentPage(
+  page: PDFPage,
+  pagePt: number,
+  safePt: number,
+  contSize: number,
+  pdfDoc: PDFDocument,
+  fonts: FontSet,
+  pdfPage: GoldenPage,
+  pageNumber: number,
+) {
+  // White background, full bleed
+  fillBackground(page, pagePt, C.white);
+
+  const cx   = safePt;
+  const cTop = pagePt - safePt;
+
+  const BODY_SIZE   = 10.5;
+  const BODY_LH     = BODY_SIZE * 1.85;   // ~19.4pt — generous leading
+  const PULL_SIZE   = 26;
+  const PULL_LH     = PULL_SIZE * 1.25;
+  const LABEL_SIZE  = 7;
+  const LABEL_LH    = LABEL_SIZE * 2;
+
+  const { contributor_name, relation, message, image_urls } = pdfPage.content;
+  const position = pdfPage.image_layout?.position ?? (image_urls.length > 0 ? 'bottom' : 'none');
+
+  // Load first image (if any)
+  let img: PDFImage | null = null;
+  if (image_urls.length > 0) {
+    img = await embedImageFromUrl(pdfDoc, image_urls[0]);
+  }
+
+  // Pull quote: first complete sentence or first ~90 chars
+  const sentenceEnd = message.search(/[.!?]/);
+  const pullText = sentenceEnd > 20 && sentenceEnd < 160
+    ? message.slice(0, sentenceEnd + 1)
+    : message.slice(0, Math.min(90, message.length)) + (message.length > 90 ? '…' : '');
+
+  // ── Attribution footer (always at bottom, drawn last so we reserve space) ────
+  const attribHeight = 30;  // reserved for attribution line
+  const footerY      = safePt + attribHeight;  // baseline of content above footer
+
+  function drawAttribution() {
+    drawRule(page, cx, footerY, contSize, C.light, 0.4);
+    page.drawText(contributor_name, {
+      x: cx, y: safePt + 12, size: 11, font: fonts.serifBold, color: C.dark,
+    });
+    const relW = fonts.mono.widthOfTextAtSize(relation.toUpperCase(), LABEL_SIZE);
+    page.drawText(relation.toUpperCase(), {
+      x: cx + contSize - relW, y: safePt + 14, size: LABEL_SIZE, font: fonts.mono, color: C.mid,
+    });
+  }
+
+  // Available content height (above footer)
+  const availH = cTop - footerY;
+
+  // ── Relation label + rule at top ──────────────────────────────────────────────
+  function drawTopLabel(yStart: number): number {
+    // Cream pill / label background
+    const labelText = `[ ${relation} ]`;
+    const labelW    = fonts.mono.widthOfTextAtSize(labelText, LABEL_SIZE) + 10;
+    page.drawRectangle({ x: cx, y: yStart - 14, width: labelW, height: 14, color: C.cream });
+    page.drawText(labelText.toUpperCase(), { x: cx + 5, y: yStart - 11, size: LABEL_SIZE, font: fonts.mono, color: C.mid });
+    drawRule(page, cx, yStart - 18, contSize, C.light);
+    return yStart - 26;  // returns y below the label+rule
+  }
+
+  // ── Layout: NO IMAGE ─────────────────────────────────────────────────────────
+  if (!img || position === 'none') {
+    let y = drawTopLabel(cTop);
+    y -= 8;
+
+    // Pull quote
+    const pullLines = wrapText(pullText, fonts.serifItal, PULL_SIZE, contSize);
+    for (const line of pullLines) {
+      page.drawText(`"${line}"`, { x: cx, y, size: PULL_SIZE, font: fonts.serifItal, color: C.dark });
+      y -= PULL_LH;
+    }
+    y -= 16;
+
+    // Body text
+    drawWrappedText(page, message, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
+    drawAttribution();
+    drawPageNumber(page, pageNumber, pagePt, safePt, fonts.mono);
+    return;
+  }
+
+  // ── Layout: TOP ──────────────────────────────────────────────────────────────
+  if (position === 'top') {
+    const imgH    = Math.round(availH * 0.38);
+    const imgBoxY = cTop - imgH;
+
+    // Image full width at top
+    const fit = scaleToFit(img, contSize, imgH, cx, imgBoxY);
+    page.drawImage(img, fit);
+
+    let y = imgBoxY - 6;
+    y = drawTopLabel(y);
+    y -= 8;
+
+    const pullLines = wrapText(`"${pullText}"`, fonts.serifItal, PULL_SIZE, contSize);
+    for (const line of pullLines) {
+      page.drawText(line, { x: cx, y, size: PULL_SIZE, font: fonts.serifItal, color: C.dark });
+      y -= PULL_LH;
+    }
+    y -= 14;
+    drawWrappedText(page, message, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
+    drawAttribution();
+    drawPageNumber(page, pageNumber, pagePt, safePt, fonts.mono);
+    return;
+  }
+
+  // ── Layout: BOTTOM ───────────────────────────────────────────────────────────
+  if (position === 'bottom') {
+    // Reserve image space at bottom
+    const imgH     = Math.round(availH * 0.38);
+    const imgCount = Math.min(image_urls.length, 2);
+    const imgGap   = 8;
+
+    // Text area above images
+    const textAreaH = availH - imgH - imgGap - 16;
+
+    let y = cTop;
+    y = drawTopLabel(y);
+    y -= 8;
+
+    // Pull quote
+    const pullLines = wrapText(`"${pullText}"`, fonts.serifItal, PULL_SIZE, contSize);
+    for (const line of pullLines) {
+      page.drawText(line, { x: cx, y, size: PULL_SIZE, font: fonts.serifItal, color: C.dark });
+      y -= PULL_LH;
+    }
+    y -= 14;
+    drawWrappedText(page, message, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
+
+    // Images at bottom (up to 2 side by side)
+    const imgAreaY  = footerY + imgGap;
+    if (imgCount === 1) {
+      const fit = scaleToFit(img, contSize, imgH, cx, imgAreaY);
+      page.drawImage(img, fit);
+    } else {
+      // Two images
+      const slotW = (contSize - imgGap) / 2;
+      const fit1  = scaleToFit(img, slotW, imgH, cx, imgAreaY);
+      page.drawImage(img, fit1);
+
+      const img2 = await embedImageFromUrl(pdfDoc, image_urls[1]);
+      if (img2) {
+        const fit2 = scaleToFit(img2, slotW, imgH, cx + slotW + imgGap, imgAreaY);
+        page.drawImage(img2, fit2);
+      }
+    }
+
+    drawAttribution();
+    drawPageNumber(page, pageNumber, pagePt, safePt, fonts.mono);
+    return;
+  }
+
+  // ── Layout: CENTER ───────────────────────────────────────────────────────────
+  if (position === 'center') {
+    const imgH    = Math.round(availH * 0.36);
+    const imgW    = Math.round(contSize * 0.7);
+    const imgX    = cx + (contSize - imgW) / 2;
+
+    // First block of text
+    const firstWords = message.split(/\s+/).slice(0, 40).join(' ');
+    const restWords  = message.split(/\s+/).slice(40).join(' ');
+
+    let y = cTop;
+    y = drawTopLabel(y);
+    y -= 10;
+
+    // First text block
+    y = drawWrappedText(page, firstWords, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
+    y -= 14;
+
+    // Image (centred, constrained to imgW × imgH)
+    const imgBotY = y - imgH;
+    const fit = scaleToFit(img, imgW, imgH, imgX, imgBotY);
+    page.drawImage(img, fit);
+    y = imgBotY - 14;
+
+    // Rest of text
+    if (restWords) {
+      drawWrappedText(page, restWords, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
+    }
+
+    drawAttribution();
+    drawPageNumber(page, pageNumber, pagePt, safePt, fonts.mono);
+    return;
+  }
+
+  // ── Layout: FLOAT-LEFT / FLOAT-RIGHT ─────────────────────────────────────────
+  if (position === 'float-left' || position === 'float-right') {
+    const isLeft   = position === 'float-left';
+    const imgW     = Math.round(contSize * 0.42);
+    const imgH     = Math.round(availH  * 0.50);
+    const imgGap   = 16;
+    const txtColW  = contSize - imgW - imgGap;
+
+    const imgX = isLeft ? cx : cx + contSize - imgW;
+    const txtX = isLeft ? cx + imgW + imgGap : cx;
+
+    // Image placed from top of content area
+    const imgBotY = cTop - imgH;
+    const fit = scaleToFit(img, imgW, imgH, imgX, imgBotY);
+    page.drawImage(img, fit);
+
+    // Draw top label spanning full width
+    let y = cTop;
+    y = drawTopLabel(y);
+    y -= 10;
+
+    // Pull quote in the narrow column beside the image
+    const pullWrapped = wrapText(`"${pullText}"`, fonts.serifItal, 18, txtColW);
+    for (const line of pullWrapped) {
+      if (y < imgBotY - 4) break;  // out of image zone — switch to full width below
+      page.drawText(line, { x: txtX, y, size: 18, font: fonts.serifItal, color: C.dark });
+      y -= 18 * 1.3;
+    }
+    y -= 10;
+
+    // Body text: narrow column while still in image zone
+    const wordsArr = message.split(/\s+/).filter(Boolean);
+    let wordIdx = 0;
+
+    // Phase 1: narrow column (beside image)
+    while (y > imgBotY - 4 && wordIdx < wordsArr.length) {
+      // Build one line
+      let line = '';
+      while (wordIdx < wordsArr.length) {
+        const candidate = line ? `${line} ${wordsArr[wordIdx]}` : wordsArr[wordIdx];
+        if (fonts.body.widthOfTextAtSize(candidate, BODY_SIZE) <= txtColW) {
+          line = candidate;
+          wordIdx++;
+        } else break;
+      }
+      if (line) {
+        page.drawText(line, { x: txtX, y, size: BODY_SIZE, font: fonts.body, color: C.mid });
+        y -= BODY_LH;
+      } else {
+        // Single word too wide — force it
+        if (wordIdx < wordsArr.length) {
+          page.drawText(wordsArr[wordIdx], { x: txtX, y, size: BODY_SIZE, font: fonts.body, color: C.mid });
+          wordIdx++;
+          y -= BODY_LH;
+        }
+      }
+    }
+
+    // Phase 2: full width below image
+    if (wordIdx < wordsArr.length && y > footerY + 10) {
+      y = Math.min(y, imgBotY - 8);  // align to just below image
+      const remaining = wordsArr.slice(wordIdx).join(' ');
+      drawWrappedText(page, remaining, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
+    }
+
+    drawAttribution();
+    drawPageNumber(page, pageNumber, pagePt, safePt, fonts.mono);
+    return;
+  }
+
+  // Fallback: text-only layout
+  let y = drawTopLabel(cTop);
+  y -= 8;
+  const pullLines = wrapText(`"${pullText}"`, fonts.serifItal, PULL_SIZE, contSize);
+  for (const line of pullLines) {
+    page.drawText(line, { x: cx, y, size: PULL_SIZE, font: fonts.serifItal, color: C.dark });
+    y -= PULL_LH;
+  }
+  y -= 14;
+  drawWrappedText(page, message, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
+  drawAttribution();
+  drawPageNumber(page, pageNumber, pagePt, safePt, fonts.mono);
+}
+
+// ─── Back cover ───────────────────────────────────────────────────────────────
+
+function drawBackCover(
+  page: PDFPage,
+  pagePt: number,
+  safePt: number,
+  contSize: number,
+  fonts: FontSet,
+  missionaryName: string,
+) {
+  fillBackground(page, pagePt, C.cream);
+  drawCreamGrid(page, pagePt, safePt, contSize);
+
+  const cx   = safePt;
+  const cTop = pagePt - safePt;
+
+  // Centred vertical alignment
+  const centerY = pagePt / 2;
+
+  drawRule(page, cx, centerY + 40, contSize, C.light, 0.5);
+
+  page.drawText('Memory Vault', {
+    x    : cx + contSize / 2 - fonts.serif.widthOfTextAtSize('Memory Vault', 22) / 2,
+    y    : centerY + 12,
+    size : 22,
+    font : fonts.serif,
+    color: C.dark,
+  });
+  page.drawText('Heirloom Memory Books', {
+    x    : cx + contSize / 2 - fonts.mono.widthOfTextAtSize('Heirloom Memory Books', 8) / 2,
+    y    : centerY - 6,
+    size : 8,
+    font : fonts.mono,
+    color: C.mid,
+  });
+
+  drawRule(page, cx, centerY - 20, contSize, C.light, 0.5);
+
+  const tagline = `A collection of memories for ${missionaryName}`;
+  const tagW    = fonts.mono.widthOfTextAtSize(tagline, 7.5);
+  page.drawText(tagline, {
+    x    : cx + contSize / 2 - tagW / 2,
+    y    : safePt + 20,
+    size : 7.5,
+    font : fonts.mono,
+    color: C.light,
+  });
+}
+
+// ─── Type definitions for payload ─────────────────────────────────────────────
+
+interface ImageLayout { position: 'top' | 'float-left' | 'float-right' | 'center' | 'bottom' | 'none'; }
+
+interface GoldenPage {
+  page_number   : number;
+  template_type : 'cover' | 'standard_text_only' | 'standard_text_with_image';
+  image_layout? : ImageLayout;
+  content: {
+    contributor_name: string;
+    relation        : string;
+    message         : string;
+    image_urls      : string[];
+  };
+}
+
+interface GoldenPayload {
+  book_id          : string;
+  missionary_name  : string;
+  mission_name     : string;
+  service_dates    : string;
+  cover_image_url  : string;
+  pages            : GoldenPage[];
+  book_inches?     : number;  // optional override; defaults to 11
+}
+
+// ─── Main build function ──────────────────────────────────────────────────────
+
+async function buildPdf(payload: GoldenPayload): Promise<Uint8Array> {
+  const bookIn  = payload.book_inches ?? 11;
+  const { pagePt, safePt, contSize } = dims(bookIn);
+
+  // ── Load fonts ────────────────────────────────────────────────────────────────
+  const pdfDoc = await PDFDocument.create();
+
+  // Metadata
+  pdfDoc.setTitle(`Memory Vault — ${payload.missionary_name}`);
+  pdfDoc.setAuthor('Memory Vault');
+  pdfDoc.setSubject(payload.mission_name);
+  pdfDoc.setCreator('Memory Vault PDF Generator');
+  pdfDoc.setProducer('pdf-lib');
+  pdfDoc.setCreationDate(new Date());
+
+  // Fetch custom fonts; fall back gracefully to built-in PDF fonts
+  const [
+    serifBytes,
+    serifItalBytes,
+    serifBoldBytes,
+    monoBytes,
+  ] = await Promise.all([
+    fetchGoogleFont('Playfair Display', 400),
+    fetchGoogleFont('Playfair Display', 400, true),
+    fetchGoogleFont('Playfair Display', 700),
+    fetchGoogleFont('Space Mono', 400),
+  ]);
+
+  const fonts: FontSet = {
+    serif     : serifBytes
+                  ? await pdfDoc.embedFont(serifBytes)
+                  : await pdfDoc.embedFont(StandardFonts.TimesRoman),
+    serifItal : serifItalBytes
+                  ? await pdfDoc.embedFont(serifItalBytes)
+                  : await pdfDoc.embedFont(StandardFonts.TimesRomanItalic),
+    serifBold : serifBoldBytes
+                  ? await pdfDoc.embedFont(serifBoldBytes)
+                  : await pdfDoc.embedFont(StandardFonts.HelveticaBold),
+    mono      : monoBytes
+                  ? await pdfDoc.embedFont(monoBytes)
+                  : await pdfDoc.embedFont(StandardFonts.Courier),
+    body      : await pdfDoc.embedFont(StandardFonts.Helvetica),
+    bodyBold  : await pdfDoc.embedFont(StandardFonts.HelveticaBold),
+  };
+
+  // ── Cover page ────────────────────────────────────────────────────────────────
+  const coverPage = pdfDoc.addPage([pagePt, pagePt]);
+  await drawCoverPage(coverPage, pagePt, safePt, contSize, pdfDoc, fonts, payload);
+
+  // ── Content pages (skip page_number === 1 — that's the cover) ────────────────
+  const contentPages = payload.pages.filter((p) => p.template_type !== 'cover');
+  for (let i = 0; i < contentPages.length; i++) {
+    const pg   = contentPages[i];
+    const page = pdfDoc.addPage([pagePt, pagePt]);
+    await drawContentPage(page, pagePt, safePt, contSize, pdfDoc, fonts, pg, i + 2);
+  }
+
+  // ── Back cover ────────────────────────────────────────────────────────────────
+  const backPage = pdfDoc.addPage([pagePt, pagePt]);
+  drawBackCover(backPage, pagePt, safePt, contSize, fonts, payload.missionary_name);
+
+  return pdfDoc.save();
+}
+
+// ─── Edge Function handler ────────────────────────────────────────────────────
+
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+);
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    const payload: GoldenPayload = await req.json();
+
+    if (!payload.book_id || !payload.pages?.length) {
+      throw new Error('Invalid payload: book_id and pages are required');
+    }
+
+    // Generate PDF
+    const pdfBytes = await buildPdf(payload);
+
+    // Upload to Supabase Storage
+    const fileName = `${payload.book_id}/${Date.now()}.pdf`;
+    const { error: uploadErr } = await supabase.storage
+      .from('book-pdfs')
+      .upload(fileName, pdfBytes, {
+        contentType : 'application/pdf',
+        cacheControl: '3600',
+        upsert      : true,
+      });
+
+    if (uploadErr) throw new Error(`Storage upload failed: ${uploadErr.message}`);
+
+    const { data: urlData } = supabase.storage
+      .from('book-pdfs')
+      .getPublicUrl(fileName);
+
+    const result = {
+      pdf_url    : urlData.publicUrl,
+      page_count : payload.pages.length + 2,  // cover + content + back cover
+    };
+
+    return new Response(JSON.stringify(result), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status : 200,
+    });
+  } catch (err) {
+    console.error('generate-pdf error:', err);
+    return new Response(
+      JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 },
+    );
+  }
+});

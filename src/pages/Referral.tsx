@@ -24,77 +24,125 @@ export default function Referral() {
 
   return (
     <AppShell>
-      <PageTag>Referrals</PageTag>
-      <h1 className="mt-2 font-playfair text-3xl font-semibold text-dark-text">Share Mission Memory Vault</h1>
-
-      <Divider className="my-8" />
-
-      {/* Referral link */}
-      <div className="border border-border-light bg-white p-6">
-        <div className="flex items-center gap-2">
-          <Gift className="h-5 w-5 text-accent-gold" />
-          <h3 className="font-playfair text-lg font-semibold text-dark-text">Your Referral Link</h3>
+      <div className="p-10 max-w-3xl">
+        <div className="mb-10">
+          <PageTag className="block mb-3">Referrals</PageTag>
+          <h1 className="font-playfair text-4xl font-normal text-[#222222]">
+            Share Memory Vault
+          </h1>
         </div>
-        <p className="mt-2 font-inter text-sm text-muted-text">
-          Share this link with other mothers who might want to create a Memory Book for their missionary. When they sign up, you'll both receive a reward.
-        </p>
-        <div className="mt-4 flex items-center gap-2">
-          <input
-            readOnly
-            value={referralUrl}
-            className="flex-1 border border-border-light bg-stone-bg px-4 py-2.5 font-mono text-xs text-dark-text"
-          />
-          <button
-            onClick={copy}
-            className="flex items-center gap-1.5 border border-border-light px-4 py-2.5 font-inter text-sm text-muted-text transition-colors hover:text-dark-text"
+
+        <Divider className="mb-10" />
+
+        {/* Referral link */}
+        <div className="mb-10">
+          <PageTag className="block mb-3">Your Referral Link</PageTag>
+          <p className="text-sm text-[#555555] mb-4" style={{ lineHeight: 1.7 }}>
+            Share this link with other families preparing a missionary. When they sign up and purchase their first book, you both receive <strong>$20 in credit</strong> — automatically applied at your next checkout.
+          </p>
+          <div className="flex gap-2">
+            <div
+              className="flex-1 px-4 py-3 text-sm font-space-mono text-[#555555] overflow-hidden"
+              style={{
+                border: '1px solid #e0deda',
+                backgroundColor: '#f4f2ef',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {referralUrl}
+            </div>
+            <button
+              onClick={copy}
+              className="flex items-center gap-2 px-4 py-3 text-sm font-inter transition-colors"
+              style={{
+                backgroundColor: copied ? '#222222' : 'transparent',
+                color: copied ? '#ffffff' : '#222222',
+                border: '1px solid #222222',
+              }}
+            >
+              {copied ? <Check size={14} /> : <Copy size={14} />}
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+          </div>
+        </div>
+
+        {/* Available credit banner */}
+        {profile && profile.reward_balance > 0 && (
+          <div
+            className="flex items-center justify-between px-5 py-4 mb-8"
+            style={{ border: '1px solid #222222', backgroundColor: '#f4f2ef' }}
           >
-            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            {copied ? 'Copied' : 'Copy'}
-          </button>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="mt-8 grid grid-cols-3 gap-4">
-        {[
-          { label: 'Total Referred', value: referrals.length },
-          { label: 'Converted', value: totalConverted },
-          { label: 'Rewards Earned', value: `$${totalRewards.toFixed(0)}` },
-        ].map(({ label, value }) => (
-          <div key={label} className="border border-border-light bg-white p-4 text-center">
-            <p className="font-playfair text-2xl font-semibold text-dark-text">{value}</p>
-            <p className="font-space-mono text-[10px] uppercase tracking-wider text-muted-text">{label}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Referral list */}
-      <div className="mt-8">
-        <h3 className="font-playfair text-lg font-semibold text-dark-text">Referral History</h3>
-        <Divider className="my-4" />
-        {loading ? (
-          <p className="py-8 text-center font-inter text-sm text-muted-text">Loading…</p>
-        ) : referrals.length === 0 ? (
-          <div className="border border-border-light bg-white p-8 text-center">
-            <p className="font-inter text-sm text-muted-text">No referrals yet</p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {referrals.map((r) => (
-              <div key={r.id} className="flex items-center justify-between border border-border-light bg-white px-5 py-3">
-                <div>
-                  <p className="font-inter text-sm text-dark-text">{r.referred_email}</p>
-                  <p className="font-space-mono text-[10px] text-muted-text">
-                    {new Date(r.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                  </p>
-                </div>
-                <span className="font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-                  {r.status}
-                </span>
-              </div>
-            ))}
+            <div>
+              <p className="font-space-mono text-xs text-[#555555] uppercase tracking-widest mb-1">
+                Available Credit
+              </p>
+              <p className="font-playfair text-2xl text-[#222222]">
+                ${profile.reward_balance.toFixed(2)}
+              </p>
+            </div>
+            <p className="text-xs text-[#555555] font-inter max-w-xs text-right" style={{ lineHeight: 1.7 }}>
+              Applied automatically at checkout toward your next book.
+            </p>
           </div>
         )}
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-10">
+          {[
+            { label: 'Total Referred', value: referrals.length },
+            { label: 'Converted', value: totalConverted },
+            { label: 'Rewards Earned', value: `$${totalRewards.toFixed(0)}` },
+          ].map(({ label, value }) => (
+            <div
+              key={label}
+              className="p-5 text-center"
+              style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+            >
+              <div className="font-playfair text-3xl text-[#222222] mb-1">{value}</div>
+              <PageTag>{label}</PageTag>
+            </div>
+          ))}
+        </div>
+
+        {/* Referral list */}
+        <div>
+          <PageTag className="block mb-4">Referral History</PageTag>
+          {loading ? (
+            <p className="text-sm text-[#555555]">Loading…</p>
+          ) : referrals.length === 0 ? (
+            <div className="py-12 text-center" style={{ border: '1px solid #e0deda' }}>
+              <Gift size={28} strokeWidth={1} className="text-[#e0deda] mx-auto mb-4" />
+              <p className="font-space-mono text-xs text-[#555555] uppercase tracking-widest">
+                No referrals yet
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y" style={{ border: '1px solid #e0deda' }}>
+              {referrals.map((r) => (
+                <div key={r.id} className="flex items-center justify-between px-5 py-4">
+                  <div>
+                    <p className="text-sm font-inter text-[#222222]">{r.referred_email}</p>
+                    <p className="font-space-mono text-xs text-[#555555] mt-0.5">
+                      {new Date(r.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  </div>
+                  <span
+                    className="font-space-mono text-xs uppercase tracking-wider px-2.5 py-1"
+                    style={{
+                      backgroundColor: r.status === 'converted' || r.status === 'rewarded' ? '#f4f2ef' : 'transparent',
+                      border: '1px solid #e0deda',
+                      color: r.status === 'pending' ? '#555555' : '#222222',
+                    }}
+                  >
+                    {r.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </AppShell>
   );

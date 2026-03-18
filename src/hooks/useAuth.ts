@@ -19,15 +19,6 @@ export function useAuth() {
   });
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        const profile = await fetchProfile(session.user.id);
-        setState({ user: session.user, session, profile, loading: false });
-      } else {
-        setState({ user: null, session: null, profile: null, loading: false });
-      }
-    });
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         fetchProfile(session.user.id).then((profile) => {
@@ -35,6 +26,15 @@ export function useAuth() {
         });
       } else {
         setState((s) => ({ ...s, user: null, session: null, profile: null, loading: false }));
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        const profile = await fetchProfile(session.user.id);
+        setState({ user: session.user, session, profile, loading: false });
+      } else {
+        setState({ user: null, session: null, profile: null, loading: false });
       }
     });
 
@@ -98,5 +98,5 @@ export function useAuth() {
     await supabase.auth.signOut();
   }
 
-  return { ...state, signIn, signUp, signOut };
+  return { ...state, signUp, signIn, signOut };
 }
