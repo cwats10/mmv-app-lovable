@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Upload, X } from 'lucide-react';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 const RELATIONS = [
   'Mother', 'Father', 'Sister', 'Brother', 'Grandparent',
