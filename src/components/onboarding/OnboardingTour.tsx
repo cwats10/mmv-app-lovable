@@ -14,6 +14,8 @@ interface TourStep {
   position?: Position;
   /** Label for the primary button on the very last step. */
   cta?: string;
+  /** Optional image to show inside the card for contextless steps. */
+  image?: string;
 }
 
 const STEPS: TourStep[] = [
@@ -91,7 +93,7 @@ function getWrapperStyle(step: TourStep, rect: DOMRect | null): React.CSSPropert
   if (step.position === 'right') {
     return {
       left: Math.min(rect.right + OFFSET, vw - CARD_W - 16),
-      top:  Math.max(16, Math.min(rect.top - 20, vh - 340)),
+      top:  Math.max(16, Math.min(rect.bottom + 10, vh - 340)),
     };
   }
 
@@ -237,6 +239,24 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
               margin:          '0.875rem 0 1rem',
             }}
           />
+
+          {/* Optional image */}
+          {current.image && (
+            <div
+              style={{
+                marginBottom:  '1rem',
+                borderRadius:  6,
+                overflow:      'hidden',
+                border:        '1px solid #e0deda',
+              }}
+            >
+              <img
+                src={current.image}
+                alt={current.title}
+                style={{ width: '100%', height: 'auto', display: 'block' }}
+              />
+            </div>
+          )}
 
           {/* Body */}
           <p
