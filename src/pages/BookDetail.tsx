@@ -39,28 +39,7 @@ export default function BookDetail() {
     await reject(submissionId);
   }
 
-  async function handlePurchase() {
-    if (!book || !vault) return;
-    if (!address.street || !address.city || !address.state || !address.zip) {
-      setAddressError('Please complete all required address fields.');
-      return;
-    }
-    setAddressError('');
-    setPurchasing(true);
-    try {
-      await supabase.from('books').update({ delivery_address: address }).eq('id', book.id);
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { book_id: book.id },
-      });
-      if (error) throw error;
-      if (data?.url) window.location.href = data.url;
-    } catch (err) {
-      console.error(err);
-      setAddressError('Something went wrong. Please try again.');
-    } finally {
-      setPurchasing(false);
-    }
-  }
+
 
   if (!vault || !book) {
     return (
