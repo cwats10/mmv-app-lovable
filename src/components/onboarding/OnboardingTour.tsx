@@ -14,6 +14,8 @@ interface TourStep {
   position?: Position;
   /** Label for the primary button on the very last step. */
   cta?: string;
+  /** Optional image to show inside the card for contextless steps. */
+  image?: string;
 }
 
 const STEPS: TourStep[] = [
