@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import worldMap from '@/assets/world-map.png';
 import { PublicShell } from '@/components/layout/PublicShell';
 import { BookSpread } from '@/components/book/BookSpread';
 import { PageTag } from '@/components/common/PageTag';
@@ -61,6 +62,12 @@ export default function Landing() {
     <PublicShell>
       {/* Hero */}
       <section className="relative px-8 py-24 text-center">
+        <img
+          src={worldMap}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-contain opacity-[0.18] grayscale"
+        />
         <GridOverlay />
         <div className="relative z-10 mx-auto max-w-3xl">
           
