@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { Skeleton } from '@/components/ui/skeleton';
 
 import inviteContributorsImg from '@/assets/onboarding/invite-contributors.png';
 import reviewQueueImg from '@/assets/onboarding/review-queue.png';
 import vaultPendingImg from '@/assets/onboarding/vault-pending.png';
-import memoriesPreservedImg from '@/assets/onboarding/memories-preserved.png';
 import messageBankImg from '@/assets/onboarding/message-bank.png';
 
 // ── Step definitions ─────────────────────────────────────────────────────────
@@ -16,70 +14,57 @@ type Position = 'center' | 'below' | 'right';
 interface TourStep {
   title: string;
   body: string;
-  /** data-tour attribute on the element to highlight. Omit for centered steps. */
   target?: string;
   position?: Position;
-  /** Label for the primary button on the very last step. */
   cta?: string;
-  /** Optional image(s) to show inside the card for contextless steps. */
   image?: string | string[];
 }
 
 const STEPS: TourStep[] = [
   {
     title: 'Welcome to Memory Vault',
-    body:
-      "You're about to build something that will last generations. This quick tour walks you through how the vault works, from the very first contribution all the way to a printed heirloom book.",
+    body: "You're about to build something that will last generations. This quick tour walks you through how the vault works, from the very first contribution all the way to a printed heirloom book.",
   },
   {
     title: 'Start Here: Create a Vault',
-    body:
-      "A vault holds everything for one missionary. Give them a name, add the mission, and set the dates. Each vault gets its own contribution link and review queue, living right here on your dashboard.",
+    body: "A vault holds everything for one missionary. Give them a name, add the mission, and set the dates. Each vault gets its own contribution link and review queue, living right here on your dashboard.",
     target: 'new-vault-btn',
     position: 'below',
   },
   {
     title: 'Invite Contributors',
-    body:
-      "Share your vault's unique contribution link with anyone. No account required. Each person writes their memory, uploads a photo, and drags it to where they'd like it placed on the page. It arrives in your review queue automatically.",
+    body: "Share your vault's unique contribution link with anyone. No account required. Each person writes their memory, uploads a photo, and drags it to where they'd like it placed on the page. It arrives in your review queue automatically.",
     image: inviteContributorsImg,
   },
   {
     title: 'Review, Approve, and Delegate',
-    body:
-      "Approve the memories you want in the book; reject the ones that don't fit. Need help? Share the manager link with someone you trust. They can curate submissions, but only you can purchase and finalize the book.",
+    body: "Approve the memories you want in the book; reject the ones that don't fit. Need help? Share the manager link with someone you trust. They can curate submissions, but only you can purchase and finalize the book.",
     image: [vaultPendingImg, reviewQueueImg],
   },
   {
     title: 'Memories Are Never Lost',
-    body:
-      "Contributions are preserved forever. Once a book is printed, late arrivals queue automatically for the next edition. The vault stays open for years, and nothing is ever deleted.",
-    image: memoriesPreservedImg,
+    body: "Contributions are preserved forever. Once a book is printed, late arrivals queue automatically for the next edition. The vault stays open for years, and nothing is ever deleted.",
   },
   {
     title: 'Your Vaults',
-    body:
-      "All your vaults live here, one click from anywhere in the app. You can manage multiple missionaries from a single account, each with its own contributors, queue, and book.",
+    body: "All your vaults live here, one click from anywhere in the app. You can manage multiple missionaries from a single account, each with its own contributors, queue, and book.",
     target: 'nav-vaults',
     position: 'right',
   },
   {
     title: 'Referrals',
-    body:
-      "Know other families preparing a missionary? Share your referral code from the Referrals page. When they create an account, you both earn a reward toward a future book.",
+    body: "Know other families preparing a missionary? Share your referral code from the Referrals page. When they create an account, you both earn a reward toward a future book.",
     target: 'nav-referrals',
     position: 'right',
   },
   {
     title: 'Message Bank',
-    body:
-      "Need help spreading the word? The Message Bank gives you ready-to-send messages for text, email, Facebook, Instagram, and ward announcements — personalized for each vault. Just pick a tab, copy, and paste.",
+    body: "Need help spreading the word? The Message Bank gives you ready-to-send messages for text, email, Facebook, Instagram, and ward announcements — personalized for each vault. Just pick a tab, copy, and paste.",
     image: messageBankImg,
   },
   {
     title: "You're Ready",
-    body:
-      "When the memories are in and you've approved the ones you want, finalize the book and we'll print and ship it to your door. The vault stays open, so the next edition is always waiting.",
+    body: "When the memories are in and you've approved the ones you want, finalize the book and we'll print and ship it to your door. The vault stays open, so the next edition is always waiting.",
     cta: 'Create My First Vault',
   },
 ];
@@ -87,7 +72,7 @@ const STEPS: TourStep[] = [
 // ── Positioning ──────────────────────────────────────────────────────────────
 
 const CARD_W = 380;
-const CARD_W_IMAGE = 620;
+const CARD_W_IMAGE = 520;
 const OFFSET = 20;
 const PAD = 8;
 
@@ -120,9 +105,7 @@ function getWrapperStyle(step: TourStep, rect: DOMRect | null): React.CSSPropert
 // ── Component ────────────────────────────────────────────────────────────────
 
 interface Props {
-  /** Called when the user completes or skips the tour. */
   onComplete: () => void;
-  /** Called additionally when the user clicks the final CTA button. */
   onCreateVault?: () => void;
 }
 
@@ -134,42 +117,40 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
 
   const current = STEPS[step];
   const isLast = step === STEPS.length - 1;
-  const currentImages = current.image ? (Array.isArray(current.image) ? current.image : [current.image]) : [];
-  const currentImagesReady = currentImages.every((src) => loadedImages[src]);
+  const currentImages = current.image
+    ? Array.isArray(current.image) ? current.image : [current.image]
+    : [];
+
+  // Collect every unique image src once
+  const allImageSrcs = useMemo(
+    () => [...new Set(STEPS.flatMap((s) => (s.image ? (Array.isArray(s.image) ? s.image : [s.image]) : [])))],
+    [],
+  );
+
+  const allImagesReady = allImageSrcs.length === 0 || allImageSrcs.every((src) => loadedImages[src]);
 
   // ── Preload all tour images on mount ─────────────────────────────────
   useEffect(() => {
     let cancelled = false;
-    const allImages = [...new Set(STEPS.flatMap((s) => (s.image ? (Array.isArray(s.image) ? s.image : [s.image]) : [])))];
 
-    allImages.forEach((src) => {
+    allImageSrcs.forEach((src) => {
       const img = new Image();
-
       const markLoaded = () => {
         if (cancelled) return;
         setLoadedImages((prev) => (prev[src] ? prev : { ...prev, [src]: true }));
       };
-
       img.onload = markLoaded;
       img.onerror = markLoaded;
       img.src = src;
-
-      if (img.complete) {
-        markLoaded();
-      }
+      if (img.complete) markLoaded();
     });
 
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    return () => { cancelled = true; };
+  }, [allImageSrcs]);
 
-  // ── Measure target element ──────────────────────────────────────────────
+  // ── Measure target element ──────────────────────────────────────────
   useEffect(() => {
-    if (!current.target) {
-      setRect(null);
-      return;
-    }
+    if (!current.target) { setRect(null); return; }
     const measure = () => {
       const el = document.querySelector<HTMLElement>(`[data-tour="${current.target}"]`);
       setRect(el ? el.getBoundingClientRect() : null);
@@ -179,40 +160,34 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
     return () => window.removeEventListener('resize', measure);
   }, [step, current.target]);
 
-  // ── Fade-in card on each step ──────────────────────────────────────────
+  // ── Crossfade on each step ─────────────────────────────────────────
   useEffect(() => {
     setVisible(false);
     const t = setTimeout(() => setVisible(true), 30);
     return () => clearTimeout(t);
   }, [step]);
 
-  // ── Handlers ────────────────────────────────────────────────────────────
+  // ── Handlers ───────────────────────────────────────────────────────
   function next() {
-    if (isLast) {
-      onComplete();
-      onCreateVault?.();
-    } else {
-      setStep((s) => s + 1);
-    }
+    if (isLast) { onComplete(); onCreateVault?.(); }
+    else setStep((s) => s + 1);
   }
-
-  function back() {
-    setStep((s) => Math.max(0, s - 1));
-  }
+  function back() { setStep((s) => Math.max(0, s - 1)); }
 
   const wrapperStyle = getWrapperStyle(current, rect);
+
+  // Gate: don't show the tour until every image is cached
+  if (!allImagesReady) {
+    return createPortal(
+      <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(34,34,34,0.72)', zIndex: 9997 }} />,
+      document.body,
+    );
+  }
 
   return createPortal(
     <>
       {/* Dark backdrop */}
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(34,34,34,0.72)',
-          zIndex: 9997,
-        }}
-      />
+      <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(34,34,34,0.72)', zIndex: 9997 }} />
 
       {/* Spotlight ring around target */}
       {rect && (
@@ -232,12 +207,12 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
         />
       )}
 
-      {/* Card wrapper (handles fixed positioning) */}
+      {/* Card */}
       <div style={{ position: 'fixed', zIndex: 9999, pointerEvents: 'none', ...wrapperStyle }}>
-        {/* Inner card (handles fade-in; never overrides the wrapper's transform) */}
         <div
           style={{
             width: current.image ? CARD_W_IMAGE : CARD_W,
+            maxWidth: '90vw',
             maxHeight: '85vh',
             overflowY: 'auto',
             backgroundColor: '#ffffff',
@@ -246,8 +221,7 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
             padding: '2rem',
             pointerEvents: 'all',
             opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(10px)',
-            transition: 'opacity 0.22s ease, transform 0.22s ease',
+            transition: 'opacity 0.25s ease',
           }}
         >
           {/* Step counter */}
@@ -280,15 +254,9 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
           </h2>
 
           {/* Divider */}
-          <div
-            style={{
-              height: 1,
-              backgroundColor: '#e0deda',
-              margin: '0.875rem 0 1rem',
-            }}
-          />
+          <div style={{ height: 1, backgroundColor: '#e0deda', margin: '0.875rem 0 1rem' }} />
 
-          {/* Optional image(s) */}
+          {/* Optional image(s) — always ready at this point */}
           {current.image && (
             <div
               style={{
@@ -307,23 +275,15 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
                     borderRadius: 6,
                     overflow: 'hidden',
                     border: '1px solid #e0deda',
-                    minHeight: Array.isArray(current.image) ? 180 : 260,
                   }}
                 >
-                  {currentImagesReady ? (
-                    <img
-                      src={src}
-                      alt={`${current.title} ${idx + 1}`}
-                      loading="eager"
-                      decoding="async"
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                    />
-                  ) : (
-                    <Skeleton
-                      className="h-full w-full rounded-none"
-                      style={{ minHeight: Array.isArray(current.image) ? 180 : 260 }}
-                    />
-                  )}
+                  <img
+                    src={src}
+                    alt={`${current.title} ${idx + 1}`}
+                    loading="eager"
+                    decoding="async"
+                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                  />
                 </div>
               ))}
             </div>
@@ -342,15 +302,8 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
             {current.body}
           </p>
 
-          {/* Progress dots (clickable for quick navigation) */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '6px',
-              alignItems: 'center',
-              marginBottom: '1.5rem',
-            }}
-          >
+          {/* Progress dots */}
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '1.5rem' }}>
             {STEPS.map((_, i) => (
               <button
                 key={i}
@@ -372,14 +325,7 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
           </div>
 
           {/* Actions */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            {/* Skip (hidden on last step) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <button
               onClick={onComplete}
               style={{
@@ -398,7 +344,6 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
               Skip Tour
             </button>
 
-            {/* Back + Next/CTA */}
             <div style={{ display: 'flex', gap: '8px' }}>
               {step > 0 && (
                 <HeirloomButton variant="secondary" size="sm" onClick={back}>
