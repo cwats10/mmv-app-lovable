@@ -21,7 +21,6 @@ const DEMO_VAULT: Vault = {
   mission_end: '2024-03-01',
   vault_type: 'post',
   submission_token: 'demo',
-  manager_token: 'demo',
   cover_image_url: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=800',
 };
 

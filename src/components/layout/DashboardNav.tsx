@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Home, Gift, LogOut } from 'lucide-react';
+import { BookOpen, Home, Gift, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const links = [
@@ -16,6 +16,7 @@ export function DashboardNav() {
     <header className="border-b border-border-light bg-white px-8 py-4">
       <div className="mx-auto flex max-w-5xl items-center justify-between">
         <Link to="/dashboard" className="flex items-center gap-2 text-dark-text">
+          <BookOpen className="h-5 w-5" />
           <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
         </Link>
 
@@ -24,7 +25,6 @@ export function DashboardNav() {
             <Link
               key={to}
               to={to}
-              data-tour={to === '/dashboard' ? 'nav-vaults' : to === '/referral' ? 'nav-referrals' : undefined}
               className={cn(
                 'flex items-center gap-1.5 font-inter text-sm transition-colors',
                 location.pathname.startsWith(to)

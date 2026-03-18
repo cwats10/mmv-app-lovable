@@ -1,7 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
-import { ManagerShareWidget } from '@/components/vault/ManagerShareWidget';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
@@ -89,13 +88,6 @@ export default function VaultDetail() {
       <div className="mt-8">
         <VaultShareWidget submissionToken={vault.submission_token} />
       </div>
-
-      {/* Manager share widget */}
-      {vault.manager_token && (
-        <div className="mt-4">
-          <ManagerShareWidget managerToken={vault.manager_token} />
-        </div>
-      )}
 
       {/* Book status + action */}
       {book && (

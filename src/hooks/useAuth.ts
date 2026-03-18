@@ -57,10 +57,7 @@ export function useAuth() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { name },
-        emailRedirectTo: window.location.origin,
-      },
+      options: { data: { name } },
     });
     if (error) throw error;
 
@@ -90,9 +87,6 @@ export function useAuth() {
         .update({ name })
         .eq('id', data.user.id);
     }
-
-    // Sign out immediately so unverified users don't auto-navigate to dashboard
-    await supabase.auth.signOut();
 
     return data;
   }

@@ -6,7 +6,7 @@ import { Divider } from '@/components/common/Divider';
 
 import { supabase } from '@/integrations/supabase/client';
 import type { Vault } from '@/types';
-import { CheckCircle } from 'lucide-react';
+import { BookOpen, CheckCircle } from 'lucide-react';
 import { useSubmissions } from '@/hooks/useSubmissions';
 
 export default function Contribute() {
@@ -31,14 +31,6 @@ export default function Contribute() {
         setLoading(false);
       });
   }, [token]);
-
-  useEffect(() => {
-    if (!submitted) return;
-    const timer = setTimeout(() => {
-      window.location.href = '/';
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [submitted]);
 
   async function handleSubmit(data: Parameters<typeof submitContribution>[0]) {
     await submitContribution(data);
@@ -89,6 +81,7 @@ export default function Contribute() {
         
         <div className="relative z-10 mx-auto max-w-2xl">
           <div className="flex items-center justify-center gap-2 text-dark-text">
+            <BookOpen className="h-5 w-5" />
             <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
           </div>
           <Divider className="my-5" />

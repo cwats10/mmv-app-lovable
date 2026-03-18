@@ -89,8 +89,8 @@ export default function Manage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-stone-bg">
-        <span className="font-space-mono text-xs text-muted-text uppercase tracking-widest">Loading…</span>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f4f2ef' }}>
+        <span className="font-space-mono text-xs text-[#555555] uppercase tracking-widest">Loading…</span>
       </div>
     );
   }
@@ -98,13 +98,14 @@ export default function Manage() {
   if (notFound || !context) {
     return (
       <div
-        className="min-h-screen flex flex-col items-center justify-center px-4 text-center bg-stone-bg"
+        className="min-h-screen flex flex-col items-center justify-center px-4 text-center"
+        style={{ backgroundColor: '#f4f2ef' }}
       >
         <PageTag className="block mb-4">Not Found</PageTag>
-        <h1 className="font-playfair text-4xl font-normal text-dark-text mb-3">
+        <h1 className="font-playfair text-4xl font-normal text-[#222222] mb-3">
           This link is invalid or has been revoked.
         </h1>
-        <p className="text-sm text-muted-text">Contact the vault owner to get a new manager link.</p>
+        <p className="text-sm text-[#555555]">Contact the vault owner to get a new manager link.</p>
       </div>
     );
   }
@@ -132,16 +133,17 @@ export default function Manage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-dark">
+    <div className="min-h-screen" style={{ backgroundColor: '#d1cfcb' }}>
       {/* Header */}
       <div
-        className="relative overflow-hidden bg-stone-bg border-b border-border-light"
+        className="relative overflow-hidden"
+        style={{ backgroundColor: '#f4f2ef', borderBottom: '1px solid #e0deda' }}
       >
         <GridOverlay />
         <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 flex flex-col">
           <div className="flex items-center gap-2 mb-8">
-            <Users size={16} strokeWidth={1.5} className="text-muted-text" />
-            <span className="font-space-mono text-xs text-muted-text uppercase tracking-widest">
+            <Users size={16} strokeWidth={1.5} className="text-[#555555]" />
+            <span className="font-space-mono text-xs text-[#555555] uppercase tracking-widest">
               Manager View
             </span>
           </div>
@@ -149,7 +151,7 @@ export default function Manage() {
           <PageTag className="block mb-4">Submission Review</PageTag>
 
           <h1
-            className="font-playfair text-4xl sm:text-5xl font-normal text-dark-text"
+            className="font-playfair text-4xl sm:text-5xl font-normal text-[#222222]"
             style={{ lineHeight: 1.1, letterSpacing: '-0.02em' }}
           >
             {vault.mission_name || `${vault.missionary_name}'s Mission`}
@@ -158,9 +160,9 @@ export default function Manage() {
           <Divider className="my-6" />
 
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-text" style={{ lineHeight: 1.8 }}>
+            <p className="text-sm text-[#555555]" style={{ lineHeight: 1.8 }}>
               You have been invited to help review memories for{' '}
-              <strong className="text-dark-text font-medium">{vault.missionary_name}</strong>.
+              <strong className="text-[#222222] font-medium">{vault.missionary_name}</strong>.
               {vault.mission_start || vault.mission_end
                 ? ` ${formatServiceDates(vault.mission_start, vault.mission_end)}.`
                 : ''}
@@ -168,8 +170,8 @@ export default function Manage() {
 
             {/* Permission reminder */}
             <div
-              className="ml-8 flex-shrink-0 px-4 py-3 text-xs font-space-mono text-muted-text uppercase tracking-widest border border-border-light bg-white"
-              style={{ lineHeight: 1.6 }}
+              className="ml-8 flex-shrink-0 px-4 py-3 text-xs font-space-mono text-[#555555] uppercase tracking-widest"
+              style={{ border: '1px solid #e0deda', backgroundColor: '#ffffff', lineHeight: 1.6 }}
             >
               Can: Approve · Reject<br />
               Cannot: Purchase · Finalize
@@ -184,12 +186,13 @@ export default function Manage() {
           className="max-w-4xl mx-auto px-6 pt-8"
         >
           <div
-            className="flex items-start gap-3 px-5 py-4 bg-stone-bg border border-border-light"
+            className="flex items-start gap-3 px-5 py-4"
+            style={{ backgroundColor: '#f4f2ef', border: '1px solid #e0deda' }}
           >
-            <BookMarked size={14} strokeWidth={1.5} className="text-muted-text mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-muted-text" style={{ lineHeight: 1.7 }}>
+            <BookMarked size={14} strokeWidth={1.5} className="text-[#555555] mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-[#555555]" style={{ lineHeight: 1.7 }}>
               This edition has been{' '}
-              <strong className="text-dark-text font-medium">finalized</strong>. Submissions are
+              <strong className="text-[#222222] font-medium">finalized</strong>. Submissions are
               shown here for reference. Any memories received after finalization are preserved in
               the Future Edition Queue below.
             </p>
@@ -208,8 +211,8 @@ export default function Manage() {
               onClick={() => setFilter(t)}
               className="px-4 py-2 text-xs font-space-mono uppercase tracking-wider transition-colors"
               style={{
-                backgroundColor: filter === t ? '#2b2b2a' : '#fefefe',
-                color: filter === t ? '#fefefe' : '#555555',
+                backgroundColor: filter === t ? '#222222' : '#ffffff',
+                color: filter === t ? '#ffffff' : '#555555',
                 border: '1px solid #e0deda',
                 borderRight: t !== 'rejected' ? 'none' : '1px solid #e0deda',
               }}
@@ -231,8 +234,8 @@ export default function Manage() {
 
         {/* Current edition submissions */}
         {filtered.length === 0 ? (
-          <div className="py-16 text-center bg-white border border-border-light">
-            <span className="font-space-mono text-xs text-muted-text uppercase tracking-widest">
+          <div className="py-16 text-center" style={{ backgroundColor: '#ffffff', border: '1px solid #e0deda' }}>
+            <span className="font-space-mono text-xs text-[#555555] uppercase tracking-widest">
               No {filter === 'all' ? '' : filter} submissions yet.
             </span>
           </div>
@@ -254,15 +257,16 @@ export default function Manage() {
         {futureEdition.length > 0 && (
           <div className="mt-12">
             <div
-              className="flex items-center gap-3 mb-4 pb-4 border-b border-border-light"
+              className="flex items-center gap-3 mb-4 pb-4"
+              style={{ borderBottom: '1px solid #e0deda' }}
             >
-              <BookMarked size={14} strokeWidth={1.5} className="text-muted-text" />
+              <BookMarked size={14} strokeWidth={1.5} className="text-[#555555]" />
               <div>
                 <PageTag>Future Edition Queue</PageTag>
-                <p className="text-xs text-muted-text mt-1" style={{ lineHeight: 1.6 }}>
+                <p className="text-xs text-[#555555] mt-1" style={{ lineHeight: 1.6 }}>
                   {futureEdition.length}{' '}
                   {futureEdition.length === 1 ? 'memory' : 'memories'} received after
-                  this edition was finalized, preserved for the next print run.
+                  this edition was finalized — preserved for the next print run.
                 </p>
               </div>
             </div>

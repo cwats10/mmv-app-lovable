@@ -9,9 +9,7 @@ const BookDetail = lazy(() => import('@/pages/BookDetail'));
 const Contribute = lazy(() => import('@/pages/Contribute'));
 const Checkout = lazy(() => import('@/pages/Checkout'));
 const Referral = lazy(() => import('@/pages/Referral'));
-const Manage = lazy(() => import('@/pages/Manage'));
 const Admin = lazy(() => import('@/pages/Admin'));
-const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 function PageLoader() {
@@ -35,9 +33,7 @@ export default function App() {
           <Route path="/contribute/:token" element={<Contribute />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/referral" element={<Referral />} />
-          <Route path="/manage/:token" element={<Manage />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
