@@ -338,6 +338,7 @@ function UsersTable({
               <td className="px-4 py-3 font-inter text-sm text-dark-text">{u.name || '\u2014'}</td>
               <td className="px-4 py-3 font-inter text-sm text-muted-text">{u.email}</td>
               <td className="px-4 py-3 font-space-mono text-xs text-muted-text">{u.referral_code}</td>
+              <td className="px-4 py-3 font-inter text-sm text-muted-text">{u.referral_count}</td>
               <td className="px-4 py-3 font-inter text-sm">{u.is_admin ? <span className="text-green-700">Yes</span> : <span className="text-muted-text">No</span>}</td>
               <td className="px-4 py-3 font-inter text-sm text-muted-text">{new Date(u.created_at).toLocaleDateString()}</td>
               <td className="flex gap-2 px-4 py-3">
