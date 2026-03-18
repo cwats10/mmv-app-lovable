@@ -19,6 +19,7 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        white: "#fefefe",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -58,9 +59,9 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         // MMV custom colors
-        "stone-bg": "#f4f2ef",
+        "stone-bg": "#f4f1ec",
         "stone-dark": "#d1cfcb",
-        "dark-text": "#222222",
+        "dark-text": "#2b2b2a",
         "muted-text": "#555555",
         "border-light": "#e0deda",
         "accent-gold": "#c9a96e",

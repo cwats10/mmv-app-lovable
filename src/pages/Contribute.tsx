@@ -6,7 +6,7 @@ import { Divider } from '@/components/common/Divider';
 
 import { supabase } from '@/integrations/supabase/client';
 import type { Vault } from '@/types';
-import { BookOpen, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { useSubmissions } from '@/hooks/useSubmissions';
 
 export default function Contribute() {
@@ -89,7 +89,6 @@ export default function Contribute() {
         
         <div className="relative z-10 mx-auto max-w-2xl">
           <div className="flex items-center justify-center gap-2 text-dark-text">
-            <BookOpen className="h-5 w-5" />
             <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
           </div>
           <Divider className="my-5" />

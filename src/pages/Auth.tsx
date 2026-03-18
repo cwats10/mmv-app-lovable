@@ -80,8 +80,8 @@ export default function Auth() {
                 onClick={() => { setTab(t); setError(''); setSuccess(''); }}
                 className="flex-1 py-4 font-inter text-sm transition-colors"
                 style={{
-                  backgroundColor: tab === t ? '#222222' : 'transparent',
-                  color: tab === t ? '#ffffff' : '#555555',
+                  backgroundColor: tab === t ? '#2b2b2a' : 'transparent',
+                  color: tab === t ? '#fefefe' : '#555555',
                   borderBottom: tab !== t ? '1px solid #e0deda' : 'none',
                 }}
               >

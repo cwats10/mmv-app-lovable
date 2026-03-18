@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { BookOpen } from 'lucide-react';
 import { Footer } from './Footer';
 
 interface PublicShellProps {
@@ -13,7 +12,6 @@ export function PublicShell({ children, showNav = true }: PublicShellProps) {
       {showNav && (
         <header className="flex items-center justify-between px-8 py-6">
           <Link to="/" className="flex items-center gap-2 text-dark-text">
-            <BookOpen className="h-5 w-5" />
             <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
           </Link>
           <nav className="flex items-center gap-6">
