@@ -133,6 +133,17 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
   const current = STEPS[step];
   const isLast  = step === STEPS.length - 1;
 
+  // ── Preload all tour images on mount ─────────────────────────────────
+  useEffect(() => {
+    const allImages = STEPS.flatMap((s) =>
+      s.image ? (Array.isArray(s.image) ? s.image : [s.image]) : []
+    );
+    allImages.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
   // ── Measure target element ──────────────────────────────────────────────
   useEffect(() => {
     if (!current.target) {
