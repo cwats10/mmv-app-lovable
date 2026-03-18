@@ -163,8 +163,8 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
   // ── Crossfade on each step ─────────────────────────────────────────
   useEffect(() => {
     setVisible(false);
-    const t = setTimeout(() => setVisible(true), 30);
-    return () => clearTimeout(t);
+    const af = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(af);
   }, [step]);
 
   // ── Handlers ───────────────────────────────────────────────────────
