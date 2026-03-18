@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageTag } from '@/components/common/PageTag';
@@ -10,7 +10,7 @@ import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import type { Book, Vault, Profile } from '@/types';
 import {
   Zap, Trash2, KeyRound, Users, Archive, BookOpen,
-  CheckCircle, Download, AlertTriangle,
+  CheckCircle, Download, AlertTriangle, ArrowUpDown,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
