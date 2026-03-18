@@ -33,7 +33,7 @@ export function useSubmissions(vaultId: string | undefined) {
     return () => { supabase.removeChannel(channel); };
   }, [vaultId, fetch]);
 
-  async function approve(submissionId: string, bookId: string) {
+  async function approve(submissionId: string, bookId?: string) {
     const { error } = await supabase
       .from('submissions')
       .update({ status: 'approved', book_id: bookId })
