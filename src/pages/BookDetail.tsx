@@ -7,12 +7,11 @@ import { BookSpread } from '@/components/book/BookSpread';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
+import { PurchaseModal } from '@/components/book/PurchaseModal';
 import { useVault } from '@/hooks/useVaults';
 import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
-import { supabase } from '@/lib/supabase';
 import { ChevronRight, Eye, X, MapPin } from 'lucide-react';
-import type { DeliveryAddress } from '@/types';
 
 type FilterTab = 'all' | 'pending' | 'approved' | 'rejected';
 
@@ -24,10 +23,7 @@ export default function BookDetail() {
 
   const [filter, setFilter] = useState<FilterTab>('all');
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [addressFormOpen, setAddressFormOpen] = useState(false);
-  const [address, setAddress] = useState<DeliveryAddress>({ street: '', city: '', state: '', zip: '', country: 'United States' });
-  const [purchasing, setPurchasing] = useState(false);
-  const [addressError, setAddressError] = useState('');
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
 
   const isLocked = !!(book && !['collecting', 'review'].includes(book.status));
 
@@ -43,28 +39,7 @@ export default function BookDetail() {
     await reject(submissionId);
   }
 
-  async function handlePurchase() {
-    if (!book || !vault) return;
-    if (!address.street || !address.city || !address.state || !address.zip) {
-      setAddressError('Please complete all required address fields.');
-      return;
-    }
-    setAddressError('');
-    setPurchasing(true);
-    try {
-      await supabase.from('books').update({ delivery_address: address }).eq('id', book.id);
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { book_id: book.id },
-      });
-      if (error) throw error;
-      if (data?.url) window.location.href = data.url;
-    } catch (err) {
-      console.error(err);
-      setAddressError('Something went wrong. Please try again.');
-    } finally {
-      setPurchasing(false);
-    }
-  }
+
 
   if (!vault || !book) {
     return (
@@ -168,7 +143,7 @@ export default function BookDetail() {
               </p>
             )}
           </div>
-          <HeirloomButton onClick={() => setAddressFormOpen(true)}>
+          <HeirloomButton onClick={() => setPurchaseOpen(true)}>
             <MapPin className="mr-1.5 h-4 w-4" /> Purchase & Print
           </HeirloomButton>
         </div>
@@ -193,57 +168,13 @@ export default function BookDetail() {
         </div>
       )}
 
-      {/* Address modal */}
-      {addressFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-lg border border-border-light bg-white p-8">
-            <PageTag>Delivery Address</PageTag>
-            <h2 className="mt-2 font-playfair text-2xl font-semibold text-dark-text">
-              Where should we send the book?
-            </h2>
-            <button
-              onClick={() => setAddressFormOpen(false)}
-              className="absolute right-4 top-4 text-muted-text hover:text-dark-text"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            <Divider className="my-5" />
-
-            <div className="space-y-4">
-              {(['street', 'city', 'state', 'zip', 'country'] as (keyof DeliveryAddress)[]).map((field) => (
-                <div key={field}>
-                  <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  <input
-                    value={address[field]}
-                    onChange={(e) => setAddress((a) => ({ ...a, [field]: e.target.value }))}
-                    className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
-                  />
-                </div>
-              ))}
-            </div>
-
-            {addressError && (
-              <div className="mt-4 border border-red-200 bg-red-50 px-4 py-2">
-                <p className="font-inter text-sm text-red-600">{addressError}</p>
-              </div>
-            )}
-
-            <Divider className="my-5" />
-
-            <div className="flex gap-3">
-              <HeirloomButton variant="ghost" onClick={() => setAddressFormOpen(false)} className="flex-1">
-                Cancel
-              </HeirloomButton>
-              <HeirloomButton loading={purchasing} onClick={handlePurchase} className="flex-1">
-                Confirm & Pay
-              </HeirloomButton>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Purchase modal */}
+      <PurchaseModal
+        open={purchaseOpen}
+        onClose={() => setPurchaseOpen(false)}
+        book={book}
+        vault={vault}
+      />
     </AppShell>
   );
 }
