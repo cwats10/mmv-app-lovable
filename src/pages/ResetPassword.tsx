@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
-import { BookOpen, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
@@ -17,13 +17,11 @@ export default function ResetPassword() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Supabase redirects with a hash containing type=recovery
     const hash = window.location.hash;
     if (hash.includes('type=recovery')) {
       setReady(true);
     }
 
-    // Also listen for PASSWORD_RECOVERY event
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         setReady(true);
@@ -63,7 +61,6 @@ export default function ResetPassword() {
     <div className="flex min-h-screen items-center justify-center bg-stone-bg px-4">
       <div className="w-full max-w-md border border-border-light bg-white">
         <div className="flex items-center justify-center gap-2 pt-8">
-          <BookOpen className="h-5 w-5 text-dark-text" />
           <span className="font-playfair text-lg font-semibold text-dark-text">Mission Memory Vault</span>
         </div>
 

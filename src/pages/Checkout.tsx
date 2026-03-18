@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { BookOpen, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 export default function Checkout() {
   const [searchParams] = useSearchParams();
@@ -23,7 +23,6 @@ export default function Checkout() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-stone-bg px-4 text-center">
       <div className="flex items-center gap-2 text-dark-text">
-        <BookOpen className="h-5 w-5" />
         <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
       </div>
       <Divider className="my-6 w-32" />

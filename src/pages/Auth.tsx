@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
-import { BookOpen, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 export default function Auth() {
@@ -68,7 +68,6 @@ export default function Auth() {
       <div className="w-full max-w-md border border-border-light bg-white">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 pt-8">
-          <BookOpen className="h-5 w-5 text-dark-text" />
           <span className="font-playfair text-lg font-semibold text-dark-text">Mission Memory Vault</span>
         </div>
 
@@ -81,8 +80,8 @@ export default function Auth() {
                 onClick={() => { setTab(t); setError(''); setSuccess(''); }}
                 className="flex-1 py-4 font-inter text-sm transition-colors"
                 style={{
-                  backgroundColor: tab === t ? '#222222' : 'transparent',
-                  color: tab === t ? '#ffffff' : '#555555',
+                  backgroundColor: tab === t ? '#2b2b2a' : 'transparent',
+                  color: tab === t ? '#fefefe' : '#555555',
                   borderBottom: tab !== t ? '1px solid #e0deda' : 'none',
                 }}
               >
