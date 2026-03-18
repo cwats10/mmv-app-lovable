@@ -104,8 +104,17 @@ export default function Admin() {
   /* ── Data fetching ────────────────────────────────────────────────────── */
 
   const fetchUsers = useCallback(async () => {
-    const { data } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-    setUsers((data as Profile[]) || []);
+    const { data: profiles } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+    const profileList = (profiles as Profile[]) || [];
+    // Fetch referral counts
+    const { data: referralCounts } = await supabase
+      .from('referrals')
+      .select('referrer_id');
+    const countMap = new Map<string, number>();
+    (referralCounts || []).forEach((r: { referrer_id: string }) => {
+      countMap.set(r.referrer_id, (countMap.get(r.referrer_id) || 0) + 1);
+    });
+    setUsers(profileList.map((p) => ({ ...p, referral_count: countMap.get(p.id) || 0 })));
   }, []);
 
   const fetchVaults = useCallback(async () => {
