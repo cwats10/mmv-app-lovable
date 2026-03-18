@@ -1,21 +1,17 @@
-import { useCallback, useRef, useState } from 'react';
-
 export function GridOverlay() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setMousePos(null);
-  }, []);
-
   return (
     <div
+sync/from-main
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        backgroundSize: '100px 100px',
+        backgroundImage: `
+          linear-gradient(to right, #e0deda 1px, transparent 1px),
+          linear-gradient(to bottom, #e0deda 1px, transparent 1px)
+        `,
+        opacity: 0.3,
+      }}
+    />
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -49,5 +45,6 @@ export function GridOverlay() {
         />
       )}
     </div>
+main
   );
 }

@@ -9,30 +9,35 @@ interface PublicShellProps {
 
 export function PublicShell({ children, showNav = true }: PublicShellProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-stone-bg">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f4f2ef' }}>
       {showNav && (
-        <header className="flex items-center justify-between px-8 py-6">
-          <Link to="/" className="flex items-center gap-2 text-dark-text">
-            <BookOpen className="h-5 w-5" />
-            <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
+        <header
+          className="flex items-center justify-between px-8 py-5"
+          style={{ borderBottom: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+        >
+          <Link to="/" className="flex items-center gap-2">
+            <BookOpen size={18} strokeWidth={1.5} className="text-[#222222]" />
+            <span className="font-playfair text-lg font-normal text-[#222222]">Memory Vault</span>
           </Link>
-          <nav className="flex items-center gap-6">
+          <div className="flex items-center gap-6">
             <Link
               to="/auth"
-              className="font-inter text-sm text-muted-text transition-colors hover:text-dark-text"
+              className="font-inter text-sm text-[#555555] hover:text-[#222222] transition-colors"
             >
               Sign In
             </Link>
             <Link
               to="/auth?tab=signup"
-              className="bg-dark-text px-5 py-2 font-inter text-sm text-white transition-colors hover:bg-[#3a3a3a]"
+              className="font-inter text-sm bg-[#222222] text-white px-4 py-2 hover:bg-[#3a3a3a] transition-colors"
             >
               Get Started
             </Link>
-          </nav>
+          </div>
         </header>
       )}
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        {children}
+      </main>
       <Footer />
     </div>
   );

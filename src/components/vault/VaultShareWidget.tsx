@@ -18,22 +18,39 @@ export function VaultShareWidget({ submissionToken }: VaultShareWidgetProps) {
   }
 
   return (
-    <div className="border border-border-light bg-white p-6">
-      <PageTag>Share This Vault</PageTag>
-      <p className="mt-2 font-inter text-sm text-muted-text">
+    <div
+      className="p-6"
+      style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+    >
+      <PageTag className="block mb-4">Share This Vault</PageTag>
+
+      <p className="text-sm text-[#555555] mb-4" style={{ lineHeight: 1.7 }}>
         Send this link to family, friends, and mission companions. Anyone with the link can submit a memory.
       </p>
-      <div className="mt-4 flex items-center gap-2">
-        <input
-          readOnly
-          value={url}
-          className="flex-1 border border-border-light bg-stone-bg px-4 py-2.5 font-mono text-xs text-dark-text"
-        />
+
+      <div className="flex gap-2">
+        <div
+          className="flex-1 px-4 py-3 text-sm font-space-mono text-[#555555] overflow-hidden"
+          style={{
+            backgroundColor: '#ffffff',
+            border: '1px solid #e0deda',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {url}
+        </div>
         <button
           onClick={copy}
-          className="flex items-center gap-1.5 border border-border-light px-4 py-2.5 font-inter text-sm text-muted-text transition-colors hover:text-dark-text"
+          className="flex items-center gap-2 px-4 py-3 text-sm font-inter transition-colors"
+          style={{
+            backgroundColor: copied ? '#222222' : 'transparent',
+            color: copied ? '#ffffff' : '#222222',
+            border: '1px solid #222222',
+          }}
         >
-          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          {copied ? <Check size={14} /> : <Copy size={14} />}
           {copied ? 'Copied' : 'Copy'}
         </button>
       </div>
