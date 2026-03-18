@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type { Vault, VaultWithBook } from '@/types';
 
 export function useVaults(userId: string | undefined) {
@@ -13,7 +13,6 @@ export function useVaults(userId: string | undefined) {
       .from('vaults')
       .select('*, books(id, status)')
       .eq('owner_id', userId)
-      .is('archived_at', null)
       .order('created_at', { ascending: false });
     setVaults((data as VaultWithBook[]) || []);
     setLoading(false);
@@ -36,9 +35,7 @@ export function useVaults(userId: string | undefined) {
       .single();
     if (error) throw error;
 
-    // Auto-create linked book
     await supabase.from('books').insert({ vault_id: data.id });
-
     await fetchVaults();
     return data as Vault;
   }

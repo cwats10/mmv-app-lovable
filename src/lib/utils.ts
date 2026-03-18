@@ -17,7 +17,7 @@ export function formatServiceDates(start: string | null, end: string | null): st
   if (!start && !end) return '';
   const s = start ? formatDate(start) : '';
   const e = end ? formatDate(end) : 'Present';
-  return `${s} — ${e}`;
+  return `${s} – ${e}`;
 }
 
 export function generateShareUrl(token: string): string {
@@ -25,12 +25,12 @@ export function generateShareUrl(token: string): string {
   return `${base}/contribute/${token}`;
 }
 
-export function generateManagerUrl(token: string): string {
-  const base = window.location.origin;
-  return `${base}/manage/${token}`;
-}
-
 export function truncate(str: string, maxLength: number): string {
   if (str.length <= maxLength) return str;
   return str.slice(0, maxLength) + '…';
+}
+
+export function generateManagerUrl(token: string): string {
+  const base = window.location.origin;
+  return `${base}/manage/${token}`;
 }
