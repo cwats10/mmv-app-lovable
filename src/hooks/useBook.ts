@@ -14,7 +14,7 @@ export function useBook(vaultId: string | undefined) {
       .eq('vault_id', vaultId)
       .single()
       .then(({ data }) => {
-        setBook(data as Book | null);
+        setBook(data as unknown as Book | null);
         setLoading(false);
       });
   }, [vaultId]);
