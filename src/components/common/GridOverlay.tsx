@@ -26,7 +26,7 @@ export function GridOverlay() {
         className="absolute inset-0"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px)',
+            'linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)',
           backgroundSize: '80px 80px',
           maskImage:
             'radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%)',
