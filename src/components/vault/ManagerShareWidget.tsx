@@ -27,8 +27,8 @@ export function ManagerShareWidget({ managerToken }: ManagerShareWidgetProps) {
         <div>
           <PageTag className="block mb-1">Manager Link</PageTag>
           <p className="text-sm text-[#555555]" style={{ lineHeight: 1.7 }}>
-            Share this link with trusted helpers — family members, a co-organiser, or a
-            mission companion — who can review and approve submissions on your behalf.
+            Share this link with trusted helpers: family members, a co-organiser, or a
+            mission companion who can review and approve submissions on your behalf.
             Managers <strong className="text-[#222222] font-medium">cannot</strong> purchase
             or finalize the book. Only you can do that.
           </p>

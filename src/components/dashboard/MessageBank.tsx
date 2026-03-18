@@ -107,21 +107,21 @@ export function MessageBank({ vaults, profile }: Props) {
     text: [
       {
         label: 'Personal text',
-        body: `Hey! I'm making a Memory Book for ${missionaryName} and I'd love a note from you. It only takes a few minutes — you can write a message and even add a photo. No account needed!\n\n${contributeUrl}`,
+        body: `Hey! I'm making a Memory Book for ${missionaryName} and I'd love a note from you. It only takes a few minutes. You can write a message and even add a photo. No account needed!\n\n${contributeUrl}`,
       },
       {
         label: 'Group family text',
-        body: `Hey everyone! We're creating a special Memory Book for ${missionaryName} and want a note from each of you. Click the link, write your memory, add a photo if you'd like — takes 5 minutes!\n\n👉 ${contributeUrl}\n\nThank you!`,
+        body: `Hey everyone! We're creating a special Memory Book for ${missionaryName} and want a note from each of you. Click the link, write your memory, add a photo if you'd like. Takes 5 minutes!\n\n👉 ${contributeUrl}\n\nThank you!`,
       },
       {
         label: 'Reminder follow-up',
-        body: `Quick reminder — we're still collecting memories for ${missionaryName}'s book! Still time to add yours:\n\n${contributeUrl} 🙏`,
+        body: `Quick reminder: we're still collecting memories for ${missionaryName}'s book! Still time to add yours:\n\n${contributeUrl} 🙏`,
       },
     ],
     email: [
       {
         label: 'Formal invite',
-        body: `Subject: A keepsake for ${missionaryName} — would you contribute a memory?\n\nDear [Name],\n\nI'm putting together a Memory Book for ${missionaryName} as a permanent keepsake of their mission. I would be so honored to include a note from you.\n\nThe process is simple: click the link below, write your memory, and upload a photo if you'd like. You can even choose exactly where the photo appears on the page. No account is required.\n\n${contributeUrl}\n\nThank you so much — your words will be treasured for generations.\n\nWith gratitude,\n${senderName}`,
+        body: `Subject: A keepsake for ${missionaryName}: would you contribute a memory?\n\nDear [Name],\n\nI'm putting together a Memory Book for ${missionaryName} as a permanent keepsake of their mission. I would be so honored to include a note from you.\n\nThe process is simple: click the link below, write your memory, and upload a photo if you'd like. You can even choose exactly where the photo appears on the page. No account is required.\n\n${contributeUrl}\n\nThank you so much. Your words will be treasured for generations.\n\nWith gratitude,\n${senderName}`,
       },
       {
         label: 'Short email invite',
@@ -129,23 +129,23 @@ export function MessageBank({ vaults, profile }: Props) {
       },
       {
         label: 'Reminder email',
-        body: `Subject: Still time to contribute — ${missionaryName}'s Memory Book\n\nHi,\n\nJust a friendly reminder that we're still collecting memories for ${missionaryName}'s book. We'd love to have yours included before we send it to print.\n\n${contributeUrl}\n\nThank you!`,
+        body: `Subject: Still time to contribute to ${missionaryName}'s Memory Book\n\nHi,\n\nJust a friendly reminder that we're still collecting memories for ${missionaryName}'s book. We'd love to have yours included before we send it to print.\n\n${contributeUrl}\n\nThank you!`,
       },
     ],
     facebook: [
       {
         label: 'Facebook post',
-        body: `Friends — I am making something very special for ${missionaryName} and I need your help. 💛\n\nI'm putting together a printed Memory Book of stories and photos from the people who love them most. Anyone can contribute — it takes about 5 minutes and no account is needed.\n\nIf ${missionaryName} has touched your life in any way, please click the link and share a memory. It will be read and treasured for a very long time.\n\n👉 ${contributeUrl}\n\nPlease share — the more voices, the more beautiful this will be. Thank you!`,
+        body: `Friends, I am making something very special for ${missionaryName} and I need your help. 💛\n\nI'm putting together a printed Memory Book of stories and photos from the people who love them most. Anyone can contribute. It takes about 5 minutes and no account is needed.\n\nIf ${missionaryName} has touched your life in any way, please click the link and share a memory. It will be read and treasured for a very long time.\n\n👉 ${contributeUrl}\n\nPlease share. The more voices, the more beautiful this will be. Thank you!`,
       },
       {
         label: 'Facebook group post',
-        body: `Hi everyone! 👋 Posting here because many of you know and love ${missionaryName}.\n\nWe're creating a printed Memory Book as a homecoming keepsake and would love contributions from this group! You can write a note, upload a photo, and choose how it appears on the page.\n\n🔗 ${contributeUrl}\n\nNo account needed — just click and write. Deadline is coming up so please share soon. Thank you! 🙏`,
+        body: `Hi everyone! 👋 Posting here because many of you know and love ${missionaryName}.\n\nWe're creating a printed Memory Book as a homecoming keepsake and would love contributions from this group! You can write a note, upload a photo, and choose how it appears on the page.\n\n🔗 ${contributeUrl}\n\nNo account needed, just click and write. Deadline is coming up so please share soon. Thank you! 🙏`,
       },
     ],
     instagram: [
       {
         label: 'Instagram caption',
-        body: `Something very special is in the works for ${missionaryName}. 📖✨\n\nWe're creating a printed Memory Book filled with notes, photos, and stories from the people whose lives they touched.\n\nWant to be part of it? The link is in my bio — no account needed, just a few minutes and a memory to share.\n\nPlease share this and help us make it complete. 💛 #MissionaryMemories #HeirloomBook`,
+        body: `Something very special is in the works for ${missionaryName}. 📖✨\n\nWe're creating a printed Memory Book filled with notes, photos, and stories from the people whose lives they touched.\n\nWant to be part of it? The link is in my bio. No account needed, just a few minutes and a memory to share.\n\nPlease share this and help us make it complete. 💛 #MissionaryMemories #HeirloomBook`,
       },
       {
         label: 'Instagram story CTA',
@@ -155,15 +155,15 @@ export function MessageBank({ vaults, profile }: Props) {
     ward: [
       {
         label: 'Ward newsletter / email',
-        body: `Dear Ward Family,\n\nWe are creating a printed Memory Book for ${missionaryName} as they return from their mission, and we would be so grateful for contributions from members of this ward who have watched them grow.\n\nPlease take a few minutes to share a memory, a testimony, or a word of encouragement. No account is needed — simply click the link below.\n\n${contributeUrl}\n\nThank you for loving and supporting our missionary. This book will be a treasure they keep for the rest of their lives.\n\n— ${senderName}`,
+        body: `Dear Ward Family,\n\nWe are creating a printed Memory Book for ${missionaryName} as they return from their mission, and we would be so grateful for contributions from members of this ward who have watched them grow.\n\nPlease take a few minutes to share a memory, a testimony, or a word of encouragement. No account is needed; simply click the link below.\n\n${contributeUrl}\n\nThank you for loving and supporting our missionary. This book will be a treasure they keep for the rest of their lives.\n\nWarmly,\n${senderName}`,
       },
       {
         label: 'Sacrament meeting announcement',
-        body: `We have an exciting announcement for our ward family! We are putting together a beautiful Memory Book for ${missionaryName} as a homecoming gift, and we'd love contributions from as many of you as possible. There's a link in the program — no account needed, just a few minutes to share a memory or a photo. Thank you so much!`,
+        body: `We have an exciting announcement for our ward family! We are putting together a beautiful Memory Book for ${missionaryName} as a homecoming gift, and we'd love contributions from as many of you as possible. There's a link in the program. No account needed, just a few minutes to share a memory or a photo. Thank you so much!`,
       },
       {
         label: 'Stake group text',
-        body: `Hi stake family! We're making a Memory Book for ${missionaryName} and would love your memories and photos. No account needed — click the link and add your note:\n\n${contributeUrl}\n\nThank you! Please share with anyone who knows them. 🙏`,
+        body: `Hi stake family! We're making a Memory Book for ${missionaryName} and would love your memories and photos. No account needed. Click the link and add your note:\n\n${contributeUrl}\n\nThank you! Please share with anyone who knows them. 🙏`,
       },
     ],
   };
@@ -171,15 +171,15 @@ export function MessageBank({ vaults, profile }: Props) {
   const managerMessages: Message[] = [
     {
       label: 'Invite a manager',
-      body: `Hi! I'm putting together a Memory Book for ${missionaryName} and could use some help reviewing contributions.\n\nThis link lets you approve or reject submissions on my behalf — you won't be able to purchase or finalize the book, just help curate the memories. I really appreciate the help!\n\nYour manager link:\n${managerUrl}`,
+      body: `Hi! I'm putting together a Memory Book for ${missionaryName} and could use some help reviewing contributions.\n\nThis link lets you approve or reject submissions on my behalf. You won't be able to purchase or finalize the book, just help curate the memories. I really appreciate the help!\n\nYour manager link:\n${managerUrl}`,
     },
     {
-      label: 'Manager invite — short',
+      label: 'Manager invite (short)',
       body: `Hey! Could you help me review submissions for ${missionaryName}'s Memory Book? Use this link:\n\n${managerUrl}\n\nYou can approve or reject memories. Thank you!`,
     },
     {
       label: 'Email to manager',
-      body: `Subject: Help reviewing memories for ${missionaryName}'s book\n\nHi,\n\nI'm creating a Memory Book for ${missionaryName} and would love your help reviewing the submissions that come in. You'll be able to approve or reject entries — but don't worry, you won't have any ability to purchase or finalize the book.\n\nHere is your manager link:\n${managerUrl}\n\nThank you so much for helping make this special.\n\n— ${senderName}`,
+      body: `Subject: Help reviewing memories for ${missionaryName}'s book\n\nHi,\n\nI'm creating a Memory Book for ${missionaryName} and would love your help reviewing the submissions that come in. You'll be able to approve or reject entries, but don't worry: you won't have any ability to purchase or finalize the book.\n\nHere is your manager link:\n${managerUrl}\n\nThank you so much for helping make this special.\n\nWarmly,\n${senderName}`,
     },
   ];
 
@@ -187,7 +187,7 @@ export function MessageBank({ vaults, profile }: Props) {
     text: [
       {
         label: 'Friend text',
-        body: `Have you heard of Memory Vault? It's the most beautiful way to collect memories for your missionary and turn them into a printed heirloom book. I just started one — it's incredible.\n\nSign up with my link and we both get $20 toward a book:\n${referralUrl}`,
+        body: `Have you heard of Memory Vault? It's the most beautiful way to collect memories for your missionary and turn them into a printed heirloom book. I just started one and it's incredible.\n\nSign up with my link and we both get $20 toward a book:\n${referralUrl}`,
       },
       {
         label: 'Quick referral text',
@@ -197,33 +197,33 @@ export function MessageBank({ vaults, profile }: Props) {
     email: [
       {
         label: 'Referral email',
-        body: `Subject: Something special for your missionary's homecoming\n\nHi,\n\nI wanted to share something I discovered called Memory Vault. It's the most thoughtful way I've seen to honor a missionary's service — you collect memories and photos from family and friends, and they get turned into a beautiful printed heirloom book.\n\nI've been setting one up and it couldn't be easier. If you sign up through my link, we both receive $20 toward a book:\n\n${referralUrl}\n\nI think you'll love it.\n\n— ${senderName}`,
+        body: `Subject: Something special for your missionary's homecoming\n\nHi,\n\nI wanted to share something I discovered called Memory Vault. It's the most thoughtful way I've seen to honor a missionary's service. You collect memories and photos from family and friends, and they get turned into a beautiful printed heirloom book.\n\nI've been setting one up and it couldn't be easier. If you sign up through my link, we both receive $20 toward a book:\n\n${referralUrl}\n\nI think you'll love it.\n\nWarmly,\n${senderName}`,
       },
     ],
     facebook: [
       {
         label: 'Facebook referral post',
-        body: `Missionary moms — I have to share this with you. 💛\n\nMemory Vault lets you collect stories, notes, and photos from everyone who loves your missionary and turns them into a stunning printed heirloom book. I just started one and I'm already emotional.\n\nSign up through my link and we both get $20 toward a book:\n${referralUrl}\n\nPlease share with any mom preparing for a farewell or homecoming! 🙏`,
+        body: `Missionary moms, I have to share this with you. 💛\n\nMemory Vault lets you collect stories, notes, and photos from everyone who loves your missionary and turns them into a stunning printed heirloom book. I just started one and I'm already emotional.\n\nSign up through my link and we both get $20 toward a book:\n${referralUrl}\n\nPlease share with any mom preparing for a farewell or homecoming! 🙏`,
       },
       {
         label: 'Facebook group referral',
-        body: `If anyone here has a missionary coming home (or leaving soon), you need to check out Memory Vault. It collects memories from family and friends and prints them into a beautiful book — and it's so simple to set up.\n\nSign up here and we both get a $20 reward when you purchase your first book:\n${referralUrl}\n\n— ${senderName}`,
+        body: `If anyone here has a missionary coming home (or leaving soon), you need to check out Memory Vault. It collects memories from family and friends and prints them into a beautiful book, and it's so simple to set up.\n\nSign up here and we both get a $20 reward when you purchase your first book:\n${referralUrl}\n\nWarmly,\n${senderName}`,
       },
     ],
     instagram: [
       {
         label: 'Instagram referral',
-        body: `Missionary mamas, this one's for you. 📖💛\n\nMemory Vault makes it so simple to gather everyone's stories and turn them into a printed heirloom book your missionary will treasure forever. No scrapbooking, no chasing people, no layout stress — they do everything.\n\nLink in bio — when you sign up through my link we both get $20 toward a book. ✨ #MissionaryMom #HeirloomBook #MemoryVault`,
+        body: `Missionary mamas, this one's for you. 📖💛\n\nMemory Vault makes it so simple to gather everyone's stories and turn them into a printed heirloom book your missionary will treasure forever. No scrapbooking, no chasing people, no layout stress. They do everything.\n\nLink in bio. When you sign up through my link we both get $20 toward a book. ✨ #MissionaryMom #HeirloomBook #MemoryVault`,
       },
     ],
     ward: [
       {
         label: 'Ward referral message',
-        body: `Dear friends,\n\nI wanted to share a resource that has been a true blessing for our family. Memory Vault allows you to gather stories and photos from everyone who loves your missionary and have them printed into a beautiful heirloom book. It is simple to set up and the results are extraordinary.\n\nIf you sign up through my referral link, we both receive $20 toward a book:\n${referralUrl}\n\nI hope it blesses your family as much as it has ours.\n\n— ${senderName}`,
+        body: `Dear friends,\n\nI wanted to share a resource that has been a true blessing for our family. Memory Vault allows you to gather stories and photos from everyone who loves your missionary and have them printed into a beautiful heirloom book. It is simple to set up and the results are extraordinary.\n\nIf you sign up through my referral link, we both receive $20 toward a book:\n${referralUrl}\n\nI hope it blesses your family as much as it has ours.\n\nWarmly,\n${senderName}`,
       },
       {
         label: 'Stake newsletter blurb',
-        body: `Attention missionary families: Memory Vault is a beautiful way to collect memories from ward members, friends, and family and turn them into a printed heirloom book for your returning missionary. Learn more and sign up at the link below — use this referral to give both you and the person who referred you $20 off your first book:\n${referralUrl}`,
+        body: `Attention missionary families: Memory Vault is a beautiful way to collect memories from ward members, friends, and family and turn them into a printed heirloom book for your returning missionary. Learn more and sign up at the link below. Use this referral to give both you and the person who referred you $20 off your first book:\n${referralUrl}`,
       },
     ],
   };
@@ -231,15 +231,15 @@ export function MessageBank({ vaults, profile }: Props) {
   const revealIdeas: RevealIdea[] = [
     {
       title: 'Right after the homecoming talk',
-      body: 'Have the book waiting at the back of the chapel, wrapped simply in kraft paper and twine. The moment they step off the stand, hand it to them privately before the receiving line begins. That first quiet moment — just you and them — is when it will mean the most.',
+      body: 'Have the book waiting at the back of the chapel, wrapped simply in kraft paper and twine. The moment they step off the stand, hand it to them privately before the receiving line begins. That first quiet moment, just you and them, is when it will mean the most.',
     },
     {
       title: 'A sacred moment after a temple visit',
-      body: "Plan a family temple visit in the days after they return. On the drive home or in a quiet room afterward, present the book as a continuation of the spiritual experience. Frame it as the world's witness to their covenants — the people they served, speaking directly to them.",
+      body: "Plan a family temple visit in the days after they return. On the drive home or in a quiet room afterward, present the book as a continuation of the spiritual experience. Frame it as the world's witness to their covenants: the people they served, speaking directly to them.",
     },
     {
       title: 'A slideshow at the homecoming party',
-      body: "Export the PDF and display each page as a slideshow on a TV or projector during the homecoming reception. Let guests see their own words and photos in print. This turns the Memory Book into a shared experience — not just a private keepsake but a moment the whole room shares together.",
+      body: "Export the PDF and display each page as a slideshow on a TV or projector during the homecoming reception. Let guests see their own words and photos in print. This turns the Memory Book into a shared experience, not just a private keepsake but a moment the whole room shares together.",
     },
     {
       title: 'Waiting in their room when they get home',

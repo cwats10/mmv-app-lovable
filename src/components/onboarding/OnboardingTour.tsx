@@ -20,10 +20,10 @@ const STEPS: TourStep[] = [
   {
     title: 'Welcome to Memory Vault',
     body:
-      "You're about to build something that will last generations. This quick tour walks you through how the vault works — from the very first contribution all the way to a printed heirloom book.",
+      "You're about to build something that will last generations. This quick tour walks you through how the vault works, from the very first contribution all the way to a printed heirloom book.",
   },
   {
-    title: 'Start Here — Create a Vault',
+    title: 'Start Here: Create a Vault',
     body:
       "A vault holds everything for one missionary. Give them a name, add the mission, and set the dates. Each vault gets its own contribution link and review queue, living right here on your dashboard.",
     target: 'new-vault-btn',
@@ -32,17 +32,17 @@ const STEPS: TourStep[] = [
   {
     title: 'Invite Contributors',
     body:
-      "Share your vault's unique contribution link with anyone — no account required. Each person writes their memory, uploads a photo, and drags it to where they'd like it placed on the page. It arrives in your review queue automatically.",
+      "Share your vault's unique contribution link with anyone. No account required. Each person writes their memory, uploads a photo, and drags it to where they'd like it placed on the page. It arrives in your review queue automatically.",
   },
   {
     title: 'Review, Approve, and Delegate',
     body:
-      "Approve the memories you want in the book; reject the ones that don't fit. Need help? Share the manager link with someone you trust — they can curate submissions, but only you can purchase and finalize the book.",
+      "Approve the memories you want in the book; reject the ones that don't fit. Need help? Share the manager link with someone you trust. They can curate submissions, but only you can purchase and finalize the book.",
   },
   {
     title: 'Memories Are Never Lost',
     body:
-      "Contributions are preserved forever. Once a book is printed, late arrivals queue automatically for the next edition. The vault stays open for years — nothing is ever deleted.",
+      "Contributions are preserved forever. Once a book is printed, late arrivals queue automatically for the next edition. The vault stays open for years, and nothing is ever deleted.",
   },
   {
     title: 'Your Vaults',
@@ -61,7 +61,7 @@ const STEPS: TourStep[] = [
   {
     title: "You're Ready",
     body:
-      "When the memories are in and you've approved the ones you want, finalize the book and we'll print and ship it to your door. The vault stays open — the next edition is always waiting.",
+      "When the memories are in and you've approved the ones you want, finalize the book and we'll print and ship it to your door. The vault stays open, so the next edition is always waiting.",
     cta: 'Create My First Vault',
   },
 ];
@@ -155,7 +155,7 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
 
   return createPortal(
     <>
-      {/* ── Dark backdrop ─────────────────────────────────────────────── */}
+      {/* Dark backdrop */}
       <div
         style={{
           position:        'fixed',
@@ -165,7 +165,7 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
         }}
       />
 
-      {/* ── Spotlight ring around target ──────────────────────────────── */}
+      {/* Spotlight ring around target */}
       {rect && (
         <div
           style={{
@@ -183,7 +183,7 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
         />
       )}
 
-      {/* ── Card wrapper (handles fixed positioning) ──────────────────── */}
+      {/* Card wrapper (handles fixed positioning) */}
       <div style={{ position: 'fixed', zIndex: 9999, pointerEvents: 'none', ...wrapperStyle }}>
 
         {/* Inner card (handles fade-in; never overrides the wrapper's transform) */}
@@ -251,7 +251,7 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
             {current.body}
           </p>
 
-          {/* Progress dots — clickable for quick navigation */}
+          {/* Progress dots (clickable for quick navigation) */}
           <div
             style={{
               display:      'flex',

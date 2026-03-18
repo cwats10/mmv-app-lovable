@@ -266,7 +266,7 @@ export default function Manage() {
                 <p className="text-xs text-[#555555] mt-1" style={{ lineHeight: 1.6 }}>
                   {futureEdition.length}{' '}
                   {futureEdition.length === 1 ? 'memory' : 'memories'} received after
-                  this edition was finalized — preserved for the next print run.
+                  this edition was finalized, preserved for the next print run.
                 </p>
               </div>
             </div>
