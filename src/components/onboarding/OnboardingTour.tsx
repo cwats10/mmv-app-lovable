@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import inviteContributorsImg from '@/assets/onboarding/invite-contributors.png';
 import reviewQueueImg from '@/assets/onboarding/review-queue.png';
@@ -85,10 +86,10 @@ const STEPS: TourStep[] = [
 
 // ── Positioning ──────────────────────────────────────────────────────────────
 
-const CARD_W       = 380;
+const CARD_W = 380;
 const CARD_W_IMAGE = 620;
 const OFFSET = 20;
-const PAD    = 8;
+const PAD = 8;
 
 function getWrapperStyle(step: TourStep, rect: DOMRect | null): React.CSSProperties {
   if (!rect || !step.position || step.position === 'center') {
@@ -102,14 +103,14 @@ function getWrapperStyle(step: TourStep, rect: DOMRect | null): React.CSSPropert
     const rawLeft = rect.left + rect.width / 2 - CARD_W / 2;
     return {
       left: Math.max(16, Math.min(rawLeft, vw - CARD_W - 16)),
-      top:  Math.min(rect.bottom + OFFSET, vh - 340),
+      top: Math.min(rect.bottom + OFFSET, vh - 340),
     };
   }
 
   if (step.position === 'right') {
     return {
       left: Math.min(rect.right + OFFSET, vw - CARD_W - 16),
-      top:  Math.max(16, Math.min(rect.bottom + 10, vh - 340)),
+      top: Math.max(16, Math.min(rect.bottom + 10, vh - 340)),
     };
   }
 
@@ -126,22 +127,41 @@ interface Props {
 }
 
 export function OnboardingTour({ onComplete, onCreateVault }: Props) {
-  const [step, setStep]       = useState(0);
-  const [rect, setRect]       = useState<DOMRect | null>(null);
+  const [step, setStep] = useState(0);
+  const [rect, setRect] = useState<DOMRect | null>(null);
   const [visible, setVisible] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
   const current = STEPS[step];
-  const isLast  = step === STEPS.length - 1;
+  const isLast = step === STEPS.length - 1;
+  const currentImages = current.image ? (Array.isArray(current.image) ? current.image : [current.image]) : [];
+  const currentImagesReady = currentImages.every((src) => loadedImages[src]);
 
   // ── Preload all tour images on mount ─────────────────────────────────
   useEffect(() => {
-    const allImages = STEPS.flatMap((s) =>
-      s.image ? (Array.isArray(s.image) ? s.image : [s.image]) : []
-    );
+    let cancelled = false;
+    const allImages = [...new Set(STEPS.flatMap((s) => (s.image ? (Array.isArray(s.image) ? s.image : [s.image]) : [])))];
+
     allImages.forEach((src) => {
       const img = new Image();
+
+      const markLoaded = () => {
+        if (cancelled) return;
+        setLoadedImages((prev) => (prev[src] ? prev : { ...prev, [src]: true }));
+      };
+
+      img.onload = markLoaded;
+      img.onerror = markLoaded;
       img.src = src;
+
+      if (img.complete) {
+        markLoaded();
+      }
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // ── Measure target element ──────────────────────────────────────────────
@@ -187,10 +207,10 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
       {/* Dark backdrop */}
       <div
         style={{
-          position:        'fixed',
-          inset:           0,
+          position: 'fixed',
+          inset: 0,
           backgroundColor: 'rgba(34,34,34,0.72)',
-          zIndex:          9997,
+          zIndex: 9997,
         }}
       />
 
@@ -198,15 +218,15 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
       {rect && (
         <div
           style={{
-            position:  'fixed',
-            left:      rect.left  - PAD,
-            top:       rect.top   - PAD,
-            width:     rect.width  + PAD * 2,
-            height:    rect.height + PAD * 2,
+            position: 'fixed',
+            left: rect.left - PAD,
+            top: rect.top - PAD,
+            width: rect.width + PAD * 2,
+            height: rect.height + PAD * 2,
             boxShadow: '0 0 0 9999px rgba(34,34,34,0.72)',
-            border:    '1.5px solid rgba(255,255,255,0.18)',
+            border: '1.5px solid rgba(255,255,255,0.18)',
             borderRadius: 4,
-            zIndex:    9998,
+            zIndex: 9998,
             pointerEvents: 'none',
           }}
         />
@@ -214,33 +234,32 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
 
       {/* Card wrapper (handles fixed positioning) */}
       <div style={{ position: 'fixed', zIndex: 9999, pointerEvents: 'none', ...wrapperStyle }}>
-
         {/* Inner card (handles fade-in; never overrides the wrapper's transform) */}
         <div
           style={{
-            width:           current.image ? CARD_W_IMAGE : CARD_W,
-            maxHeight:       '85vh',
-            overflowY:       'auto',
+            width: current.image ? CARD_W_IMAGE : CARD_W,
+            maxHeight: '85vh',
+            overflowY: 'auto',
             backgroundColor: '#ffffff',
-            border:          '1px solid #e0deda',
-            boxShadow:       '0 24px 64px rgba(0,0,0,0.28)',
-            padding:         '2rem',
-            pointerEvents:   'all',
-            opacity:         visible ? 1 : 0,
-            transform:       visible ? 'translateY(0)' : 'translateY(10px)',
-            transition:      'opacity 0.22s ease, transform 0.22s ease',
+            border: '1px solid #e0deda',
+            boxShadow: '0 24px 64px rgba(0,0,0,0.28)',
+            padding: '2rem',
+            pointerEvents: 'all',
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'opacity 0.22s ease, transform 0.22s ease',
           }}
         >
           {/* Step counter */}
           <span
             style={{
-              display:       'block',
-              fontFamily:    '"Space Mono", monospace',
-              fontSize:      '0.65rem',
+              display: 'block',
+              fontFamily: '"Space Mono", monospace',
+              fontSize: '0.65rem',
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color:         '#555555',
-              marginBottom:  '0.75rem',
+              color: '#555555',
+              marginBottom: '0.75rem',
             }}
           >
             {step + 1} &nbsp;/&nbsp; {STEPS.length}
@@ -249,11 +268,11 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
           {/* Title */}
           <h2
             style={{
-              fontFamily:   '"Playfair Display", serif',
-              fontSize:     '1.5rem',
-              fontWeight:   400,
-              color:        '#222222',
-              lineHeight:   1.2,
+              fontFamily: '"Playfair Display", serif',
+              fontSize: '1.5rem',
+              fontWeight: 400,
+              color: '#222222',
+              lineHeight: 1.2,
               marginBottom: '0.75rem',
             }}
           >
@@ -263,9 +282,9 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
           {/* Divider */}
           <div
             style={{
-              height:          1,
+              height: 1,
               backgroundColor: '#e0deda',
-              margin:          '0.875rem 0 1rem',
+              margin: '0.875rem 0 1rem',
             }}
           />
 
@@ -277,37 +296,46 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
                 display: 'flex',
                 flexDirection: Array.isArray(current.image) ? 'row' : 'column',
                 gap: Array.isArray(current.image) ? '6px' : 0,
+                alignItems: 'stretch',
               }}
             >
-              {(Array.isArray(current.image) ? current.image : [current.image]).map(
-                (src, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      flex: 1,
-                      borderRadius: 6,
-                      overflow: 'hidden',
-                      border: '1px solid #e0deda',
-                    }}
-                  >
+              {currentImages.map((src, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    flex: 1,
+                    borderRadius: 6,
+                    overflow: 'hidden',
+                    border: '1px solid #e0deda',
+                    minHeight: Array.isArray(current.image) ? 180 : 260,
+                  }}
+                >
+                  {currentImagesReady ? (
                     <img
                       src={src}
                       alt={`${current.title} ${idx + 1}`}
+                      loading="eager"
+                      decoding="async"
                       style={{ width: '100%', height: 'auto', display: 'block' }}
                     />
-                  </div>
-                ),
-              )}
+                  ) : (
+                    <Skeleton
+                      className="h-full w-full rounded-none"
+                      style={{ minHeight: Array.isArray(current.image) ? 180 : 260 }}
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           )}
 
           {/* Body */}
           <p
             style={{
-              fontFamily:   '"Inter", sans-serif',
-              fontSize:     '0.875rem',
-              color:        '#555555',
-              lineHeight:   1.85,
+              fontFamily: '"Inter", sans-serif',
+              fontSize: '0.875rem',
+              color: '#555555',
+              lineHeight: 1.85,
               marginBottom: '1.75rem',
             }}
           >
@@ -317,9 +345,9 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
           {/* Progress dots (clickable for quick navigation) */}
           <div
             style={{
-              display:      'flex',
-              gap:          '6px',
-              alignItems:   'center',
+              display: 'flex',
+              gap: '6px',
+              alignItems: 'center',
               marginBottom: '1.5rem',
             }}
           >
@@ -329,15 +357,15 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
                 onClick={() => setStep(i)}
                 title={`Step ${i + 1}`}
                 style={{
-                  width:           i === step ? 22 : 7,
-                  height:          7,
-                  borderRadius:    4,
+                  width: i === step ? 22 : 7,
+                  height: 7,
+                  borderRadius: 4,
                   backgroundColor: i === step ? '#222222' : '#e0deda',
-                  border:          'none',
-                  cursor:          'pointer',
-                  padding:         0,
-                  transition:      'width 0.25s ease, background-color 0.2s ease',
-                  flexShrink:      0,
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  transition: 'width 0.25s ease, background-color 0.2s ease',
+                  flexShrink: 0,
                 }}
               />
             ))}
@@ -346,8 +374,8 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
           {/* Actions */}
           <div
             style={{
-              display:        'flex',
-              alignItems:     'center',
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'space-between',
             }}
           >
@@ -355,16 +383,16 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
             <button
               onClick={onComplete}
               style={{
-                fontFamily:    '"Space Mono", monospace',
-                fontSize:      '0.65rem',
+                fontFamily: '"Space Mono", monospace',
+                fontSize: '0.65rem',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                color:         '#555555',
-                background:    'none',
-                border:        'none',
-                cursor:        'pointer',
-                padding:       0,
-                visibility:    isLast ? 'hidden' : 'visible',
+                color: '#555555',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                visibility: isLast ? 'hidden' : 'visible',
               }}
             >
               Skip Tour
