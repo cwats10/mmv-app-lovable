@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import worldMap from '@/assets/world-map.png';
 import { PublicShell } from '@/components/layout/PublicShell';
 import { BookSpread } from '@/components/book/BookSpread';
 import { PageTag } from '@/components/common/PageTag';
