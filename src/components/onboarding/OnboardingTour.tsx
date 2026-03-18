@@ -93,7 +93,7 @@ function getWrapperStyle(step: TourStep, rect: DOMRect | null): React.CSSPropert
   if (step.position === 'right') {
     return {
       left: Math.min(rect.right + OFFSET, vw - CARD_W - 16),
-      top:  Math.max(16, Math.min(rect.top - 20, vh - 340)),
+      top:  Math.max(16, Math.min(rect.bottom + 10, vh - 340)),
     };
   }
 
