@@ -189,6 +189,13 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
       {/* Dark backdrop */}
       <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(34,34,34,0.72)', zIndex: 9997 }} />
 
+      {/* Hidden pre-render block — forces browser to decode all images upfront */}
+      <div style={{ display: 'none' }} aria-hidden="true">
+        {allImageSrcs.map((src) => (
+          <img key={src} src={src} decoding="sync" alt="" />
+        ))}
+      </div>
+
       {/* Spotlight ring around target */}
       {rect && (
         <div
