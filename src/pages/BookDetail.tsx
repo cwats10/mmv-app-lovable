@@ -7,12 +7,11 @@ import { BookSpread } from '@/components/book/BookSpread';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
+import { PurchaseModal } from '@/components/book/PurchaseModal';
 import { useVault } from '@/hooks/useVaults';
 import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
-import { supabase } from '@/lib/supabase';
 import { ChevronRight, Eye, X, MapPin } from 'lucide-react';
-import type { DeliveryAddress } from '@/types';
 
 type FilterTab = 'all' | 'pending' | 'approved' | 'rejected';
 
@@ -24,10 +23,7 @@ export default function BookDetail() {
 
   const [filter, setFilter] = useState<FilterTab>('all');
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [addressFormOpen, setAddressFormOpen] = useState(false);
-  const [address, setAddress] = useState<DeliveryAddress>({ street: '', city: '', state: '', zip: '', country: 'United States' });
-  const [purchasing, setPurchasing] = useState(false);
-  const [addressError, setAddressError] = useState('');
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
 
   const isLocked = !!(book && !['collecting', 'review'].includes(book.status));
 
