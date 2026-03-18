@@ -11,8 +11,8 @@ export function AppShell({ children }: AppShellProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f4f2ef' }}>
-        <div className="font-space-mono text-xs text-[#555555] uppercase tracking-widest">Loading…</div>
+      <div className="flex min-h-screen items-center justify-center bg-stone-bg">
+        <p className="font-inter text-sm text-muted-text">Loading…</p>
       </div>
     );
   }
@@ -22,11 +22,9 @@ export function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen flex-col bg-stone-bg">
       <DashboardNav />
-      <main className="flex-1 overflow-y-auto" style={{ backgroundColor: '#ffffff' }}>
-        {children}
-      </main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">{children}</main>
     </div>
   );
 }

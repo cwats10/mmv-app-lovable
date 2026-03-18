@@ -1,11 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { BookOpen, Home, Gift, LogOut, Settings } from 'lucide-react';
+import { BookOpen, Home, Gift, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const links = [
-  { to: '/dashboard', label: 'Vaults',    icon: Home, tourId: 'nav-vaults'    },
-  { to: '/referral',  label: 'Referrals', icon: Gift, tourId: 'nav-referrals' },
+  { to: '/dashboard', label: 'Vaults', icon: Home },
+  { to: '/referral', label: 'Referrals', icon: Gift },
 ];
 
 export function DashboardNav() {
@@ -13,70 +13,48 @@ export function DashboardNav() {
   const { profile, signOut } = useAuth();
 
   return (
-    <aside
-      className="flex flex-col h-full"
-      style={{
-        width: '240px',
-        minHeight: '100vh',
-        backgroundColor: '#f4f2ef',
-        borderRight: '1px solid #e0deda',
-        padding: '2.5rem 1.5rem',
-      }}
-    >
-      {/* Logo */}
-      <Link to="/dashboard" className="flex items-center gap-2 mb-10">
-        <BookOpen size={18} strokeWidth={1.5} className="text-[#222222]" />
-        <span className="font-playfair text-lg font-normal text-[#222222]">Memory Vault</span>
-      </Link>
+    <header className="border-b border-border-light bg-white px-8 py-4">
+      <div className="mx-auto flex max-w-5xl items-center justify-between">
+        <Link to="/dashboard" className="flex items-center gap-2 text-dark-text">
+          <BookOpen className="h-5 w-5" />
+          <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
+        </Link>
 
-      {/* Nav links */}
-      <nav className="flex flex-col gap-1 flex-1">
-        {links.map(({ to, label, icon: Icon, tourId }) => {
-          const active = location.pathname.startsWith(to);
-          return (
+        <nav className="flex items-center gap-6">
+          {links.map(({ to, label, icon: Icon }) => (
             <Link
               key={to}
               to={to}
-              data-tour={tourId}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 text-sm transition-colors rounded-sm',
-                active
-                  ? 'bg-[#222222] text-white'
-                  : 'text-[#555555] hover:text-[#222222] hover:bg-[#e0deda]'
+                'flex items-center gap-1.5 font-inter text-sm transition-colors',
+                location.pathname.startsWith(to)
+                  ? 'text-dark-text'
+                  : 'text-muted-text hover:text-dark-text'
               )}
             >
-              <Icon size={15} strokeWidth={1.5} />
-              <span className="font-inter">{label}</span>
+              <Icon className="h-4 w-4" />
+              {label}
             </Link>
-          );
-        })}
-      </nav>
+          ))}
 
-      {/* Bottom: profile + signout */}
-      <div className="mt-auto pt-6 border-t border-[#e0deda] space-y-3">
-        {profile && (
-          <div className="px-3">
-            <p className="text-xs font-medium text-[#222222] truncate">{profile.name || profile.email}</p>
-            <p className="text-xs text-[#555555] truncate">{profile.email}</p>
-          </div>
-        )}
-        {profile?.is_admin && (
-          <Link
-            to="/admin"
-            className="flex items-center gap-3 px-3 py-2.5 text-sm text-[#555555] hover:text-[#222222] hover:bg-[#e0deda] rounded-sm"
+          {profile?.is_admin && (
+            <Link
+              to="/admin"
+              className="font-inter text-sm text-muted-text transition-colors hover:text-dark-text"
+            >
+              Admin
+            </Link>
+          )}
+
+          <button
+            onClick={() => signOut()}
+            className="flex items-center gap-1.5 font-inter text-sm text-muted-text transition-colors hover:text-dark-text"
           >
-            <Settings size={15} strokeWidth={1.5} />
-            Admin
-          </Link>
-        )}
-        <button
-          onClick={signOut}
-          className="flex items-center gap-3 px-3 py-2.5 text-sm text-[#555555] hover:text-[#222222] hover:bg-[#e0deda] rounded-sm w-full text-left"
-        >
-          <LogOut size={15} strokeWidth={1.5} />
-          Sign Out
-        </button>
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </button>
+        </nav>
       </div>
-    </aside>
+    </header>
   );
 }

@@ -1,31 +1,42 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Landing from '@/pages/Landing';
-import Auth from '@/pages/Auth';
-import Dashboard from '@/pages/Dashboard';
-import VaultDetail from '@/pages/VaultDetail';
-import BookDetail from '@/pages/BookDetail';
-import Contribute from '@/pages/Contribute';
-import Manage from '@/pages/Manage';
-import Checkout from '@/pages/Checkout';
-import Referral from '@/pages/Referral';
-import Admin from '@/pages/Admin';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+const Landing = lazy(() => import('@/pages/Landing'));
+const Auth = lazy(() => import('@/pages/Auth'));
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const VaultDetail = lazy(() => import('@/pages/VaultDetail'));
+const BookDetail = lazy(() => import('@/pages/BookDetail'));
+const Contribute = lazy(() => import('@/pages/Contribute'));
+const Checkout = lazy(() => import('@/pages/Checkout'));
+const Referral = lazy(() => import('@/pages/Referral'));
+const Admin = lazy(() => import('@/pages/Admin'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
+
+function PageLoader() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-stone-bg">
+      <p className="font-inter text-sm text-muted-text">Loading…</p>
+    </div>
+  );
+}
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/contribute/:token" element={<Contribute />} />
-        <Route path="/manage/:token" element={<Manage />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/vault/:id" element={<VaultDetail />} />
-        <Route path="/dashboard/vault/:id/book/:bookId" element={<BookDetail />} />
-        <Route path="/referral" element={<Referral />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/vault/:id" element={<VaultDetail />} />
+          <Route path="/vault/:id/book/:bookId" element={<BookDetail />} />
+          <Route path="/contribute/:token" element={<Contribute />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/referral" element={<Referral />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

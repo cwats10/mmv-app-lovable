@@ -1,17 +1,9 @@
 export function Footer() {
   return (
-    <footer
-      className="border-t border-[#e0deda] py-8 px-8"
-      style={{ backgroundColor: '#f4f2ef' }}
-    >
-      <div className="max-w-6xl mx-auto flex justify-between items-center">
-        <span className="font-space-mono text-xs text-[#555555] uppercase tracking-widest">
-          Memory Vault — Heirloom Books
-        </span>
-        <span className="font-space-mono text-xs text-[#555555]">
-          © {new Date().getFullYear()}
-        </span>
-      </div>
+    <footer className="border-t border-border-light px-8 py-8 text-center">
+      <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-muted-text">
+        © {new Date().getFullYear()} Mission Memory Vault · Heirloom Memory Books
+      </p>
     </footer>
   );
 }
