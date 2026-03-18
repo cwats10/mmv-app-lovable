@@ -9,45 +9,45 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
     steps:
-      - name: Checkout mmv-app repository
+      - name: Checkout mmv-app-lovable
         uses: actions/checkout@v4
         with:
-          repository: cwats10/mmv-app
+          repository: cwats10/mmv-app-lovable
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure Git
+      - name: Download from mmv-app
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Clone mmv-app-lovable
-        run: |
-          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/cwats10/mmv-app-lovable.git ../mmv-app-lovable
-
-      - name: Sync files to mmv-app-lovable
-        run: |
-          cd ../mmv-app-lovable
+          # Create temp directory
+          mkdir -p /tmp/main-source
+          cd /tmp/main-source
           
-          # Copy src directory
-          if [ -d "../mmv-app/src" ]; then
-            rsync -av --delete ../mmv-app/src/ src/
+          # Download main repo as zip
+          curl -L https://github.com/cwats10/mmv-app/archive/refs/heads/main.zip -o main.zip
+          unzip -q main.zip
+          
+          # Copy files
+          cd $GITHUB_WORKSPACE
+          
+          if [ -d "/tmp/main-source/mmv-app-main/src" ]; then
+            cp -r /tmp/main-source/mmv-app-main/src/* src/ 2>/dev/null || true
           fi
           
-          # Copy public directory
-          if [ -d "../mmv-app/public" ]; then
-            rsync -av --delete ../mmv-app/public/ public/
+          if [ -d "/tmp/main-source/mmv-app-main/public" ]; then
+            cp -r /tmp/main-source/mmv-app-main/public/* public/ 2>/dev/null || true
           fi
           
-          # Copy supabase directory
-          if [ -d "../mmv-app/supabase" ]; then
-            rsync -av --delete ../mmv-app/supabase/ supabase/
+          if [ -d "/tmp/main-source/mmv-app-main/supabase" ]; then
+            cp -r /tmp/main-source/mmv-app-main/supabase/* supabase/ 2>/dev/null || true
           fi
           
-          # Sync config files
           for file in tsconfig.json tsconfig.app.json tsconfig.node.json vite.config.ts eslint.config.js postcss.config.js index.html; do
-            if [ -f "../mmv-app/$file" ]; then
-              cp ../mmv-app/$file $file
+            if [ -f "/tmp/main-source/mmv-app-main/$file" ]; then
+              cp /tmp/main-source/mmv-app-main/$file . 2>/dev/null || true
             fi
           done
 
@@ -60,4 +60,3 @@ jobs:
           body: 'Automated sync of changes from mmv-app'
           branch: sync/from-main
           delete-branch: true
-          repository: cwats10/mmv-app-lovable
