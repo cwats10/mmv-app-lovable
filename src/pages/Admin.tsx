@@ -311,7 +311,7 @@ function UsersTable({
   onDelete,
   onResetPassword,
 }: {
-  users: Profile[];
+  users: (Profile & { referral_count: number })[];
   profile: Profile;
   actionLoading: string | null;
   onDelete: (id: string, email: string) => void;
@@ -325,7 +325,7 @@ function UsersTable({
       <table className="w-full border-collapse">
         <thead>
           <tr className="border-b border-border-light">
-            {['Name', 'Email', 'Referral Code', 'Admin', 'Joined', 'Actions'].map((h) => (
+            {['Name', 'Email', 'Referral Code', 'Referrals', 'Admin', 'Joined', 'Actions'].map((h) => (
               <th key={h} className="px-4 py-3 text-left font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
                 {h}
               </th>
