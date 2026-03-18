@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
+import { ManagerShareWidget } from '@/components/vault/ManagerShareWidget';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';

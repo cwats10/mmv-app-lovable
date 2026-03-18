@@ -34,6 +34,7 @@ export default function App() {
           <Route path="/contribute/:token" element={<Contribute />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/referral" element={<Referral />} />
+          <Route path="/manage/:token" element={<Manage />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

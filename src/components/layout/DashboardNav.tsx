@@ -25,6 +25,7 @@ export function DashboardNav() {
             <Link
               key={to}
               to={to}
+              data-tour={to === '/dashboard' ? 'nav-vaults' : to === '/referral' ? 'nav-referrals' : undefined}
               className={cn(
                 'flex items-center gap-1.5 font-inter text-sm transition-colors',
                 location.pathname.startsWith(to)

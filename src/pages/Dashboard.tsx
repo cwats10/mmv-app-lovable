@@ -6,16 +6,34 @@ import { CreateVaultModal } from '@/components/vault/CreateVaultModal';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
+import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
+import { MessageBank } from '@/components/dashboard/MessageBank';
 import { useAuth } from '@/hooks/useAuth';
 import { useVaults } from '@/hooks/useVaults';
+
+const TOUR_DONE_KEY = 'mmv_tour_done';
 
 export default function Dashboard() {
   const { user, profile } = useAuth();
   const { vaults, loading, createVault } = useVaults(user?.id);
   const [showCreate, setShowCreate] = useState(false);
+  const [tourDone, setTourDone] = useState(() => localStorage.getItem(TOUR_DONE_KEY) === '1');
+
+  function completeTour() {
+    localStorage.setItem(TOUR_DONE_KEY, '1');
+    setTourDone(true);
+  }
 
   return (
     <AppShell>
+      {/* Onboarding Tour */}
+      {!loading && !tourDone && (
+        <OnboardingTour
+          onComplete={completeTour}
+          onCreateVault={() => setShowCreate(true)}
+        />
+      )}
+
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
@@ -24,7 +42,7 @@ export default function Dashboard() {
             {profile?.name ? `Welcome, ${profile.name.split(' ')[0]}` : 'Mission Memory Vault'}
           </h1>
         </div>
-        <HeirloomButton onClick={() => setShowCreate(true)}>
+        <HeirloomButton data-tour="new-vault-btn" onClick={() => setShowCreate(true)}>
           <Plus className="mr-1.5 h-4 w-4" />
           New Vault
         </HeirloomButton>
@@ -51,11 +69,17 @@ export default function Dashboard() {
           </HeirloomButton>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {vaults.map((vault) => (
-            <VaultCard key={vault.id} vault={vault} />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {vaults.map((vault) => (
+              <VaultCard key={vault.id} vault={vault} />
+            ))}
+          </div>
+
+          {/* Message Bank */}
+          <Divider className="my-10" />
+          <MessageBank vaults={vaults} profile={profile} />
+        </>
       )}
 
       {showCreate && (
