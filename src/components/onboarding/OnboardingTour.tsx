@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 
+import inviteContributorsImg from '@/assets/onboarding/invite-contributors.png';
+import reviewQueueImg from '@/assets/onboarding/review-queue.png';
+import vaultPendingImg from '@/assets/onboarding/vault-pending.png';
+import memoriesPreservedImg from '@/assets/onboarding/memories-preserved.png';
+import messageBankImg from '@/assets/onboarding/message-bank.png';
+
 // ── Step definitions ─────────────────────────────────────────────────────────
 
 type Position = 'center' | 'below' | 'right';
@@ -14,8 +20,8 @@ interface TourStep {
   position?: Position;
   /** Label for the primary button on the very last step. */
   cta?: string;
-  /** Optional image to show inside the card for contextless steps. */
-  image?: string;
+  /** Optional image(s) to show inside the card for contextless steps. */
+  image?: string | string[];
 }
 
 const STEPS: TourStep[] = [
@@ -35,16 +41,19 @@ const STEPS: TourStep[] = [
     title: 'Invite Contributors',
     body:
       "Share your vault's unique contribution link with anyone. No account required. Each person writes their memory, uploads a photo, and drags it to where they'd like it placed on the page. It arrives in your review queue automatically.",
+    image: inviteContributorsImg,
   },
   {
     title: 'Review, Approve, and Delegate',
     body:
       "Approve the memories you want in the book; reject the ones that don't fit. Need help? Share the manager link with someone you trust. They can curate submissions, but only you can purchase and finalize the book.",
+    image: [vaultPendingImg, reviewQueueImg],
   },
   {
     title: 'Memories Are Never Lost',
     body:
       "Contributions are preserved forever. Once a book is printed, late arrivals queue automatically for the next edition. The vault stays open for years, and nothing is ever deleted.",
+    image: memoriesPreservedImg,
   },
   {
     title: 'Your Vaults',
@@ -59,6 +68,12 @@ const STEPS: TourStep[] = [
       "Know other families preparing a missionary? Share your referral code from the Referrals page. When they create an account, you both earn a reward toward a future book.",
     target: 'nav-referrals',
     position: 'right',
+  },
+  {
+    title: 'Message Bank',
+    body:
+      "Need help spreading the word? The Message Bank gives you ready-to-send messages for text, email, Facebook, Instagram, and ward announcements — personalized for each vault. Just pick a tab, copy, and paste.",
+    image: messageBankImg,
   },
   {
     title: "You're Ready",
