@@ -69,7 +69,7 @@ export default function BookDetail() {
   const filtered = (filter === 'all' ? currentEditionSubmissions
     : currentEditionSubmissions.filter((s) => s.status === filter));
 
-  async function handleApprove(submissionId: string, bId: string) {
+  async function handleApprove(submissionId: string, bId?: string) {
     await approve(submissionId, bId);
     await refetch();
   }
