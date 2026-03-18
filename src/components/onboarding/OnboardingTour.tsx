@@ -207,7 +207,9 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
         {/* Inner card (handles fade-in; never overrides the wrapper's transform) */}
         <div
           style={{
-            width:           CARD_W,
+            width:           current.image ? CARD_W_IMAGE : CARD_W,
+            maxHeight:       '85vh',
+            overflowY:       'auto',
             backgroundColor: '#ffffff',
             border:          '1px solid #e0deda',
             boxShadow:       '0 24px 64px rgba(0,0,0,0.28)',
