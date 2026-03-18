@@ -11,7 +11,7 @@ import type { Book, Vault, Profile } from '@/types';
 import {
   Zap, Trash2, KeyRound, Users, Archive, BookOpen,
   CheckCircle, Download, AlertTriangle,
-} from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import { toast } from 'sonner';
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
