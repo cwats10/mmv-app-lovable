@@ -37,6 +37,7 @@ export default function App() {
           <Route path="/referral" element={<Referral />} />
           <Route path="/manage/:token" element={<Manage />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
