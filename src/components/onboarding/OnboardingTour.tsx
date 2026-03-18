@@ -255,21 +255,35 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
             }}
           />
 
-          {/* Optional image */}
+          {/* Optional image(s) */}
           {current.image && (
             <div
               style={{
-                marginBottom:  '1rem',
-                borderRadius:  6,
-                overflow:      'hidden',
-                border:        '1px solid #e0deda',
+                marginBottom: '1rem',
+                display: 'flex',
+                flexDirection: Array.isArray(current.image) ? 'row' : 'column',
+                gap: Array.isArray(current.image) ? '6px' : 0,
               }}
             >
-              <img
-                src={current.image}
-                alt={current.title}
-                style={{ width: '100%', height: 'auto', display: 'block' }}
-              />
+              {(Array.isArray(current.image) ? current.image : [current.image]).map(
+                (src, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      flex: 1,
+                      borderRadius: 6,
+                      overflow: 'hidden',
+                      border: '1px solid #e0deda',
+                    }}
+                  >
+                    <img
+                      src={src}
+                      alt={`${current.title} ${idx + 1}`}
+                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                    />
+                  </div>
+                ),
+              )}
             </div>
           )}
 
