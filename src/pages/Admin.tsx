@@ -10,7 +10,7 @@ import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import type { Book, Vault, Profile } from '@/types';
 import {
   Zap, Trash2, KeyRound, Users, Archive, BookOpen,
-  CheckCircle, Download, AlertTriangle, ArrowUpDown,
+  CheckCircle, Download, AlertTriangle, ArrowUpDown, ShieldCheck, ShieldOff,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
