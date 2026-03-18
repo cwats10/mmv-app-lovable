@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageTag } from '@/components/common/PageTag';
