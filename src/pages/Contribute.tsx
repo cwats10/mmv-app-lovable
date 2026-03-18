@@ -59,6 +59,14 @@ export default function Contribute() {
     );
   }
 
+  useEffect(() => {
+    if (!submitted) return;
+    const timer = setTimeout(() => {
+      window.location.href = '/';
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [submitted]);
+
   if (submitted) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-stone-bg px-4 text-center">
