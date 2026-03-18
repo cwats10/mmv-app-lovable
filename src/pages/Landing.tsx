@@ -99,10 +99,20 @@ export default function Landing() {
   return (
     <PublicShell>
       {/* Hero */}
+ sync/from-main
       <section
         className="relative overflow-hidden"
         style={{ backgroundColor: '#f4f2ef', borderBottom: '1px solid #e0deda' }}
       >
+
+      <section className="relative px-8 py-24 text-center bg-white">
+        <img
+          src={worldMap}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-contain opacity-[0.3] grayscale"
+        />
+ main
         <GridOverlay />
         <div className="relative z-10 max-w-5xl mx-auto px-8 py-28 flex flex-col items-start">
           <PageTag className="block mb-6">Heirloom Memory Books</PageTag>
