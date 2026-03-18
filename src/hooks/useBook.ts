@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import type { Book, DeliveryAddress } from '@/types';
 
 export function useBook(vaultId: string | undefined) {
@@ -14,7 +14,7 @@ export function useBook(vaultId: string | undefined) {
       .eq('vault_id', vaultId)
       .single()
       .then(({ data }) => {
-        setBook(data as unknown as Book | null);
+        setBook(data as Book | null);
         setLoading(false);
       });
   }, [vaultId]);
@@ -27,18 +27,18 @@ export function useBook(vaultId: string | undefined) {
       .select()
       .single();
     if (error) throw error;
-    setBook(data as unknown as Book);
+    setBook(data as Book);
   }
 
   async function saveDeliveryAddress(bookId: string, address: DeliveryAddress) {
     const { data, error } = await supabase
       .from('books')
-      .update({ delivery_address: address as unknown as null })
+      .update({ delivery_address: address })
       .eq('id', bookId)
       .select()
       .single();
     if (error) throw error;
-    setBook(data as unknown as Book);
+    setBook(data as Book);
   }
 
   return { book, loading, updateStatus, saveDeliveryAddress };

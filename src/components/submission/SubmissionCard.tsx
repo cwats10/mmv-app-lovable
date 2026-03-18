@@ -2,17 +2,29 @@ import { useState } from 'react';
 import type { Submission } from '@/types';
 import { PageTag } from '@/components/common/PageTag';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { Check, X, Clock } from 'lucide-react';
+import { Check, X, Clock, BookMarked } from 'lucide-react';
 
 interface SubmissionCardProps {
   submission: Submission;
   bookId?: string;
-  onApprove?: (id: string, bookId: string) => Promise<void>;
+  // bookId is passed through to the callback when known (owner view).
+  // Manager view omits it — the server resolves the book from the vault.
+  onApprove?: (id: string, bookId?: string) => Promise<void>;
   onReject?: (id: string) => Promise<void>;
   readonly?: boolean;
+  /** True when the book is already purchased/printed and this submission
+   *  arrived after finalization — it's preserved for a future edition. */
+  futureEdition?: boolean;
 }
 
-export function SubmissionCard({ submission, bookId, onApprove, onReject, readonly }: SubmissionCardProps) {
+export function SubmissionCard({
+  submission,
+  bookId,
+  onApprove,
+  onReject,
+  readonly,
+  futureEdition,
+}: SubmissionCardProps) {
   const [acting, setActing] = useState<'approving' | 'rejecting' | null>(null);
 
   const statusColors = {
@@ -22,64 +34,102 @@ export function SubmissionCard({ submission, bookId, onApprove, onReject, readon
   };
 
   return (
-    <div className={`border ${statusColors[submission.status]} p-5`}>
+    <div
+      className="p-6"
+      style={{ border: '1px solid #e0deda', backgroundColor: '#ffffff' }}
+    >
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between mb-4">
         <div>
-          <h4 className="font-playfair text-lg font-semibold text-dark-text">
+          <div className="font-inter font-semibold text-[#222222] text-sm">
             {submission.contributor_name}
-          </h4>
-          <PageTag>{submission.relation}</PageTag>
+          </div>
+          <div className="font-space-mono text-xs text-[#555555] uppercase tracking-wider mt-0.5">
+            {submission.relation}
+          </div>
         </div>
         <div className="flex items-center gap-1.5">
-          {submission.status === 'pending' && <Clock className="h-3.5 w-3.5 text-amber-600" />}
-          {submission.status === 'approved' && <Check className="h-3.5 w-3.5 text-emerald-600" />}
-          {submission.status === 'rejected' && <X className="h-3.5 w-3.5 text-red-500" />}
-          <span className="font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-            {submission.status}
-          </span>
+          {futureEdition ? (
+            <>
+              <BookMarked size={12} className="text-[#555555]" />
+              <span className="font-space-mono text-xs uppercase tracking-wider px-2 py-0.5 rounded-sm border border-[#e0deda] bg-[#f4f2ef] text-[#555555]">
+                Future Edition
+              </span>
+            </>
+          ) : (
+            <>
+              {submission.status === 'pending' && <Clock size={12} className="text-amber-500" />}
+              {submission.status === 'approved' && <Check size={12} className="text-emerald-600" />}
+              {submission.status === 'rejected' && <X size={12} className="text-red-500" />}
+              <span className={`font-space-mono text-xs uppercase tracking-wider px-2 py-0.5 rounded-sm ${statusColors[submission.status]}`}>
+                {submission.status}
+              </span>
+            </>
+          )}
         </div>
       </div>
 
       {/* Message */}
-      <p className="mt-3 font-inter text-sm leading-relaxed text-dark-text">
+      <p
+        className="text-sm text-[#555555] mb-4"
+        style={{ lineHeight: 1.8 }}
+      >
         {submission.message}
       </p>
 
       {/* Photos */}
       {submission.media_urls.length > 0 && (
-        <div className="mt-4 flex gap-2 overflow-x-auto">
+        <div className="flex gap-2 mb-4">
           {submission.media_urls.map((url, i) => (
-            <img key={i} src={url} alt="" className="h-20 w-20 rounded object-cover" />
+            <img
+              key={i}
+              src={url}
+              alt=""
+              className="w-20 h-20 object-cover"
+              style={{ filter: 'grayscale(15%) sepia(8%)' }}
+            />
           ))}
         </div>
       )}
 
-      <p className="mt-3 font-space-mono text-[10px] text-muted-text">
+      <PageTag className="block mb-3 text-[10px]">
         {new Date(submission.created_at).toLocaleDateString('en-US', {
           month: 'long', day: 'numeric', year: 'numeric',
         })}
-      </p>
+      </PageTag>
 
-      {/* Actions */}
-      {!readonly && submission.status === 'pending' && onApprove && onReject && bookId && (
-        <div className="mt-4 flex gap-3">
+      {/* Actions — only shown when not locked and not a future-edition card */}
+      {!readonly && !futureEdition && submission.status === 'pending' && onApprove && onReject && (
+        <div className="flex gap-2 mt-4 pt-4" style={{ borderTop: '1px solid #e0deda' }}>
           <HeirloomButton
+            variant="primary"
             size="sm"
             loading={acting === 'approving'}
+            disabled={acting !== null}
             onClick={async () => { setActing('approving'); await onApprove(submission.id, bookId); setActing(null); }}
           >
-            Approve
+            <Check size={12} className="mr-1" /> Approve
           </HeirloomButton>
           <HeirloomButton
             variant="danger"
             size="sm"
             loading={acting === 'rejecting'}
+            disabled={acting !== null}
             onClick={async () => { setActing('rejecting'); await onReject(submission.id); setActing(null); }}
           >
-            Reject
+            <X size={12} className="mr-1" /> Reject
           </HeirloomButton>
         </div>
+      )}
+
+      {/* Future-edition footer note */}
+      {futureEdition && (
+        <p
+          className="font-space-mono text-xs text-[#555555] mt-4 pt-4"
+          style={{ borderTop: '1px solid #e0deda', lineHeight: 1.6 }}
+        >
+          Received after this edition was finalized — preserved for the next print.
+        </p>
       )}
     </div>
   );

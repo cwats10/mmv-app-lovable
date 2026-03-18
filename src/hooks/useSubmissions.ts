@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import type { Submission } from '@/types';
 
 export function useSubmissions(vaultId: string | undefined) {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchSubmissions = useCallback(async () => {
+  const fetch = useCallback(async () => {
     if (!vaultId) { setLoading(false); return; }
     const { data } = await supabase
       .from('submissions')
@@ -17,8 +17,9 @@ export function useSubmissions(vaultId: string | undefined) {
     setLoading(false);
   }, [vaultId]);
 
-  useEffect(() => { fetchSubmissions(); }, [fetchSubmissions]);
+  useEffect(() => { fetch(); }, [fetch]);
 
+  // Real-time subscription for new submissions
   useEffect(() => {
     if (!vaultId) return;
     const channel = supabase
@@ -26,11 +27,11 @@ export function useSubmissions(vaultId: string | undefined) {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'submissions', filter: `vault_id=eq.${vaultId}` },
-        () => fetchSubmissions()
+        () => fetch()
       )
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [vaultId, fetchSubmissions]);
+  }, [vaultId, fetch]);
 
   async function approve(submissionId: string, bookId: string) {
     const { error } = await supabase
@@ -38,7 +39,7 @@ export function useSubmissions(vaultId: string | undefined) {
       .update({ status: 'approved', book_id: bookId })
       .eq('id', submissionId);
     if (error) throw error;
-    await fetchSubmissions();
+    await fetch();
   }
 
   async function reject(submissionId: string) {
@@ -47,15 +48,17 @@ export function useSubmissions(vaultId: string | undefined) {
       .update({ status: 'rejected' })
       .eq('id', submissionId);
     if (error) throw error;
-    await fetchSubmissions();
+    await fetch();
   }
 
+  // Public insert — no auth required
   async function submitContribution(params: {
     vault_id: string;
     contributor_name: string;
     relation: string;
     message: string;
     media_urls: string[];
+    image_layout?: { position: string };
   }) {
     const { error } = await supabase.from('submissions').insert(params);
     if (error) throw error;
@@ -65,5 +68,5 @@ export function useSubmissions(vaultId: string | undefined) {
   const approved = submissions.filter((s) => s.status === 'approved');
   const rejected = submissions.filter((s) => s.status === 'rejected');
 
-  return { submissions, loading, approve, reject, submitContribution, pending, approved, rejected, refetch: fetchSubmissions };
+  return { submissions, pending, approved, rejected, loading, approve, reject, submitContribution, refetch: fetch };
 }

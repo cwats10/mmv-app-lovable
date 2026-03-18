@@ -138,7 +138,7 @@ serve(async (req) => {
     }
 
     return err(`Unknown action: ${action}`);
-  } catch (e: unknown) {
-    return err((e as Error).message ?? 'Internal server error', 500);
+  } catch (e) {
+    return err(e.message ?? 'Internal server error', 500);
   }
 });
