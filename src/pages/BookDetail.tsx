@@ -175,5 +175,6 @@ export default function BookDetail() {
         book={book}
         vault={vault}
       />
+    </AppShell>
   );
 }
