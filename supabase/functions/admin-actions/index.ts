@@ -109,6 +109,19 @@ serve(async (req) => {
         break;
       }
 
+      case 'toggle_admin': {
+        const { user_id, is_admin } = params;
+        if (!user_id) throw new Error('user_id is required');
+        const newVal = is_admin === 'true';
+        const { error } = await serviceClient
+          .from('profiles')
+          .update({ is_admin: newVal })
+          .eq('id', user_id);
+        if (error) throw error;
+        result.message = `Admin ${newVal ? 'granted' : 'revoked'}`;
+        break;
+      }
+
       default:
         throw new Error(`Unknown action: ${action}`);
     }

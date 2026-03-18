@@ -10,7 +10,7 @@ import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import type { Book, Vault, Profile } from '@/types';
 import {
   Zap, Trash2, KeyRound, Users, Archive, BookOpen,
-  CheckCircle, Download, AlertTriangle, ArrowUpDown,
+  CheckCircle, Download, AlertTriangle, ArrowUpDown, ShieldCheck, ShieldOff,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -241,6 +241,28 @@ export default function Admin() {
     }
   }
 
+  async function handleToggleAdmin(userId: string, name: string, currentlyAdmin: boolean) {
+    const newState = !currentlyAdmin;
+    askConfirm(
+      newState ? 'Grant Admin' : 'Revoke Admin',
+      `This will ${newState ? 'grant admin access to' : 'revoke admin access from'} ${name || userId}.`,
+      newState ? 'Grant Admin' : 'Revoke Admin',
+      async () => {
+        setActionLoading(`admin-${userId}`);
+        try {
+          await adminAction('toggle_admin', { user_id: userId, is_admin: String(newState) });
+          toast.success(`Admin ${newState ? 'granted' : 'revoked'}`);
+          await fetchUsers();
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : 'Failed to update admin status');
+        } finally {
+          setActionLoading(null);
+          setConfirm(null);
+        }
+      },
+    );
+  }
+
   /* ── Guards ───────────────────────────────────────────────────────────── */
 
   if (authLoading) return null;
@@ -283,7 +305,7 @@ export default function Admin() {
         </div>
       ) : (
         <div className="mt-6">
-          {tab === 'users' && <UsersTable users={users} profile={profile} actionLoading={actionLoading} onDelete={handleDeleteUser} onResetPassword={handleResetPassword} />}
+          {tab === 'users' && <UsersTable users={users} profile={profile} actionLoading={actionLoading} onDelete={handleDeleteUser} onResetPassword={handleResetPassword} onToggleAdmin={handleToggleAdmin} />}
           {tab === 'vaults' && <VaultsTable vaults={vaults} actionLoading={actionLoading} onDelete={handleDeleteVault} onFinalize={handleFinalizeVault} />}
           {tab === 'books' && <BooksTable books={books} actionLoading={actionLoading} onTriggerPipeline={handleTriggerPipeline} />}
         </div>
@@ -310,30 +332,51 @@ function UsersTable({
   actionLoading,
   onDelete,
   onResetPassword,
+  onToggleAdmin,
 }: {
   users: (Profile & { referral_count: number })[];
   profile: Profile;
   actionLoading: string | null;
   onDelete: (id: string, email: string) => void;
   onResetPassword: (email: string) => void;
+  onToggleAdmin: (id: string, name: string, currentlyAdmin: boolean) => void;
 }) {
+  const [sortByReferrals, setSortByReferrals] = useState<'asc' | 'desc' | null>(null);
+
+  const sortedUsers = useMemo(() => {
+    if (!sortByReferrals) return users;
+    return [...users].sort((a, b) =>
+      sortByReferrals === 'desc' ? b.referral_count - a.referral_count : a.referral_count - b.referral_count
+    );
+  }, [users, sortByReferrals]);
+
   if (users.length === 0) {
     return <EmptyState message="No users found." />;
   }
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
         <thead>
           <tr className="border-b border-border-light">
             {['Name', 'Email', 'Referral Code', 'Referrals', 'Admin', 'Joined', 'Actions'].map((h) => (
-              <th key={h} className="px-4 py-3 text-left font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-                {h}
+              <th
+                key={h}
+                className={`px-4 py-3 text-left font-space-mono text-[10px] uppercase tracking-wider text-muted-text ${
+                  h === 'Referrals' ? 'cursor-pointer select-none hover:text-dark-text transition-colors' : ''
+                }`}
+                onClick={h === 'Referrals' ? () => setSortByReferrals((prev) => prev === 'desc' ? 'asc' : 'desc') : undefined}
+              >
+                <span className="flex items-center gap-1">
+                  {h}
+                  {h === 'Referrals' && <ArrowUpDown className="h-3 w-3" />}
+                </span>
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {users.map((u) => (
+          {sortedUsers.map((u) => (
             <tr key={u.id} className="border-b border-border-light">
               <td className="px-4 py-3 font-inter text-sm text-dark-text">{u.name || '\u2014'}</td>
               <td className="px-4 py-3 font-inter text-sm text-muted-text">{u.email}</td>
@@ -352,15 +395,26 @@ function UsersTable({
                   <KeyRound className="h-3.5 w-3.5" />
                 </HeirloomButton>
                 {u.id !== profile.id && (
-                  <HeirloomButton
-                    variant="danger"
-                    size="sm"
-                    onClick={() => onDelete(u.id, u.email)}
-                    loading={actionLoading === u.id}
-                    title="Delete account"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </HeirloomButton>
+                  <>
+                    <HeirloomButton
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onToggleAdmin(u.id, u.name || u.email, u.is_admin)}
+                      loading={actionLoading === `admin-${u.id}`}
+                      title={u.is_admin ? 'Revoke admin' : 'Grant admin'}
+                    >
+                      {u.is_admin ? <ShieldOff className="h-3.5 w-3.5" /> : <ShieldCheck className="h-3.5 w-3.5" />}
+                    </HeirloomButton>
+                    <HeirloomButton
+                      variant="danger"
+                      size="sm"
+                      onClick={() => onDelete(u.id, u.email)}
+                      loading={actionLoading === u.id}
+                      title="Delete account"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </HeirloomButton>
+                  </>
                 )}
               </td>
             </tr>
