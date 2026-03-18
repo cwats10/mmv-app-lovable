@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import type { ImagePosition } from '@/types';
+type ImagePosition = { x: number; y: number; scale: number };
 
 interface Props {
   photoUrl: string;

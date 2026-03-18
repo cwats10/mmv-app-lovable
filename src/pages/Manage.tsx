@@ -276,7 +276,6 @@ export default function Manage() {
                   key={submission.id}
                   submission={submission}
                   readonly
-                  futureEdition
                 />
               ))}
             </div>
