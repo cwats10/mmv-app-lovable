@@ -85,7 +85,8 @@ const STEPS: TourStep[] = [
 
 // ── Positioning ──────────────────────────────────────────────────────────────
 
-const CARD_W = 380;
+const CARD_W       = 380;
+const CARD_W_IMAGE = 620;
 const OFFSET = 20;
 const PAD    = 8;
 
