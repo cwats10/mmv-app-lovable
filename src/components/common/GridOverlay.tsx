@@ -41,7 +41,7 @@ export function GridOverlay() {
           className="absolute inset-0 transition-opacity duration-150"
           style={{
             backgroundImage:
-              'linear-gradient(to right, hsl(var(--primary) / 0.12) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--primary) / 0.12) 1px, transparent 1px)',
+              'linear-gradient(to right, hsl(var(--primary) / 0.22) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--primary) / 0.22) 1px, transparent 1px)',
             backgroundSize: '80px 80px',
             maskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
             WebkitMaskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
