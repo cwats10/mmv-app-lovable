@@ -241,6 +241,28 @@ export default function Admin() {
     }
   }
 
+  async function handleToggleAdmin(userId: string, name: string, currentlyAdmin: boolean) {
+    const newState = !currentlyAdmin;
+    askConfirm(
+      newState ? 'Grant Admin' : 'Revoke Admin',
+      `This will ${newState ? 'grant admin access to' : 'revoke admin access from'} ${name || userId}.`,
+      newState ? 'Grant Admin' : 'Revoke Admin',
+      async () => {
+        setActionLoading(`admin-${userId}`);
+        try {
+          await adminAction('toggle_admin', { user_id: userId, is_admin: String(newState) });
+          toast.success(`Admin ${newState ? 'granted' : 'revoked'}`);
+          await fetchUsers();
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : 'Failed to update admin status');
+        } finally {
+          setActionLoading(null);
+          setConfirm(null);
+        }
+      },
+    );
+  }
+
   /* ── Guards ───────────────────────────────────────────────────────────── */
 
   if (authLoading) return null;
