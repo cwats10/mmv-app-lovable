@@ -66,7 +66,7 @@ export default function Landing() {
           src={worldMap}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-contain opacity-[0.18] grayscale"
+          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-contain opacity-[0.3] grayscale"
         />
         <GridOverlay />
         <div className="relative z-10 mx-auto max-w-3xl">
