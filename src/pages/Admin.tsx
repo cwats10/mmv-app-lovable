@@ -305,7 +305,7 @@ export default function Admin() {
         </div>
       ) : (
         <div className="mt-6">
-          {tab === 'users' && <UsersTable users={users} profile={profile} actionLoading={actionLoading} onDelete={handleDeleteUser} onResetPassword={handleResetPassword} />}
+          {tab === 'users' && <UsersTable users={users} profile={profile} actionLoading={actionLoading} onDelete={handleDeleteUser} onResetPassword={handleResetPassword} onToggleAdmin={handleToggleAdmin} />}
           {tab === 'vaults' && <VaultsTable vaults={vaults} actionLoading={actionLoading} onDelete={handleDeleteVault} onFinalize={handleFinalizeVault} />}
           {tab === 'books' && <BooksTable books={books} actionLoading={actionLoading} onTriggerPipeline={handleTriggerPipeline} />}
         </div>
