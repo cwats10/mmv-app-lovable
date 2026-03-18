@@ -32,6 +32,14 @@ export default function Contribute() {
       });
   }, [token]);
 
+  useEffect(() => {
+    if (!submitted) return;
+    const timer = setTimeout(() => {
+      window.location.href = '/';
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [submitted]);
+
   async function handleSubmit(data: Parameters<typeof submitContribution>[0]) {
     await submitContribution(data);
     setSubmitted(true);
@@ -58,14 +66,6 @@ export default function Contribute() {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (!submitted) return;
-    const timer = setTimeout(() => {
-      window.location.href = '/';
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [submitted]);
 
   if (submitted) {
     return (
