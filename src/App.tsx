@@ -9,6 +9,7 @@ const BookDetail = lazy(() => import('@/pages/BookDetail'));
 const Contribute = lazy(() => import('@/pages/Contribute'));
 const Checkout = lazy(() => import('@/pages/Checkout'));
 const Referral = lazy(() => import('@/pages/Referral'));
+const Manage = lazy(() => import('@/pages/Manage'));
 const Admin = lazy(() => import('@/pages/Admin'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
