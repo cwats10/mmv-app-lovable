@@ -288,7 +288,7 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
                     src={src}
                     alt={`${current.title} ${idx + 1}`}
                     loading="eager"
-                    decoding="async"
+                    decoding="sync"
                     style={{ width: '100%', height: 'auto', display: 'block' }}
                   />
                 </div>
