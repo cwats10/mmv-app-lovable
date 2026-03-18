@@ -11,16 +11,20 @@ import { MessageBank } from '@/components/dashboard/MessageBank';
 import { useAuth } from '@/hooks/useAuth';
 import { useVaults } from '@/hooks/useVaults';
 
-const TOUR_DONE_KEY = 'mmv_tour_done';
+function tourKey(userId: string) {
+  return `mmv_tour_done_${userId}`;
+}
 
 export default function Dashboard() {
   const { user, profile } = useAuth();
   const { vaults, loading, createVault } = useVaults(user?.id);
   const [showCreate, setShowCreate] = useState(false);
-  const [tourDone, setTourDone] = useState(() => localStorage.getItem(TOUR_DONE_KEY) === '1');
+  const [tourDone, setTourDone] = useState(() =>
+    user ? localStorage.getItem(tourKey(user.id)) === '1' : false
+  );
 
   function completeTour() {
-    localStorage.setItem(TOUR_DONE_KEY, '1');
+    if (user) localStorage.setItem(tourKey(user.id), '1');
     setTourDone(true);
   }
 
