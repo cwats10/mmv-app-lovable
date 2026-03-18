@@ -10,11 +10,11 @@ interface PageTagProps {
 export function PageTag({ children, className, style }: PageTagProps) {
   return (
     <span
+      style={style}
       className={cn(
-        'inline-block font-space-mono text-[10px] uppercase tracking-[0.2em] text-muted-text',
+        'font-space-mono text-xs uppercase tracking-widest text-[#555555]',
         className
       )}
-      style={style}
     >
       {children}
     </span>

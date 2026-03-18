@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-type ImagePosition = 'top' | 'float-left' | 'float-right' | 'center' | 'bottom';
+import type { ImagePosition } from '@/types';
 
 interface Props {
   photoUrl: string;

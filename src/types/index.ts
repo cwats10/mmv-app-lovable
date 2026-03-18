@@ -1,3 +1,7 @@
+// ============================================================
+// Core Data Interfaces — mirrors gemini.md schemas exactly
+// ============================================================
+
 export interface Profile {
   id: string;
   created_at: string;
@@ -8,6 +12,7 @@ export interface Profile {
   referral_code: string;
   referred_by: string | null;
   is_admin: boolean;
+  reward_balance: number;
 }
 
 export interface Vault {
@@ -20,22 +25,27 @@ export interface Vault {
   mission_end: string | null;
   vault_type: 'pre' | 'post';
   submission_token: string;
+  manager_token: string;
   cover_image_url: string | null;
+  archived_at: string | null;
 }
+
+export type DesignTier = 'classic' | 'heirloom';
 
 export interface Book {
   id: string;
   created_at: string;
   vault_id: string;
-  status: BookStatus;
+  status: 'collecting' | 'review' | 'purchased' | 'printing' | 'delivered';
   design_theme: string;
+  design_tier: DesignTier;
+  extra_copies: number;
   pdf_url: string | null;
   delivery_address: DeliveryAddress | null;
   stripe_payment_intent_id: string | null;
   pod_order_id: string | null;
+  locked_at: string | null;
 }
-
-export type BookStatus = 'collecting' | 'review' | 'purchased' | 'printing' | 'delivered';
 
 export interface DeliveryAddress {
   street: string;
@@ -43,6 +53,12 @@ export interface DeliveryAddress {
   state: string;
   zip: string;
   country: string;
+}
+
+export type ImagePosition = 'top' | 'float-left' | 'float-right' | 'center' | 'bottom';
+
+export interface ImageLayout {
+  position: ImagePosition;
 }
 
 export interface Submission {
@@ -55,6 +71,8 @@ export interface Submission {
   message: string;
   media_urls: string[];
   status: 'pending' | 'approved' | 'rejected';
+  image_layout: ImageLayout | null;
+  archived_at: string | null;
 }
 
 export interface Referral {
@@ -67,6 +85,7 @@ export interface Referral {
   reward_amount: number;
 }
 
+// Golden Payload — matches gemini.md exactly
 export interface GoldenPayload {
   book_id: string;
   client_id: string;
@@ -75,6 +94,7 @@ export interface GoldenPayload {
   service_dates: string;
   cover_image_url: string;
   design_theme: 'museum_archive_elegant';
+  book_inches?: 10 | 11 | 12;
   pages: GoldenPage[];
   metadata: {
     total_pages: number;
@@ -86,6 +106,7 @@ export interface GoldenPayload {
 export interface GoldenPage {
   page_number: number;
   template_type: 'cover' | 'standard_text_only' | 'standard_text_with_image';
+  image_layout?: ImageLayout | null;
   content: {
     contributor_name: string;
     relation: string;
@@ -94,8 +115,11 @@ export interface GoldenPage {
   };
 }
 
+// Vault with joined data
 export interface VaultWithBook extends Vault {
   books: Pick<Book, 'id' | 'status'>[];
 }
 
 export type SubmissionStatus = Submission['status'];
+export type BookStatus = Book['status'];
+export type VaultType = Vault['vault_type'];
