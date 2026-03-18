@@ -143,7 +143,7 @@ export default function BookDetail() {
               </p>
             )}
           </div>
-          <HeirloomButton onClick={() => setAddressFormOpen(true)}>
+          <HeirloomButton onClick={() => setPurchaseOpen(true)}>
             <MapPin className="mr-1.5 h-4 w-4" /> Purchase & Print
           </HeirloomButton>
         </div>
@@ -168,57 +168,12 @@ export default function BookDetail() {
         </div>
       )}
 
-      {/* Address modal */}
-      {addressFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-lg border border-border-light bg-white p-8">
-            <PageTag>Delivery Address</PageTag>
-            <h2 className="mt-2 font-playfair text-2xl font-semibold text-dark-text">
-              Where should we send the book?
-            </h2>
-            <button
-              onClick={() => setAddressFormOpen(false)}
-              className="absolute right-4 top-4 text-muted-text hover:text-dark-text"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            <Divider className="my-5" />
-
-            <div className="space-y-4">
-              {(['street', 'city', 'state', 'zip', 'country'] as (keyof DeliveryAddress)[]).map((field) => (
-                <div key={field}>
-                  <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  <input
-                    value={address[field]}
-                    onChange={(e) => setAddress((a) => ({ ...a, [field]: e.target.value }))}
-                    className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
-                  />
-                </div>
-              ))}
-            </div>
-
-            {addressError && (
-              <div className="mt-4 border border-red-200 bg-red-50 px-4 py-2">
-                <p className="font-inter text-sm text-red-600">{addressError}</p>
-              </div>
-            )}
-
-            <Divider className="my-5" />
-
-            <div className="flex gap-3">
-              <HeirloomButton variant="ghost" onClick={() => setAddressFormOpen(false)} className="flex-1">
-                Cancel
-              </HeirloomButton>
-              <HeirloomButton loading={purchasing} onClick={handlePurchase} className="flex-1">
-                Confirm & Pay
-              </HeirloomButton>
-            </div>
-          </div>
-        </div>
-      )}
-    </AppShell>
+      {/* Purchase modal */}
+      <PurchaseModal
+        open={purchaseOpen}
+        onClose={() => setPurchaseOpen(false)}
+        book={book}
+        vault={vault}
+      />
   );
 }
