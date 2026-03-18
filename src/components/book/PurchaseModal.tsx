@@ -153,7 +153,7 @@ export function PurchaseModal({ open, onClose, book, vault }: PurchaseModalProps
             Cancel
           </HeirloomButton>
           <HeirloomButton loading={purchasing} onClick={handlePurchase} className="flex-1">
-            Confirm & Pay — ${subtotal}
+            Confirm & Pay: ${subtotal}
           </HeirloomButton>
         </div>
       </div>
