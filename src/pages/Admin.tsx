@@ -87,7 +87,7 @@ export default function Admin() {
   const [tab, setTab] = useState<Tab>('users');
 
   // Data
-  const [users, setUsers] = useState<Profile[]>([]);
+  const [users, setUsers] = useState<(Profile & { referral_count: number })[]>([]);
   const [vaults, setVaults] = useState<AdminVault[]>([]);
   const [books, setBooks] = useState<AdminBook[]>([]);
   const [loading, setLoading] = useState(true);
