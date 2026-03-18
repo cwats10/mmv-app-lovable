@@ -87,7 +87,7 @@ export default function Admin() {
   const [tab, setTab] = useState<Tab>('users');
 
   // Data
-  const [users, setUsers] = useState<Profile[]>([]);
+  const [users, setUsers] = useState<(Profile & { referral_count: number })[]>([]);
   const [vaults, setVaults] = useState<AdminVault[]>([]);
   const [books, setBooks] = useState<AdminBook[]>([]);
   const [loading, setLoading] = useState(true);
@@ -104,8 +104,17 @@ export default function Admin() {
   /* ── Data fetching ────────────────────────────────────────────────────── */
 
   const fetchUsers = useCallback(async () => {
-    const { data } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-    setUsers((data as Profile[]) || []);
+    const { data: profiles } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+    const profileList = (profiles as Profile[]) || [];
+    // Fetch referral counts
+    const { data: referralCounts } = await supabase
+      .from('referrals')
+      .select('referrer_id');
+    const countMap = new Map<string, number>();
+    (referralCounts || []).forEach((r: { referrer_id: string }) => {
+      countMap.set(r.referrer_id, (countMap.get(r.referrer_id) || 0) + 1);
+    });
+    setUsers(profileList.map((p) => ({ ...p, referral_count: countMap.get(p.id) || 0 })));
   }, []);
 
   const fetchVaults = useCallback(async () => {
@@ -302,7 +311,7 @@ function UsersTable({
   onDelete,
   onResetPassword,
 }: {
-  users: Profile[];
+  users: (Profile & { referral_count: number })[];
   profile: Profile;
   actionLoading: string | null;
   onDelete: (id: string, email: string) => void;
@@ -316,7 +325,7 @@ function UsersTable({
       <table className="w-full border-collapse">
         <thead>
           <tr className="border-b border-border-light">
-            {['Name', 'Email', 'Referral Code', 'Admin', 'Joined', 'Actions'].map((h) => (
+            {['Name', 'Email', 'Referral Code', 'Referrals', 'Admin', 'Joined', 'Actions'].map((h) => (
               <th key={h} className="px-4 py-3 text-left font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
                 {h}
               </th>
@@ -329,6 +338,7 @@ function UsersTable({
               <td className="px-4 py-3 font-inter text-sm text-dark-text">{u.name || '\u2014'}</td>
               <td className="px-4 py-3 font-inter text-sm text-muted-text">{u.email}</td>
               <td className="px-4 py-3 font-space-mono text-xs text-muted-text">{u.referral_code}</td>
+              <td className="px-4 py-3 font-inter text-sm text-muted-text">{u.referral_count}</td>
               <td className="px-4 py-3 font-inter text-sm">{u.is_admin ? <span className="text-green-700">Yes</span> : <span className="text-muted-text">No</span>}</td>
               <td className="px-4 py-3 font-inter text-sm text-muted-text">{new Date(u.created_at).toLocaleDateString()}</td>
               <td className="flex gap-2 px-4 py-3">
