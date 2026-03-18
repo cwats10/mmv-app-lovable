@@ -4,6 +4,15 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'supabase/**'
+      - 'tsconfig*.json'
+      - 'vite.config.ts'
+      - 'eslint.config.js'
+      - 'postcss.config.js'
+      - 'index.html'
   workflow_dispatch:
 
 jobs:
@@ -24,27 +33,33 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: mmv-app
 
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Sync source code and configuration
+        working-directory: mmv-app-lovable
         run: |
           # Copy src directory
-          if [ -d "mmv-app/src" ]; then
-            rsync -av --delete mmv-app/src/ mmv-app-lovable/src/
+          if [ -d "../mmv-app/src" ]; then
+            rsync -av --delete ../mmv-app/src/ src/
           fi
           
           # Copy public directory
-          if [ -d "mmv-app/public" ]; then
-            rsync -av --delete mmv-app/public/ mmv-app-lovable/public/
+          if [ -d "../mmv-app/public" ]; then
+            rsync -av --delete ../mmv-app/public/ public/
           fi
           
           # Copy supabase directory
-          if [ -d "mmv-app/supabase" ]; then
-            rsync -av --delete mmv-app/supabase/ mmv-app-lovable/supabase/
+          if [ -d "../mmv-app/supabase" ]; then
+            rsync -av --delete ../mmv-app/supabase/ supabase/
           fi
           
           # Sync TypeScript and config files
           for file in tsconfig.json tsconfig.app.json tsconfig.node.json vite.config.ts eslint.config.js postcss.config.js index.html; do
-            if [ -f "mmv-app/$file" ]; then
-              cp mmv-app/$file mmv-app-lovable/$file
+            if [ -f "../mmv-app/$file" ]; then
+              cp ../mmv-app/$file $file
             fi
           done
 
@@ -52,6 +67,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          path: mmv-app-lovable
           commit-message: 'sync: update from mmv-app'
           title: 'Sync: Update from mmv-app'
           body: 'Automated sync of changes from mmv-app'
