@@ -15,77 +15,53 @@ export function VaultCard({ vault, pendingCount = 0 }: VaultCardProps) {
 
   return (
     <Link
-      to={`/dashboard/vault/${vault.id}`}
-      className="group block"
-      style={{
-        backgroundColor: '#f4f2ef',
-        border: '1px solid #e0deda',
-        padding: '2rem',
-        transition: 'all 0.2s',
-      }}
+      to={`/vault/${vault.id}`}
+      className="group block border border-border-light bg-white transition-shadow hover:shadow-md"
     >
-      {/* Cover image */}
       {vault.cover_image_url ? (
-        <div
-          className="mb-6 overflow-hidden"
-          style={{
-            height: '180px',
-            backgroundImage: `url('${vault.cover_image_url}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'grayscale(15%) sepia(8%)',
-          }}
-        />
+        <div className="aspect-[16/9] overflow-hidden">
+          <img
+            src={vault.cover_image_url}
+            alt={vault.missionary_name}
+            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+          />
+        </div>
       ) : (
-        <div
-          className="mb-6 flex items-center justify-center"
-          style={{
-            height: '180px',
-            backgroundColor: '#e0deda',
-          }}
-        >
-          <span className="font-space-mono text-xs text-[#555555] uppercase tracking-widest">No Cover</span>
+        <div className="flex aspect-[16/9] items-center justify-center bg-stone-bg">
+          <span className="font-inter text-sm text-muted-text">No Cover</span>
         </div>
       )}
 
-      <PageTag className="block mb-3">
-        {vault.vault_type === 'post' ? 'Post-Mission' : 'Pre-Mission'}
-      </PageTag>
-
-      <h3
-        className="font-playfair text-2xl font-normal text-[#222222] mb-1 group-hover:underline"
-        style={{ letterSpacing: '-0.01em' }}
-      >
-        {vault.missionary_name}
-      </h3>
-
-      <p className="text-sm text-[#555555] mb-4">
-        {vault.mission_name || 'Mission details not set'}
-      </p>
-
-      {(vault.mission_start || vault.mission_end) && (
-        <p className="font-space-mono text-xs text-[#555555] mb-4">
-          {formatServiceDates(vault.mission_start, vault.mission_end)}
+      <div className="p-5">
+        <PageTag>{vault.vault_type === 'post' ? 'Post-Mission' : 'Pre-Mission'}</PageTag>
+        <h3 className="mt-2 font-playfair text-xl font-semibold text-dark-text">
+          {vault.missionary_name}
+        </h3>
+        <p className="mt-1 font-inter text-sm text-muted-text">
+          {vault.mission_name || 'Mission details not set'}
         </p>
-      )}
 
-      <Divider className="mb-4" />
-
-      <div className="flex items-center justify-between">
-        {book ? (
-          <BookStatusBadge status={book.status} />
-        ) : (
-          <span className="font-space-mono text-xs text-[#555555]">No book</span>
+        {(vault.mission_start || vault.mission_end) && (
+          <p className="mt-1 font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+            {formatServiceDates(vault.mission_start, vault.mission_end)}
+          </p>
         )}
 
-        {pendingCount > 0 && (
-          <span
-            className="font-space-mono text-xs px-2 py-1"
-            style={{ backgroundColor: '#222222', color: '#ffffff' }}
-          >
-            {pendingCount} pending
-          </span>
-        )}
+        <Divider className="my-4" />
+
+        <div className="flex items-center justify-between">
+          {book ? (
+            <BookStatusBadge status={book.status} />
+          ) : (
+            <span className="font-inter text-xs text-muted-text">No book</span>
+          )}
+
+          {pendingCount > 0 && (
+            <span className="font-space-mono text-[10px] text-amber-600">
+              {pendingCount} pending
+            </span>
+          )}
+        </div>
       </div>
     </Link>
   );

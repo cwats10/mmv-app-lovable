@@ -48,7 +48,7 @@ serve(async (req) => {
 
     if (bookError || !book) throw new Error('Book not found');
 
-    const clientId = (book.vaults as unknown as { client_id: string } | null)?.client_id;
+    const clientId = (book.vaults as { client_id: string } | null)?.client_id;
     if (clientId !== user.id) throw new Error('Forbidden');
 
     // Upsert purchased status — idempotent with the stripe-webhook path
@@ -65,7 +65,7 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: (error as Error).message }), {
+    return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
     });

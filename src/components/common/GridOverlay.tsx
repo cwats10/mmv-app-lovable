@@ -1,15 +1,18 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 export function GridOverlay() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = containerRef.current?.getBoundingClientRect();
-    if (rect) setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
+    if (!rect) return;
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  }, []);
 
-  const handleMouseLeave = () => setMousePos(null);
+  const handleMouseLeave = useCallback(() => {
+    setMousePos(null);
+  }, []);
 
   return (
     <div
@@ -18,6 +21,7 @@ export function GridOverlay() {
       onMouseLeave={handleMouseLeave}
       className="pointer-events-auto absolute inset-0 z-20"
     >
+      {/* Base grid with edge fade */}
       <div
         className="absolute inset-0"
         style={{
@@ -31,12 +35,13 @@ export function GridOverlay() {
         }}
       />
 
+      {/* Mouse highlight glow */}
       {mousePos && (
         <div
           className="absolute inset-0 transition-opacity duration-150"
           style={{
             backgroundImage:
-              'linear-gradient(to right, rgba(0,0,0,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.12) 1px, transparent 1px)',
+              'linear-gradient(to right, hsl(var(--primary) / 0.12) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--primary) / 0.12) 1px, transparent 1px)',
             backgroundSize: '80px 80px',
             maskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
             WebkitMaskImage: `radial-gradient(circle 200px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,

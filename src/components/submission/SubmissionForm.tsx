@@ -1,9 +1,7 @@
 import { useState, useRef } from 'react';
 import { Upload, X } from 'lucide-react';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { ImageLayoutPicker } from '@/components/submission/ImageLayoutPicker';
 import { supabase } from '@/lib/supabase';
-import type { ImagePosition } from '@/types';
 
 const RELATIONS = [
   'Mother', 'Father', 'Sister', 'Brother', 'Grandparent',
@@ -20,7 +18,6 @@ interface SubmissionFormProps {
     relation: string;
     message: string;
     media_urls: string[];
-    image_layout: { position: ImagePosition };
   }) => Promise<void>;
 }
 
@@ -28,7 +25,6 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<{ url: string; name: string }[]>([]);
-  const [imagePosition, setImagePosition] = useState<ImagePosition>('float-right');
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
@@ -75,7 +71,6 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
         relation: form.relation,
         message: form.message.trim(),
         media_urls: photos.map((p) => p.url),
-        image_layout: { position: imagePosition },
       });
     } finally {
       setLoading(false);
@@ -85,34 +80,28 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
   const charCount = form.message.length;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Name */}
       <div>
-        <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
+        <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
           Your Name *
         </label>
         <input
-          required
-          type="text"
-          placeholder={`Your name`}
           value={form.contributor_name}
           onChange={(e) => set('contributor_name', e.target.value)}
-          className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none"
-          style={{ border: '1px solid #e0deda', backgroundColor: '#ffffff' }}
+          className="w-full border border-border-light bg-white px-4 py-3 font-inter text-sm text-dark-text outline-none"
         />
       </div>
 
       {/* Relation */}
       <div>
-        <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
+        <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
           Your Relationship to {missionaryName} *
         </label>
         <select
-          required
           value={form.relation}
           onChange={(e) => set('relation', e.target.value)}
-          className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none appearance-none"
-          style={{ border: '1px solid #e0deda', backgroundColor: '#ffffff' }}
+          className="w-full appearance-none border border-border-light bg-white px-4 py-3 font-inter text-sm text-dark-text outline-none"
         >
           <option value="">Select your relationship…</option>
           {RELATIONS.map((r) => (
@@ -123,122 +112,57 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
 
       {/* Message */}
       <div>
-        <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
-          Your Message *
+        <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+          Your Memory *
         </label>
-
-        {/* Writing prompts */}
-        <div className="mb-3">
-          <p className="font-space-mono text-xs text-[#555555] mb-2">Need a prompt? Choose one to get started:</p>
-          <div className="flex flex-col gap-1.5">
-            {[
-              `How did ${missionaryName} impact you?`,
-              `What was your favorite moment with ${missionaryName}?`,
-              `What is your hope for ${missionaryName} as they arrive home?`,
-            ].map((prompt) => (
-              <button
-                key={prompt}
-                type="button"
-                onClick={() => set('message', form.message ? form.message : prompt + ' ')}
-                className="text-left text-xs font-inter px-3 py-2 transition-colors hover:text-[#222222]"
-                style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef', color: '#555555', lineHeight: 1.5 }}
-              >
-                <span className="text-[#e0deda] mr-1.5">→</span>{prompt}
-              </button>
-            ))}
-          </div>
-        </div>
-
         <textarea
-          required
-          rows={6}
-          maxLength={1000}
-          placeholder={`Share a memory, a story, or a word of thanks for ${missionaryName}'s service…`}
           value={form.message}
           onChange={(e) => set('message', e.target.value)}
-          className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none resize-none"
-          style={{ border: '1px solid #e0deda', backgroundColor: '#ffffff', lineHeight: 1.8 }}
+          rows={6}
+          maxLength={2000}
+          className="w-full resize-none border border-border-light bg-white px-4 py-3 font-inter text-sm text-dark-text outline-none"
+          placeholder={`Share a memory, story, or message for ${missionaryName}…`}
         />
-        <div className="text-right mt-1">
-          <span className="font-space-mono text-xs text-[#555555]">
-            {charCount} / 1000
-          </span>
-        </div>
+        <p className="mt-1 text-right font-space-mono text-[10px] text-muted-text">
+          {charCount} / 2000
+        </p>
       </div>
 
       {/* Photos */}
       <div>
-        <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
-          Photos (Optional — up to 6)
+        <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+          Photos (optional, up to 6)
         </label>
+        <input type="file" ref={fileRef} className="hidden" accept="image/*" multiple onChange={handlePhotoUpload} />
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading || photos.length >= 6}
+          className="flex w-full items-center justify-center gap-2 border border-dashed border-border-light bg-stone-bg py-3 font-inter text-sm text-muted-text transition-colors hover:text-dark-text"
+        >
+          <Upload className="h-4 w-4" />
+          {uploading ? 'Uploading…' : 'Add Photos'}
+        </button>
 
         {photos.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {photos.map((photo) => (
-              <div key={photo.url} className="relative">
-                <img
-                  src={photo.url}
-                  alt=""
-                  className="w-20 h-20 object-cover"
-                  style={{ filter: 'grayscale(15%) sepia(8%)' }}
-                />
+          <div className="mt-3 flex flex-wrap gap-2">
+            {photos.map((p) => (
+              <div key={p.url} className="group relative h-16 w-16 overflow-hidden">
+                <img src={p.url} alt={p.name} className="h-full w-full object-cover" />
                 <button
                   type="button"
-                  onClick={() => removePhoto(photo.url)}
-                  className="absolute top-0.5 right-0.5 bg-[#222222] text-white rounded-full p-0.5"
+                  onClick={() => removePhoto(p.url)}
+                  className="absolute right-0.5 top-0.5 rounded-full bg-black/60 p-0.5 text-white opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <X size={10} />
+                  <X className="h-3 w-3" />
                 </button>
               </div>
             ))}
           </div>
         )}
-
-        {photos.length < 6 && (
-          <>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handlePhotoUpload}
-              className="hidden"
-            />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              disabled={uploading}
-              className="flex items-center gap-2 w-full py-3 text-sm font-inter text-[#555555] hover:text-[#222222] transition-colors justify-center"
-              style={{ border: '1px dashed #e0deda', backgroundColor: '#f4f2ef' }}
-            >
-              <Upload size={14} />
-              {uploading ? 'Uploading…' : 'Add Photos'}
-            </button>
-          </>
-        )}
       </div>
 
-      {/* Image Layout Picker — only shown when at least one photo is uploaded */}
-      {photos.length > 0 && (
-        <div
-          className="pt-6"
-          style={{ borderTop: '1px solid #e0deda' }}
-        >
-          <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-4">
-            Photo Layout
-          </label>
-          <p className="text-sm text-[#555555] mb-5" style={{ lineHeight: 1.7 }}>
-            Choose where your photo appears on the page. Drag it directly or tap a preset below.
-          </p>
-          <ImageLayoutPicker
-            photoUrl={photos[0].url}
-            position={imagePosition}
-            onChange={setImagePosition}
-          />
-        </div>
-      )}
-
-      <HeirloomButton type="submit" loading={loading} size="lg" className="w-full">
+      <HeirloomButton type="submit" loading={loading} className="w-full" size="lg">
         Submit Memory
       </HeirloomButton>
     </form>
