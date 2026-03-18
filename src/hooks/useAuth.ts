@@ -19,7 +19,10 @@ export function useAuth() {
   });
 
   useEffect(() => {
+    let initialized = false;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!initialized) return; // skip until getSession sets initial state
       if (session?.user) {
         const profile = await fetchProfile(session.user.id);
         setState({ user: session.user, session, profile, loading: false });
@@ -28,14 +31,14 @@ export function useAuth() {
       }
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        fetchProfile(session.user.id).then((profile) => {
-          setState({ user: session.user, session, profile, loading: false });
-        });
+        const profile = await fetchProfile(session.user.id);
+        setState({ user: session.user, session, profile, loading: false });
       } else {
-        setState((s) => ({ ...s, user: null, session: null, profile: null, loading: false }));
+        setState({ user: null, session: null, profile: null, loading: false });
       }
+      initialized = true;
     });
 
     return () => subscription.unsubscribe();
