@@ -180,6 +180,7 @@ export type Database = {
           cover_image_url: string | null
           created_at: string
           id: string
+          manager_token: string | null
           mission_end: string | null
           mission_name: string
           mission_start: string | null
@@ -192,6 +193,7 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string
           id?: string
+          manager_token?: string | null
           mission_end?: string | null
           mission_name?: string
           mission_start?: string | null
@@ -204,6 +206,7 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string
           id?: string
+          manager_token?: string | null
           mission_end?: string | null
           mission_name?: string
           mission_start?: string | null
