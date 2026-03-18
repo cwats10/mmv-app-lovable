@@ -27,7 +27,7 @@ export default function Admin() {
       .select('*, vaults(missionary_name, mission_name)')
       .order('created_at', { ascending: false })
       .then(({ data }) => {
-        setBooks((data as AdminBook[]) || []);
+        setBooks((data as unknown as AdminBook[]) || []);
         setLoading(false);
       });
   }, [profile]);
