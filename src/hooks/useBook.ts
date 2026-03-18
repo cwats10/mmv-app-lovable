@@ -27,7 +27,7 @@ export function useBook(vaultId: string | undefined) {
       .select()
       .single();
     if (error) throw error;
-    setBook(data as Book);
+    setBook(data as unknown as Book);
   }
 
   async function saveDeliveryAddress(bookId: string, address: DeliveryAddress) {
