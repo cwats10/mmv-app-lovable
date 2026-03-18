@@ -14,7 +14,7 @@ const STATUS_STYLES: Record<BookStatus, string> = {
   review: 'bg-amber-50 text-amber-700 border-amber-200',
   purchased: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   printing: 'bg-purple-50 text-purple-700 border-purple-200',
-  delivered: 'bg-[#f4f2ef] text-[#222222] border-[#e0deda]',
+  delivered: 'bg-stone-bg text-dark-text border-border-light',
 };
 
 interface BookStatusBadgeProps {
@@ -26,7 +26,7 @@ export function BookStatusBadge({ status, className }: BookStatusBadgeProps) {
   return (
     <span
       className={cn(
-        'font-space-mono text-xs uppercase tracking-wider px-2.5 py-1 border rounded-sm',
+        'inline-block rounded-full border px-3 py-0.5 font-space-mono text-[10px] uppercase tracking-wider',
         STATUS_STYLES[status],
         className
       )}

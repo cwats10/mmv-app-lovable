@@ -46,27 +46,21 @@ export default function Auth() {
   }
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center px-4"
-      style={{ backgroundColor: '#f4f2ef' }}
-    >
-      {/* Logo */}
-      <Link to="/" className="flex items-center gap-2 mb-12">
-        <BookOpen size={18} strokeWidth={1.5} className="text-[#222222]" />
-        <span className="font-playfair text-xl font-normal text-[#222222]">Memory Vault</span>
-      </Link>
+    <div className="flex min-h-screen items-center justify-center bg-stone-bg px-4">
+      <div className="w-full max-w-md border border-border-light bg-white">
+        {/* Logo */}
+        <div className="flex items-center justify-center gap-2 pt-8">
+          <BookOpen className="h-5 w-5 text-dark-text" />
+          <span className="font-playfair text-lg font-semibold text-dark-text">Mission Memory Vault</span>
+        </div>
 
-      <div
-        className="w-full max-w-md"
-        style={{ backgroundColor: '#ffffff', border: '1px solid #e0deda' }}
-      >
         {/* Tab header */}
-        <div className="flex">
+        <div className="mt-6 flex">
           {(['signin', 'signup'] as const).map((t) => (
             <button
               key={t}
               onClick={() => { setTab(t); setError(''); }}
-              className="flex-1 py-4 text-sm font-inter transition-colors"
+              className="flex-1 py-4 font-inter text-sm transition-colors"
               style={{
                 backgroundColor: tab === t ? '#222222' : 'transparent',
                 color: tab === t ? '#ffffff' : '#555555',
@@ -78,107 +72,90 @@ export default function Auth() {
           ))}
         </div>
 
-        <div className="p-8">
-          <PageTag className="block mb-3">
-            {tab === 'signin' ? 'Welcome back' : 'Start your vault'}
-          </PageTag>
-          <h1 className="font-playfair text-3xl font-normal text-[#222222] mb-2">
+        <form onSubmit={handleSubmit} className="p-8">
+          <PageTag>{tab === 'signin' ? 'Welcome back' : 'Start your vault'}</PageTag>
+          <h1 className="mt-2 font-playfair text-2xl font-semibold text-dark-text">
             {tab === 'signin' ? 'Sign in to your account' : 'Create your account'}
           </h1>
+          <Divider className="my-5" />
 
-          <Divider className="my-6" />
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {tab === 'signup' && (
-              <div>
-                <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Jane Doe"
-                  value={form.name}
-                  onChange={(e) => set('name', e.target.value)}
-                  className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none"
-                  style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
-                Email Address
+          {tab === 'signup' && (
+            <div className="mb-4">
+              <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+                Your Name
               </label>
               <input
-                type="email"
-                required
-                placeholder="jane@example.com"
-                value={form.email}
-                onChange={(e) => set('email', e.target.value)}
-                className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none"
-                style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+                value={form.name}
+                onChange={(e) => set('name', e.target.value)}
+                className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
               />
             </div>
+          )}
 
-            <div>
-              <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
-                Password
+          <div className="mb-4">
+            <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+              Email Address
+            </label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => set('email', e.target.value)}
+              className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+              Password
+            </label>
+            <input
+              type="password"
+              value={form.password}
+              onChange={(e) => set('password', e.target.value)}
+              className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
+            />
+          </div>
+
+          {tab === 'signup' && (
+            <div className="mb-4">
+              <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+                Referral Code (Optional)
               </label>
               <input
-                type="password"
-                required
-                minLength={6}
-                placeholder="Minimum 6 characters"
-                value={form.password}
-                onChange={(e) => set('password', e.target.value)}
-                className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none"
-                style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+                value={form.referral}
+                onChange={(e) => set('referral', e.target.value)}
+                className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
               />
             </div>
+          )}
 
-            {tab === 'signup' && (
-              <div>
-                <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
-                  Referral Code (Optional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter referral code"
-                  value={form.referral}
-                  onChange={(e) => set('referral', e.target.value)}
-                  className="w-full px-4 py-3 text-sm font-inter text-[#222222] outline-none"
-                  style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
-                />
-              </div>
+          {error && (
+            <div className="mb-4 border border-red-200 bg-red-50 px-4 py-2">
+              <p className="font-inter text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
+          <HeirloomButton type="submit" loading={loading} className="w-full">
+            {tab === 'signin' ? 'Sign In' : 'Create Account'}
+          </HeirloomButton>
+
+          <p className="mt-4 text-center font-inter text-sm text-muted-text">
+            {tab === 'signin' ? (
+              <>Don't have an account?{' '}
+                <button type="button" onClick={() => setTab('signup')} className="text-dark-text underline">
+                  Create one
+                </button>
+              </>
+            ) : (
+              <>Already have an account?{' '}
+                <button type="button" onClick={() => setTab('signin')} className="text-dark-text underline">
+                  Sign in
+                </button>
+              </>
             )}
-
-            {error && (
-              <p className="text-sm text-red-600 font-inter">{error}</p>
-            )}
-
-            <HeirloomButton type="submit" loading={loading} size="lg" className="w-full mt-2">
-              {tab === 'signin' ? 'Sign In' : 'Create Account'}
-            </HeirloomButton>
-          </form>
-        </div>
+          </p>
+        </form>
       </div>
-
-      <p className="mt-6 text-sm text-[#555555] font-inter">
-        {tab === 'signin' ? (
-          <>Don't have an account?{' '}
-            <button onClick={() => setTab('signup')} className="text-[#222222] underline">
-              Create one
-            </button>
-          </>
-        ) : (
-          <>Already have an account?{' '}
-            <button onClick={() => setTab('signin')} className="text-[#222222] underline">
-              Sign in
-            </button>
-          </>
-        )}
-      </p>
     </div>
   );
 }

@@ -16,7 +16,7 @@ serve(async (req) => {
   try {
     event = stripe.webhooks.constructEvent(body, signature, Deno.env.get('STRIPE_WEBHOOK_SECRET')!);
   } catch (err) {
-    return new Response(`Webhook signature verification failed: ${(err as Error).message}`, { status: 400 });
+    return new Response(`Webhook signature verification failed: ${err.message}`, { status: 400 });
   }
 
   if (event.type === 'checkout.session.completed') {
