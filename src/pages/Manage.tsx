@@ -4,7 +4,7 @@ import { SubmissionCard } from '@/components/submission/SubmissionCard';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { GridOverlay } from '@/components/common/GridOverlay';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type { Submission, BookStatus } from '@/types';
 import { Users, BookMarked } from 'lucide-react';
 import { formatServiceDates } from '@/lib/utils';

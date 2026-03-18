@@ -4,7 +4,7 @@ import { SubmissionForm } from '@/components/submission/SubmissionForm';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type { Vault } from '@/types';
 import { BookOpen, CheckCircle } from 'lucide-react';
 import { useSubmissions } from '@/hooks/useSubmissions';

@@ -5,7 +5,7 @@ import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import type { Book, Vault } from '@/types';
 import { Zap } from 'lucide-react';

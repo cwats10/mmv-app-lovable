@@ -3,7 +3,7 @@ import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { X, Minus, Plus } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import type { DeliveryAddress, Book, Vault } from '@/types';
 
 type Tier = 'classic' | 'heirloom';
