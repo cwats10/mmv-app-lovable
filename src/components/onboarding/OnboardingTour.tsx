@@ -85,7 +85,8 @@ const STEPS: TourStep[] = [
 
 // ── Positioning ──────────────────────────────────────────────────────────────
 
-const CARD_W = 380;
+const CARD_W       = 380;
+const CARD_W_IMAGE = 620;
 const OFFSET = 20;
 const PAD    = 8;
 
@@ -206,7 +207,9 @@ export function OnboardingTour({ onComplete, onCreateVault }: Props) {
         {/* Inner card (handles fade-in; never overrides the wrapper's transform) */}
         <div
           style={{
-            width:           CARD_W,
+            width:           current.image ? CARD_W_IMAGE : CARD_W,
+            maxHeight:       '85vh',
+            overflowY:       'auto',
             backgroundColor: '#ffffff',
             border:          '1px solid #e0deda',
             boxShadow:       '0 24px 64px rgba(0,0,0,0.28)',
