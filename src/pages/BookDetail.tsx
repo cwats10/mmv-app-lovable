@@ -159,6 +159,11 @@ export default function BookDetail() {
             >
               <X className="h-6 w-6" />
             </button>
+            {/* Front cover */}
+            <div className="mb-8">
+              <BookSpread vault={vault} isCover />
+            </div>
+
             {approved.map((sub, i) => (
               <div key={sub.id} className="mb-8">
                 <BookSpread vault={vault} submission={sub} pageNumber={i + 1} />
