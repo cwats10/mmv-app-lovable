@@ -16,7 +16,7 @@ export function VaultCover({ missionaryName, theme, className, bleedSafe }: Vaul
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-4',
+        'flex flex-col items-center justify-center gap-2',
         bleedSafe && 'p-[8%]',
         className
       )}
@@ -28,7 +28,7 @@ export function VaultCover({ missionaryName, theme, className, bleedSafe }: Vaul
         className="w-4/5 max-w-[280px] object-contain"
       />
       <p
-        className="font-playfair text-xs font-medium tracking-wide"
+        className="font-playfair text-base font-medium tracking-wide"
         style={{ color: isLight ? '#2b2b2a' : '#f4f1ec' }}
       >
         {missionaryName}
