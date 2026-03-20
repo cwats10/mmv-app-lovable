@@ -8,6 +8,7 @@ interface BookSpreadProps {
   submission?: Submission;
   pageNumber?: number;
   isCover?: boolean;
+  isBackCover?: boolean;
 }
 
 export function BookSpread({ vault, submission, pageNumber, isCover }: BookSpreadProps) {
