@@ -164,6 +164,11 @@ export default function BookDetail() {
                 <BookSpread vault={vault} submission={sub} pageNumber={i + 1} />
               </div>
             ))}
+
+            {/* Back cover */}
+            <div className="mb-8">
+              <BookSpread vault={vault} isBackCover />
+            </div>
           </div>
         </div>
       )}

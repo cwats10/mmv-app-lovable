@@ -8,14 +8,15 @@ interface BookSpreadProps {
   submission?: Submission;
   pageNumber?: number;
   isCover?: boolean;
+  isBackCover?: boolean;
 }
 
-export function BookSpread({ vault, submission, pageNumber, isCover }: BookSpreadProps) {
-  if (isCover) {
+export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover }: BookSpreadProps) {
+  if (isCover || isBackCover) {
     return (
       <div className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden border border-border-light shadow-xl">
         <VaultCover
-          missionaryName={vault.missionary_name}
+          missionaryName={isBackCover ? '' : vault.missionary_name}
           theme={vault.cover_theme || 'dark'}
           bleedSafe
           className="h-full w-full"
