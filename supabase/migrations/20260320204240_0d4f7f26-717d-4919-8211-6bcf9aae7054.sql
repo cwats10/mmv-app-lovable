@@ -1,0 +1,1 @@
+ALTER TABLE public.vaults ADD COLUMN cover_theme text NOT NULL DEFAULT 'dark';

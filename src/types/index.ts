@@ -21,6 +21,7 @@ export interface Vault {
   vault_type: 'pre' | 'post';
   submission_token: string;
   cover_image_url: string | null;
+  cover_theme: 'light' | 'dark';
 }
 
 export interface Book {

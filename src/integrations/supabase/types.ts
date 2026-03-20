@@ -178,6 +178,7 @@ export type Database = {
       vaults: {
         Row: {
           cover_image_url: string | null
+          cover_theme: string
           created_at: string
           id: string
           manager_token: string | null
@@ -191,6 +192,7 @@ export type Database = {
         }
         Insert: {
           cover_image_url?: string | null
+          cover_theme?: string
           created_at?: string
           id?: string
           manager_token?: string | null
@@ -204,6 +206,7 @@ export type Database = {
         }
         Update: {
           cover_image_url?: string | null
+          cover_theme?: string
           created_at?: string
           id?: string
           manager_token?: string | null
