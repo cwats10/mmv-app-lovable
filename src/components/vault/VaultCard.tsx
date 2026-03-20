@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { VaultWithBook } from '@/types';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
+import { VaultCover } from '@/components/vault/VaultCover';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { formatServiceDates } from '@/lib/utils';
