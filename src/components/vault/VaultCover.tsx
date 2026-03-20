@@ -6,15 +6,18 @@ interface VaultCoverProps {
   missionaryName: string;
   theme: 'light' | 'dark';
   className?: string;
+  /** When true, adds inner padding to keep content inside the print safe zone */
+  bleedSafe?: boolean;
 }
 
-export function VaultCover({ missionaryName, theme, className }: VaultCoverProps) {
+export function VaultCover({ missionaryName, theme, className, bleedSafe }: VaultCoverProps) {
   const isLight = theme === 'light';
 
   return (
     <div
       className={cn(
         'flex flex-col items-center justify-center gap-4',
+        bleedSafe && 'p-[8%]',
         className
       )}
       style={{ backgroundColor: isLight ? '#f4f1ec' : '#2b2b2a' }}
