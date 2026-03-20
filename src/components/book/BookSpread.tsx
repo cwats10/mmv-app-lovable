@@ -1,5 +1,6 @@
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
+import { VaultCover } from '@/components/vault/VaultCover';
 import type { Submission, Vault } from '@/types';
 
 interface BookSpreadProps {
