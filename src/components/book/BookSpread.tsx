@@ -11,9 +11,21 @@ interface BookSpreadProps {
 }
 
 export function BookSpread({ vault, submission, pageNumber, isCover }: BookSpreadProps) {
+  if (isCover) {
+    return (
+      <div className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden border border-border-light shadow-xl">
+        <VaultCover
+          missionaryName={vault.missionary_name}
+          theme={vault.cover_theme || 'dark'}
+          bleedSafe
+          className="h-full w-full"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="relative mx-auto flex aspect-[2/1.3] w-full max-w-4xl overflow-hidden border border-border-light bg-white shadow-xl">
-      
 
       {/* Binding crease */}
       <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border-light" />
@@ -27,19 +39,9 @@ export function BookSpread({ vault, submission, pageNumber, isCover }: BookSprea
             {vault.mission_name || 'Mission Memory Vault'}
           </h2>
           <p className="mt-3 font-inter text-sm leading-relaxed text-muted-text">
-            {isCover
-              ? 'A collection of memories, stories, and impact from the people whose lives you touched during your service.'
-              : submission?.message?.slice(0, 120) + '…'}
+            {submission?.message?.slice(0, 120) + '…'}
           </p>
         </div>
-
-        {isCover && (
-          <VaultCover
-            missionaryName={vault.missionary_name}
-            theme={(vault as any).cover_theme || 'dark'}
-            className="mt-4 aspect-[4/3]"
-          />
-        )}
 
         {pageNumber && (
           <div className="mt-4">

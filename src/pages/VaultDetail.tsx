@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
 import { VaultCover } from '@/components/vault/VaultCover';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
+import { BookSpread } from '@/components/book/BookSpread';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
@@ -10,13 +12,14 @@ import { useVault } from '@/hooks/useVaults';
 import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { formatServiceDates } from '@/lib/utils';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Eye, X } from 'lucide-react';
 
 export default function VaultDetail() {
   const { id } = useParams<{ id: string }>();
   const { vault, loading: vaultLoading } = useVault(id);
   const { book } = useBook(id);
   const { pending, approved, rejected, submissions } = useSubmissions(id);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   if (vaultLoading) {
     return (
@@ -85,6 +88,15 @@ export default function VaultDetail() {
         ))}
       </div>
 
+      {/* Book preview button */}
+      {approved.length > 0 && (
+        <div className="mt-8">
+          <HeirloomButton variant="ghost" size="sm" onClick={() => setPreviewOpen(true)}>
+            <Eye className="mr-1.5 h-4 w-4" /> Preview Book
+          </HeirloomButton>
+        </div>
+      )}
+
       {/* Share widget */}
       <div className="mt-8">
         <VaultShareWidget submissionToken={vault.submission_token} />
@@ -107,6 +119,32 @@ export default function VaultDetail() {
               {book.status === 'collecting' ? 'Review Book' : 'View Book'}
             </HeirloomButton>
           </Link>
+        </div>
+      )}
+
+      {/* Book preview modal */}
+      {previewOpen && (
+        <div className="fixed inset-0 z-50 overflow-auto bg-dark-text/95 p-8">
+          <div className="mx-auto max-w-5xl">
+            <button
+              onClick={() => setPreviewOpen(false)}
+              className="mb-6 text-white transition-colors hover:text-border-light"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            {/* Cover spread */}
+            <div className="mb-8">
+              <BookSpread vault={vault} isCover />
+            </div>
+
+            {/* Content spreads */}
+            {approved.map((sub, i) => (
+              <div key={sub.id} className="mb-8">
+                <BookSpread vault={vault} submission={sub} pageNumber={i + 1} />
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </AppShell>
