@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { X } from 'lucide-react';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
-import { supabase } from '@/integrations/supabase/client';
+import { VaultCover } from '@/components/vault/VaultCover';
 
 interface CreateVaultModalProps {
   onClose: () => void;
@@ -13,15 +13,12 @@ interface CreateVaultModalProps {
     mission_start: string | null;
     mission_end: string | null;
     vault_type: 'pre' | 'post';
-    cover_image_url: string | null;
+    cover_theme: 'light' | 'dark';
   }) => Promise<unknown>;
 }
 
 export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [coverUrl, setCoverUrl] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     missionary_name: '',
@@ -29,24 +26,11 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
     mission_start: '',
     mission_end: '',
     vault_type: 'post' as 'pre' | 'post',
+    cover_theme: 'dark' as 'light' | 'dark',
   });
 
   function set(key: string, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
-  }
-
-  async function handleCoverUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const ext = file.name.split('.').pop();
-    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabase.storage.from('vault-covers').upload(path, file);
-    if (!error) {
-      const { data } = supabase.storage.from('vault-covers').getPublicUrl(path);
-      setCoverUrl(data.publicUrl);
-    }
-    setUploading(false);
   }
 
   async function submit(e: React.FormEvent) {
@@ -60,7 +44,7 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
         mission_start: form.mission_start || null,
         mission_end: form.mission_end || null,
         vault_type: form.vault_type,
-        cover_image_url: coverUrl,
+        cover_theme: form.cover_theme,
       });
       onClose();
     } finally {
@@ -98,8 +82,8 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
                 onClick={() => set('vault_type', type)}
                 className="flex-1 py-2.5 font-inter text-sm transition-colors"
                 style={{
-                  backgroundColor: form.vault_type === type ? '#222222' : 'transparent',
-                  color: form.vault_type === type ? '#ffffff' : '#555555',
+                  backgroundColor: form.vault_type === type ? '#2b2b2a' : 'transparent',
+                  color: form.vault_type === type ? '#fefefe' : '#555555',
                   border: '1px solid #e0deda',
                   borderRight: type === 'post' ? 'none' : '1px solid #e0deda',
                 }}
@@ -158,20 +142,33 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
           </div>
         </div>
 
-        {/* Cover photo */}
+        {/* Cover theme picker */}
         <div className="mb-6">
-          <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-            Cover Photo
+          <label className="mb-2 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+            Cover Style
           </label>
-          <input type="file" ref={fileRef} className="hidden" accept="image/*" onChange={handleCoverUpload} />
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="w-full border border-dashed border-border-light bg-stone-bg py-3 font-inter text-sm text-muted-text transition-colors hover:text-dark-text"
-          >
-            {uploading ? 'Uploading…' : coverUrl ? '✓ Cover uploaded' : 'Upload cover photo'}
-          </button>
+          <div className="grid grid-cols-2 gap-3">
+            {(['light', 'dark'] as const).map((theme) => (
+              <button
+                key={theme}
+                type="button"
+                onClick={() => set('cover_theme', theme)}
+                className="overflow-hidden border-2 transition-colors"
+                style={{
+                  borderColor: form.cover_theme === theme ? '#2b2b2a' : '#e0deda',
+                }}
+              >
+                <VaultCover
+                  missionaryName={form.missionary_name || 'Missionary Name'}
+                  theme={theme}
+                  className="aspect-[16/9]"
+                />
+                <p className="py-1.5 text-center font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+                  {theme}
+                </p>
+              </button>
+            ))}
+          </div>
         </div>
 
         <HeirloomButton type="submit" loading={loading} className="w-full">

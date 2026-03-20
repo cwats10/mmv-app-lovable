@@ -1,5 +1,6 @@
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
+import { VaultCover } from '@/components/vault/VaultCover';
 import type { Submission, Vault } from '@/types';
 
 interface BookSpreadProps {
@@ -32,14 +33,12 @@ export function BookSpread({ vault, submission, pageNumber, isCover }: BookSprea
           </p>
         </div>
 
-        {vault.cover_image_url && (
-          <div className="mt-4 aspect-[4/3] overflow-hidden">
-            <img
-              src={vault.cover_image_url}
-              alt={vault.missionary_name}
-              className="h-full w-full object-cover"
-            />
-          </div>
+        {isCover && (
+          <VaultCover
+            missionaryName={vault.missionary_name}
+            theme={(vault as any).cover_theme || 'dark'}
+            className="mt-4 aspect-[4/3]"
+          />
         )}
 
         {pageNumber && (

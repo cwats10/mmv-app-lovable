@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
+import { VaultCover } from '@/components/vault/VaultCover';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
@@ -48,11 +49,11 @@ export default function VaultDetail() {
 
       {/* Header */}
       <div className="flex gap-6">
-        {vault.cover_image_url && (
-          <div className="hidden h-32 w-32 shrink-0 overflow-hidden sm:block">
-            <img src={vault.cover_image_url} alt="" className="h-full w-full object-cover" />
-          </div>
-        )}
+        <VaultCover
+          missionaryName={vault.missionary_name}
+          theme={(vault as any).cover_theme || 'dark'}
+          className="hidden h-32 w-32 shrink-0 sm:flex"
+        />
         <div>
           <PageTag>{vault.vault_type === 'post' ? 'Post-Mission Vault' : 'Pre-Mission Vault'}</PageTag>
           <h1 className="mt-1 font-playfair text-3xl font-semibold text-dark-text">

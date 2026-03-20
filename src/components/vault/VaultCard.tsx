@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { VaultWithBook } from '@/types';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
+import { VaultCover } from '@/components/vault/VaultCover';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { formatServiceDates } from '@/lib/utils';
@@ -18,19 +19,11 @@ export function VaultCard({ vault, pendingCount = 0 }: VaultCardProps) {
       to={`/vault/${vault.id}`}
       className="group block border border-border-light bg-white transition-shadow hover:shadow-md"
     >
-      {vault.cover_image_url ? (
-        <div className="aspect-[16/9] overflow-hidden">
-          <img
-            src={vault.cover_image_url}
-            alt={vault.missionary_name}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
-          />
-        </div>
-      ) : (
-        <div className="flex aspect-[16/9] items-center justify-center bg-stone-bg">
-          <span className="font-inter text-sm text-muted-text">No Cover</span>
-        </div>
-      )}
+      <VaultCover
+        missionaryName={vault.missionary_name}
+        theme={(vault as any).cover_theme || 'dark'}
+        className="aspect-[16/9]"
+      />
 
       <div className="p-5">
         <PageTag>{vault.vault_type === 'post' ? 'Post-Mission' : 'Pre-Mission'}</PageTag>

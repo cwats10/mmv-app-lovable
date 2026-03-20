@@ -26,7 +26,7 @@ export function useVaults(userId: string | undefined) {
     mission_start: string | null;
     mission_end: string | null;
     vault_type: 'pre' | 'post';
-    cover_image_url: string | null;
+    cover_theme: 'light' | 'dark';
   }): Promise<Vault> {
     const { data, error } = await supabase
       .from('vaults')
