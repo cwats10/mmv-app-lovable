@@ -22,10 +22,10 @@ export function VaultCover({ missionaryName, theme, className }: VaultCoverProps
       <img
         src={isLight ? logoDark : logoLight}
         alt="Mission Memory Vault"
-        className="w-3/5 max-w-[220px] object-contain"
+        className="w-4/5 max-w-[280px] object-contain"
       />
       <p
-        className="font-playfair text-sm font-medium tracking-wide"
+        className="font-playfair text-xs font-medium tracking-wide"
         style={{ color: isLight ? '#2b2b2a' : '#f4f1ec' }}
       >
         {missionaryName}
