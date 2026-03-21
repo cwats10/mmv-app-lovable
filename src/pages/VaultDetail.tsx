@@ -25,7 +25,7 @@ import {
 export default function VaultDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { vault, loading: vaultLoading } = useVault(id);
+  const { vault, loading: vaultLoading, refetch: refetchVault } = useVault(id);
   const { user, profile } = useAuth();
   const { updateVault, deleteVault } = useVaults(user?.id);
   const { book } = useBook(id);
