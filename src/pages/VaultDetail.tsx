@@ -138,15 +138,15 @@ export default function VaultDetail() {
 
       {/* Tabbed sections */}
       <Tabs defaultValue="sharing" className="mt-8">
-        <TabsList className="grid w-full grid-cols-3 bg-muted">
-          <TabsTrigger value="sharing" className="gap-1.5 font-inter text-sm">
-            <Share2 className="h-3.5 w-3.5" /> Sharing
+        <TabsList className="grid w-full grid-cols-3 bg-muted h-auto">
+          <TabsTrigger value="sharing" className="gap-1.5 font-inter text-xs sm:text-sm px-2 py-2">
+            <Share2 className="h-3.5 w-3.5 hidden sm:inline-block" /> Sharing
           </TabsTrigger>
-          <TabsTrigger value="settings" className="gap-1.5 font-inter text-sm">
-            <Settings className="h-3.5 w-3.5" /> Settings
+          <TabsTrigger value="settings" className="gap-1.5 font-inter text-xs sm:text-sm px-2 py-2">
+            <Settings className="h-3.5 w-3.5 hidden sm:inline-block" /> Settings
           </TabsTrigger>
-          <TabsTrigger value="messages" className="gap-1.5 font-inter text-sm">
-            <MessageSquare className="h-3.5 w-3.5" /> Messages
+          <TabsTrigger value="messages" className="gap-1.5 font-inter text-xs sm:text-sm px-2 py-2">
+            <MessageSquare className="h-3.5 w-3.5 hidden sm:inline-block" /> Messages
           </TabsTrigger>
         </TabsList>
 
