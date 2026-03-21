@@ -23,6 +23,7 @@ const DEMO_VAULT: Vault = {
   submission_token: 'demo',
   cover_image_url: null,
   cover_theme: 'dark',
+  manager_token: null,
 };
 
 const DEMO_SUBMISSION: Submission = {
