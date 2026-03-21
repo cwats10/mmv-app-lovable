@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Copy, Check, MessageSquare, ChevronDown, Sparkles } from 'lucide-react';
+import { Copy, Check, MessageSquare, Sparkles } from 'lucide-react';
 import { PageTag } from '@/components/common/PageTag';
 import { generateShareUrl, generateManagerUrl } from '@/lib/utils';
 import type { Vault, Profile } from '@/types';
