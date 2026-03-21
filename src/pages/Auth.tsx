@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
-import { BookOpen } from 'lucide-react';
+
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
