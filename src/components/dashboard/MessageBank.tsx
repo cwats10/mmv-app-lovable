@@ -254,7 +254,7 @@ export function MessageBank({ vaults, profile }: Props) {
     { id: 'reveal', label: 'The Reveal' },
   ];
 
-  const needsVaultSelector = activeTab === 'contributors' || activeTab === 'managers';
+  
   const needsPlatform = activeTab === 'contributors' || activeTab === 'referrals';
 
   let messages: Message[] = [];
