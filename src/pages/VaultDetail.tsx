@@ -180,6 +180,11 @@ export default function VaultDetail() {
         </div>
       </div>
 
+      {/* Message Bank */}
+      <div className="mt-12 pt-12 border-t border-border-light">
+        <MessageBank vaults={[vault]} profile={profile} />
+      </div>
+
       {/* Delete vault — owner only */}
       {isOwner && (
         <div className="mt-12 border-t border-border-light pt-8">
