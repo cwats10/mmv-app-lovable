@@ -146,28 +146,6 @@ function scaleToFit(
   };
 }
 
-/**
- * Scale an image to COVER a bounding box (no empty space, may crop).
- */
-function scaleToCover(
-  img: PDFImage,
-  boxW: number,
-  boxH: number,
-  anchorX: number,
-  anchorY: number,
-): { x: number; y: number; width: number; height: number } {
-  const { width: iW, height: iH } = img;
-  const scale = Math.max(boxW / iW, boxH / iH);
-  const w = iW * scale;
-  const h = iH * scale;
-  return {
-    x: anchorX - (w - boxW) / 2,
-    y: anchorY - (h - boxH) / 2,
-    width: w,
-    height: h,
-  };
-}
-
 // ─── Text helpers ─────────────────────────────────────────────────────────────
 
 /** Word-wrap text to fit within maxWidth at given font + size. */
