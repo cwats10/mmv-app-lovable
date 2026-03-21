@@ -63,7 +63,6 @@ function FullImageCaptionPage({ submission }: { submission: Submission }) {
       </div>
       {/* Caption area */}
       <div className="flex flex-col gap-1 p-4" style={{ flexBasis: '22%' }}>
-        <PageTag>[ {submission.relation} ]</PageTag>
         <p className="font-inter text-xs leading-relaxed text-muted-text line-clamp-3">
           {submission.message}
         </p>
