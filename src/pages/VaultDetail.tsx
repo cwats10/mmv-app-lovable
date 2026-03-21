@@ -12,6 +12,7 @@ import { useVault, useVaults } from '@/hooks/useVaults';
 import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { useAuth } from '@/hooks/useAuth';
+import { MessageBank } from '@/components/dashboard/MessageBank';
 import { formatServiceDates } from '@/lib/utils';
 import { ChevronRight, Eye, X, Settings, Trash2 } from 'lucide-react';
 import {
@@ -24,7 +25,7 @@ export default function VaultDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { vault, loading: vaultLoading } = useVault(id);
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { updateVault, deleteVault } = useVaults(user?.id);
   const { book } = useBook(id);
   const { pending, approved, rejected, submissions } = useSubmissions(id);
@@ -177,6 +178,11 @@ export default function VaultDetail() {
               : 'Each contributor gets a full two-page spread with a showcase image and their story.'}
           </p>
         </div>
+      </div>
+
+      {/* Message Bank */}
+      <div className="mt-12 pt-12 border-t border-border-light">
+        <MessageBank vaults={[vault]} profile={profile} />
       </div>
 
       {/* Delete vault — owner only */}
