@@ -107,7 +107,7 @@ export default function VaultDetail() {
 
       {/* Book status + preview actions */}
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           {book && (
             <>
               <PageTag>Memory Book</PageTag>
