@@ -99,9 +99,9 @@ export default function VaultDetail() {
           { label: 'Approved', value: approved.length },
           { label: 'Rejected', value: rejected.length },
         ].map(({ label, value }) => (
-          <div key={label} className="bg-forest p-4 text-center">
-            <p className="font-playfair text-2xl font-semibold text-forest-foreground">{value}</p>
-            <p className="font-space-mono text-[10px] uppercase tracking-wider text-forest-foreground/70">{label}</p>
+          <div key={label} className="border border-border bg-card p-4 text-center">
+            <p className="font-playfair text-2xl font-semibold text-foreground">{value}</p>
+            <p className="font-space-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
           </div>
         ))}
       </div>
@@ -129,7 +129,7 @@ export default function VaultDetail() {
 
       {/* Book status + action */}
       {book && (
-        <div className="mt-8 flex items-center justify-between border border-accent/30 bg-accent/10 p-6">
+        <div className="mt-8 flex items-center justify-between border border-border bg-card p-6">
           <div className="flex items-center gap-3">
             <PageTag>Memory Book</PageTag>
             <BookStatusBadge status={book.status} />
@@ -148,7 +148,7 @@ export default function VaultDetail() {
       )}
 
       {/* Book Settings */}
-      <div className="mt-8 border border-border bg-warm-surface p-6">
+      <div className="mt-8 border border-border bg-card p-6">
         <div className="flex items-center gap-2 mb-4">
           <Settings className="h-4 w-4 text-muted-text" />
           <PageTag>Book Settings</PageTag>
