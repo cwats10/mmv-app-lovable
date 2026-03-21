@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, BookOpen } from 'lucide-react';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTemplatePicker } from '@/components/submission/PageTemplatePicker';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,6 +14,7 @@ const RELATIONS = [
 interface SubmissionFormProps {
   vaultId: string;
   missionaryName: string;
+  pageAllowance?: 1 | 2;
   onSubmit: (data: {
     vault_id: string;
     contributor_name: string;
@@ -24,11 +25,13 @@ interface SubmissionFormProps {
   }) => Promise<void>;
 }
 
-export function SubmissionForm({ vaultId, missionaryName, onSubmit }: SubmissionFormProps) {
+export function SubmissionForm({ vaultId, missionaryName, pageAllowance = 1, onSubmit }: SubmissionFormProps) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<{ url: string; name: string }[]>([]);
   const [pageLayout, setPageLayout] = useState<PageLayout>({ template: 'image-top-text-bottom' });
+  const [page2Layout, setPage2Layout] = useState<PageLayout>({ template: 'text-only' });
+  const [activePage, setActivePage] = useState<1 | 2>(1);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
@@ -63,14 +66,23 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
     if (photos.length === 0 && uploaded.length > 0 && pageLayout.template === 'text-only') {
       setPageLayout({ ...pageLayout, template: 'image-top-text-bottom' });
     }
+    // For page 2 in spread mode, auto-switch if images overflow
+    if (pageAllowance === 2 && uploaded.length > 0 && page2Layout.template === 'text-only') {
+      const totalPhotos = photos.length + uploaded.length;
+      if (totalPhotos > 1) {
+        setPage2Layout({ ...page2Layout, template: 'image-top-text-bottom' });
+      }
+    }
   }
 
   function removePhoto(url: string) {
     const remaining = photos.filter((ph) => ph.url !== url);
     setPhotos(remaining);
-    // If no images left, switch to text-only
     if (remaining.length === 0 && pageLayout.template !== 'text-only') {
       setPageLayout({ ...pageLayout, template: 'text-only' });
+    }
+    if (pageAllowance === 2 && remaining.length <= 1 && page2Layout.template !== 'text-only') {
+      setPage2Layout({ ...page2Layout, template: 'text-only' });
     }
   }
 
@@ -79,13 +91,18 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
     if (!form.contributor_name || !form.relation || !form.message) return;
     setLoading(true);
     try {
+      // Encode both page layouts into the page_layout JSON
+      const finalLayout: PageLayout = pageAllowance === 2
+        ? { ...pageLayout, spreadPage2: page2Layout }
+        : pageLayout;
+
       await onSubmit({
         vault_id: vaultId,
         contributor_name: form.contributor_name.trim(),
         relation: form.relation,
         message: form.message.trim(),
         media_urls: photos.map((p) => p.url),
-        page_layout: pageLayout,
+        page_layout: finalLayout,
       });
     } finally {
       setLoading(false);
@@ -94,9 +111,32 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
 
   const charCount = form.message.length;
   const hasImages = photos.length > 0;
+  const isSpread = pageAllowance === 2;
+
+  // Determine which layout is active for the template picker
+  const activeLayout = activePage === 1 ? pageLayout : page2Layout;
+  const activeOnChange = activePage === 1 ? setPageLayout : setPage2Layout;
+
+  // For spread mode, split images between pages for the preview
+  const hasPage2Images = isSpread && photos.length > 1;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Spread indicator */}
+      {isSpread && (
+        <div className="flex items-center gap-3 border border-border-light bg-[#faf9f7] p-4">
+          <BookOpen className="h-5 w-5 flex-shrink-0 text-dark-text" />
+          <div>
+            <p className="font-playfair text-sm font-semibold text-dark-text">
+              Two-Page Spread
+            </p>
+            <p className="font-inter text-xs text-muted-text">
+              You have a full two-page spread to share your memory. Customize each page individually below.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Name */}
       <div>
         <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
@@ -165,8 +205,8 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
         {photos.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
             {photos.map((p) => (
-              <div key={p.url} className="group relative h-16 w-16 overflow-hidden">
-                <img src={p.url} alt={p.name} className="h-full w-full object-cover" />
+              <div key={p.url} className="group relative h-16 w-16 overflow-hidden bg-[#f0eeea]">
+                <img src={p.url} alt={p.name} className="h-full w-full object-contain" />
                 <button
                   type="button"
                   onClick={() => removePhoto(p.url)}
@@ -182,14 +222,38 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
 
       {/* Page Layout Picker */}
       <div className="border-t border-border-light pt-5">
+        {/* Page tabs for spread mode */}
+        {isSpread && (
+          <div className="mb-4 flex gap-2">
+            {([1, 2] as const).map((pageNum) => (
+              <button
+                key={pageNum}
+                type="button"
+                onClick={() => setActivePage(pageNum)}
+                className="px-4 py-2 font-space-mono text-[10px] uppercase tracking-wider transition-colors"
+                style={{
+                  border: `1.5px solid ${activePage === pageNum ? '#222' : '#e0deda'}`,
+                  backgroundColor: activePage === pageNum ? '#222' : 'transparent',
+                  color: activePage === pageNum ? '#fff' : '#555',
+                }}
+              >
+                Page {pageNum}
+              </button>
+            ))}
+          </div>
+        )}
+
         <PageTemplatePicker
-          layout={pageLayout}
-          hasImages={hasImages}
-          onChange={setPageLayout}
+          layout={activeLayout}
+          hasImages={activePage === 1 ? hasImages : hasPage2Images}
+          onChange={activeOnChange}
           message={form.message}
           contributorName={form.contributor_name}
           relation={form.relation}
           photoUrls={photos.map((p) => p.url)}
+          pageAllowance={pageAllowance}
+          activePage={activePage}
+          page2Layout={page2Layout}
         />
       </div>
 

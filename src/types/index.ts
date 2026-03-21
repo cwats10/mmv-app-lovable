@@ -65,6 +65,8 @@ export interface PageLayout {
   };
   imagePosition?: 'top' | 'bottom' | 'left' | 'right' | 'center';
   textAlignment?: 'left' | 'center' | 'right';
+  /** Layout for the second page when contributor_page_allowance is 2 */
+  spreadPage2?: PageLayout;
 }
 
 export interface Submission {

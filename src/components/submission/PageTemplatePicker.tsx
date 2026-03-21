@@ -11,6 +11,9 @@ interface Props {
   contributorName?: string;
   relation?: string;
   photoUrls?: string[];
+  pageAllowance?: 1 | 2;
+  activePage?: 1 | 2;
+  page2Layout?: PageLayout;
 }
 
 /** Mini page preview icon showing the template's image/text split */
@@ -189,7 +192,7 @@ function CustomSplitEditor({ layout, onChange }: { layout: PageLayout; onChange:
   );
 }
 
-export function PageTemplatePicker({ layout, hasImages, onChange, message, contributorName, relation, photoUrls }: Props) {
+export function PageTemplatePicker({ layout, hasImages, onChange, message, contributorName, relation, photoUrls, pageAllowance = 1, activePage = 1, page2Layout }: Props) {
   const [showCustom, setShowCustom] = useState(layout.template === 'custom');
 
   const available = PAGE_TEMPLATES.filter(
@@ -242,6 +245,9 @@ export function PageTemplatePicker({ layout, hasImages, onChange, message, contr
           contributorName={contributorName ?? ''}
           relation={relation ?? ''}
           photoUrls={photoUrls ?? []}
+          pageAllowance={pageAllowance}
+          activePage={activePage}
+          page2Layout={page2Layout}
         />
       </div>
     </div>

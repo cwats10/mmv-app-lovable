@@ -116,6 +116,7 @@ export default function Contribute() {
         <SubmissionForm
           vaultId={vault.id}
           missionaryName={vault.missionary_name}
+          pageAllowance={vault.contributor_page_allowance ?? 1}
           onSubmit={handleSubmit}
         />
       </section>

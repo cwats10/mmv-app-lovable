@@ -7,17 +7,19 @@ interface Props {
   contributorName: string;
   relation: string;
   photoUrls: string[];
+  pageAllowance?: 1 | 2;
+  activePage?: 1 | 2;
+  page2Layout?: PageLayout;
 }
 
-/**
- * Renders a live miniature preview of a contributor page using the actual
- * form data and chosen layout. Reuses the same ContributorPage renderer
- * that the book preview and PDF pipeline use, so what you see here is
- * exactly what will appear in the printed book.
- */
-export function PagePreview({ layout, message, contributorName, relation, photoUrls }: Props) {
-  // Build a mock Submission from current form state
-  const mockSubmission: Submission = {
+function buildMockSubmission(
+  layout: PageLayout,
+  message: string,
+  contributorName: string,
+  relation: string,
+  photoUrls: string[],
+): Submission {
+  return {
     id: 'preview',
     created_at: new Date().toISOString(),
     vault_id: '',
@@ -30,6 +32,87 @@ export function PagePreview({ layout, message, contributorName, relation, photoU
     page_order: null,
     page_layout: layout,
   };
+}
+
+export function PagePreview({
+  layout,
+  message,
+  contributorName,
+  relation,
+  photoUrls,
+  pageAllowance = 1,
+  activePage = 1,
+  page2Layout,
+}: Props) {
+  const isSpread = pageAllowance === 2;
+
+  // For spread mode, split images between pages
+  const page1Photos = isSpread && photoUrls.length > 1
+    ? photoUrls.slice(0, Math.ceil(photoUrls.length / 2))
+    : photoUrls;
+  const page2Photos = isSpread && photoUrls.length > 1
+    ? photoUrls.slice(Math.ceil(photoUrls.length / 2))
+    : [];
+
+  if (isSpread) {
+    const mock1 = buildMockSubmission(layout, message, contributorName, relation, page1Photos);
+    const effectivePage2Layout = page2Layout ?? { template: 'text-only' as const };
+    const mock2 = buildMockSubmission(effectivePage2Layout, message, contributorName, relation, page2Photos);
+
+    return (
+      <div>
+        <p className="mb-2 font-space-mono text-[10px] uppercase tracking-widest text-muted-text">
+          Live Preview — Two-Page Spread
+        </p>
+
+        {/* Spread preview showing both pages */}
+        <div
+          className="mx-auto flex overflow-hidden border border-border-light bg-white shadow-lg"
+          style={{ width: 480, aspectRatio: '2 / 1.3' }}
+        >
+          {/* Page 1 */}
+          <div
+            className="relative h-full overflow-hidden"
+            style={{
+              width: '50%',
+              outline: activePage === 1 ? '2px solid #222' : 'none',
+              outlineOffset: '-2px',
+            }}
+          >
+            <ContributorPage submission={mock1} layout={layout} />
+          </div>
+
+          {/* Binding crease */}
+          <div className="w-px bg-border-light" />
+
+          {/* Page 2 */}
+          <div
+            className="relative h-full overflow-hidden"
+            style={{
+              width: '50%',
+              outline: activePage === 2 ? '2px solid #222' : 'none',
+              outlineOffset: '-2px',
+            }}
+          >
+            <ContributorPage submission={mock2} layout={effectivePage2Layout} />
+          </div>
+        </div>
+
+        {/* Page labels */}
+        <div className="mt-1 flex justify-around">
+          <span className="font-space-mono text-[9px] uppercase tracking-wider text-muted-text">
+            Page 1{activePage === 1 ? ' (editing)' : ''}
+          </span>
+          <span className="font-space-mono text-[9px] uppercase tracking-wider text-muted-text">
+            Page 2{activePage === 2 ? ' (editing)' : ''}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Single page preview
+  const mockSubmission = buildMockSubmission(layout, message, contributorName, relation, photoUrls);
 
   return (
     <div>

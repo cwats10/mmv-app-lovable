@@ -298,6 +298,103 @@ function drawLabel(
   page.drawText(text.toUpperCase(), { x, y, size: 7, font, color });
 }
 
+// ─── Image grid helper ────────────────────────────────────────────────────
+
+/**
+ * Draw multiple images in a grid layout within a bounding box.
+ * 1 image: full area. 2: side by side. 3: 1 large left + 2 stacked right.
+ * 4: 2×2 grid. 5: 3 top + 2 bottom. 6: 3×2 grid.
+ */
+function drawImageGrid(
+  page: PDFPage,
+  images: PDFImage[],
+  boxW: number,
+  boxH: number,
+  anchorX: number,
+  anchorY: number,
+) {
+  if (images.length === 0) return;
+  const gap = 6;
+
+  if (images.length === 1) {
+    const fit = scaleToFit(images[0], boxW, boxH, anchorX, anchorY);
+    page.drawImage(images[0], fit);
+    return;
+  }
+
+  if (images.length === 2) {
+    const slotW = (boxW - gap) / 2;
+    for (let i = 0; i < 2; i++) {
+      const x = anchorX + i * (slotW + gap);
+      const fit = scaleToFit(images[i], slotW, boxH, x, anchorY);
+      page.drawImage(images[i], fit);
+    }
+    return;
+  }
+
+  if (images.length === 3) {
+    // Left half: 1 large image. Right half: 2 stacked
+    const leftW = (boxW - gap) / 2;
+    const rightW = (boxW - gap) / 2;
+    const fit0 = scaleToFit(images[0], leftW, boxH, anchorX, anchorY);
+    page.drawImage(images[0], fit0);
+
+    const slotH = (boxH - gap) / 2;
+    for (let i = 0; i < 2; i++) {
+      const y = anchorY + (1 - i) * (slotH + gap);
+      const fit = scaleToFit(images[i + 1], rightW, slotH, anchorX + leftW + gap, y);
+      page.drawImage(images[i + 1], fit);
+    }
+    return;
+  }
+
+  if (images.length === 4) {
+    // 2×2 grid
+    const slotW = (boxW - gap) / 2;
+    const slotH = (boxH - gap) / 2;
+    for (let i = 0; i < 4; i++) {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const x = anchorX + col * (slotW + gap);
+      const y = anchorY + (1 - row) * (slotH + gap);
+      const fit = scaleToFit(images[i], slotW, slotH, x, y);
+      page.drawImage(images[i], fit);
+    }
+    return;
+  }
+
+  if (images.length === 5) {
+    // Top row: 3, bottom row: 2
+    const slotH = (boxH - gap) / 2;
+    const topSlotW = (boxW - 2 * gap) / 3;
+    for (let i = 0; i < 3; i++) {
+      const x = anchorX + i * (topSlotW + gap);
+      const fit = scaleToFit(images[i], topSlotW, slotH, x, anchorY + slotH + gap);
+      page.drawImage(images[i], fit);
+    }
+    const botSlotW = (boxW - gap) / 2;
+    for (let i = 0; i < 2; i++) {
+      const x = anchorX + i * (botSlotW + gap);
+      const fit = scaleToFit(images[3 + i], botSlotW, slotH, x, anchorY);
+      page.drawImage(images[3 + i], fit);
+    }
+    return;
+  }
+
+  // 6 images: 3×2 grid
+  const slotW = (boxW - 2 * gap) / 3;
+  const slotH = (boxH - gap) / 2;
+  const count = Math.min(images.length, 6);
+  for (let i = 0; i < count; i++) {
+    const col = i % 3;
+    const row = Math.floor(i / 3);
+    const x = anchorX + col * (slotW + gap);
+    const y = anchorY + (1 - row) * (slotH + gap);
+    const fit = scaleToFit(images[i], slotW, slotH, x, y);
+    page.drawImage(images[i], fit);
+  }
+}
+
 // ─── Cover page ───────────────────────────────────────────────────────────────
 
 async function drawCoverPage(
@@ -426,11 +523,13 @@ async function drawContentPage(
   const { contributor_name, relation, message, image_urls } = pdfPage.content;
   const { position, ratio: splitRatio } = resolveEffectivePosition(pdfPage);
 
-  // Load first image (if any)
-  let img: PDFImage | null = null;
-  if (image_urls.length > 0) {
-    img = await embedImageFromUrl(pdfDoc, image_urls[0]);
+  // Load all images
+  const allImages: PDFImage[] = [];
+  for (const url of image_urls) {
+    const embedded = await embedImageFromUrl(pdfDoc, url);
+    if (embedded) allImages.push(embedded);
   }
+  const img: PDFImage | null = allImages[0] ?? null;
 
   // Pull quote: first complete sentence or first ~90 chars
   const sentenceEnd = message.search(/[.!?]/);
@@ -472,9 +571,8 @@ async function drawContentPage(
     const imgH = Math.round(availH * splitRatio);
     const imgBoxY = cTop - imgH;
 
-    // Full-bleed image (covers page width within safe margins)
-    const fit = scaleToCover(img, contSize, imgH, cx, imgBoxY);
-    page.drawImage(img, fit);
+    // Draw all images in a grid (no cropping)
+    drawImageGrid(page, allImages, contSize, imgH, cx, imgBoxY);
 
     // Caption area below
     let y = imgBoxY - 8;
@@ -514,9 +612,8 @@ async function drawContentPage(
     const imgH    = Math.round(availH * splitRatio);
     const imgBoxY = cTop - imgH;
 
-    // Image full width at top
-    const fit = scaleToFit(img, contSize, imgH, cx, imgBoxY);
-    page.drawImage(img, fit);
+    // Draw images in a grid in the image area
+    drawImageGrid(page, allImages, contSize, imgH, cx, imgBoxY);
 
     let y = imgBoxY - 6;
     y = drawTopLabel(y);
@@ -538,11 +635,7 @@ async function drawContentPage(
   if (position === 'bottom') {
     // Reserve image space at bottom
     const imgH     = Math.round(availH * splitRatio);
-    const imgCount = Math.min(image_urls.length, 2);
     const imgGap   = 8;
-
-    // Text area above images
-    const textAreaH = availH - imgH - imgGap - 16;
 
     let y = cTop;
     y = drawTopLabel(y);
@@ -557,23 +650,9 @@ async function drawContentPage(
     y -= 14;
     drawWrappedText(page, message, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
 
-    // Images at bottom (up to 2 side by side)
+    // Images at bottom (grid layout for all images)
     const imgAreaY  = footerY + imgGap;
-    if (imgCount === 1) {
-      const fit = scaleToFit(img, contSize, imgH, cx, imgAreaY);
-      page.drawImage(img, fit);
-    } else {
-      // Two images
-      const slotW = (contSize - imgGap) / 2;
-      const fit1  = scaleToFit(img, slotW, imgH, cx, imgAreaY);
-      page.drawImage(img, fit1);
-
-      const img2 = await embedImageFromUrl(pdfDoc, image_urls[1]);
-      if (img2) {
-        const fit2 = scaleToFit(img2, slotW, imgH, cx + slotW + imgGap, imgAreaY);
-        page.drawImage(img2, fit2);
-      }
-    }
+    drawImageGrid(page, allImages, contSize, imgH, cx, imgAreaY);
 
     drawAttribution();
     drawPageNumber(page, pageNumber, pagePt, safePt, fonts.mono);
@@ -598,10 +677,9 @@ async function drawContentPage(
     y = drawWrappedText(page, firstWords, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
     y -= 14;
 
-    // Image (centred, constrained to imgW × imgH)
+    // Images (centred, constrained to imgW × imgH)
     const imgBotY = y - imgH;
-    const fit = scaleToFit(img, imgW, imgH, imgX, imgBotY);
-    page.drawImage(img, fit);
+    drawImageGrid(page, allImages, imgW, imgH, imgX, imgBotY);
     y = imgBotY - 14;
 
     // Rest of text
@@ -625,10 +703,9 @@ async function drawContentPage(
     const imgX = isLeft ? cx : cx + contSize - imgW;
     const txtX = isLeft ? cx + imgW + imgGap : cx;
 
-    // Image placed from top of content area
+    // Images placed from top of content area
     const imgBotY = cTop - imgH;
-    const fit = scaleToFit(img, imgW, imgH, imgX, imgBotY);
-    page.drawImage(img, fit);
+    drawImageGrid(page, allImages, imgW, imgH, imgX, imgBotY);
 
     // Draw top label spanning full width
     let y = cTop;
