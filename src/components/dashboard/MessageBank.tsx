@@ -294,32 +294,6 @@ export function MessageBank({ vaults, profile }: Props) {
         ))}
       </div>
 
-      {/* Vault selector */}
-      {needsVaultSelector && vaults.length > 0 && (
-        <div className="mb-5">
-          <label className="font-space-mono text-xs text-[#555555] uppercase tracking-widest block mb-2">
-            Vault
-          </label>
-          <div className="relative inline-block">
-            <select
-              value={selectedVaultId}
-              onChange={(e) => setSelectedVaultId(e.target.value)}
-              className="font-inter text-sm text-[#222222] pr-8 pl-3 py-2 appearance-none"
-              style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef', cursor: 'pointer', minWidth: '220px' }}
-            >
-              {vaults.map((v) => (
-                <option key={v.id} value={v.id}>{v.missionary_name}</option>
-              ))}
-            </select>
-            <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#555555] pointer-events-none" />
-          </div>
-        </div>
-      )}
-      {needsVaultSelector && vaults.length === 0 && (
-        <p className="text-sm text-[#555555] mb-5 italic">
-          Create your first vault to see personalized messages with your contribution link.
-        </p>
-      )}
 
       {/* Platform sub-tabs */}
       {needsPlatform && (
