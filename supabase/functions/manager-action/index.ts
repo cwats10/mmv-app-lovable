@@ -59,7 +59,6 @@ serve(async (req) => {
       .from('vaults')
       .select('id, missionary_name, mission_name, mission_start, mission_end, vault_type')
       .eq('manager_token', manager_token)
-      .is('archived_at', null)
       .single();
 
     if (vaultErr || !vault) return err('Invalid or expired manager link', 403);
@@ -68,7 +67,7 @@ serve(async (req) => {
     if (action === 'get-context') {
       const { data: book } = await supabase
         .from('books')
-        .select('id, status, locked_at')
+        .select('id, status')
         .eq('vault_id', vault.id)
         .single();
 
@@ -81,7 +80,6 @@ serve(async (req) => {
         .from('submissions')
         .select('*')
         .eq('vault_id', vault.id)
-        .is('archived_at', null)
         .order('created_at', { ascending: false });
 
       return ok({ submissions: submissions ?? [] });
@@ -134,6 +132,20 @@ serve(async (req) => {
         .eq('vault_id', vault.id);
 
       if (updateErr) throw updateErr;
+      return ok({ success: true });
+    }
+
+    // ── delete ───────────────────────────────────────────────────────────────
+    if (action === 'delete') {
+      if (!submission_id) return err('submission_id is required');
+
+      const { error: deleteErr } = await supabase
+        .from('submissions')
+        .delete()
+        .eq('id', submission_id)
+        .eq('vault_id', vault.id);
+
+      if (deleteErr) throw deleteErr;
       return ok({ success: true });
     }
 

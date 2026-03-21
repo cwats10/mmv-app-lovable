@@ -60,18 +60,18 @@ export function useVault(vaultId: string | undefined) {
   const [vault, setVault] = useState<Vault | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!vaultId) return;
-    supabase
+  const fetchVault = useCallback(async () => {
+    if (!vaultId) { setLoading(false); return; }
+    const { data } = await supabase
       .from('vaults')
       .select('*')
       .eq('id', vaultId)
-      .single()
-      .then(({ data }) => {
-        setVault(data as Vault | null);
-        setLoading(false);
-      });
+      .single();
+    setVault(data as Vault | null);
+    setLoading(false);
   }, [vaultId]);
 
-  return { vault, loading };
+  useEffect(() => { fetchVault(); }, [fetchVault]);
+
+  return { vault, loading, refetch: fetchVault };
 }

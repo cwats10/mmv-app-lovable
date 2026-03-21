@@ -23,6 +23,7 @@ export interface Vault {
   cover_image_url: string | null;
   cover_theme: 'light' | 'dark';
   contributor_page_allowance?: 1 | 2;
+  manager_token: string | null;
 }
 
 export interface Book {

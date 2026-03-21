@@ -20,7 +20,7 @@ export default function BookDetail() {
   const { id: vaultId, bookId } = useParams<{ id: string; bookId: string }>();
   const { vault } = useVault(vaultId);
   const { book } = useBook(vaultId);
-  const { submissions, pending, approved, reject, approve, reorderSubmissions, refetch } = useSubmissions(vaultId);
+  const { submissions, pending, approved, reject, approve, deleteSubmission, reorderSubmissions, refetch } = useSubmissions(vaultId);
 
   const [filter, setFilter] = useState<FilterTab>('all');
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -153,6 +153,7 @@ export default function BookDetail() {
               bookId={book.id}
               onApprove={handleApprove}
               onReject={handleReject}
+              onDelete={(id) => deleteSubmission(id)}
               readonly={isLocked}
             />
           ))}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
+import { ManagerShareWidget } from '@/components/vault/ManagerShareWidget';
 import { VaultCover } from '@/components/vault/VaultCover';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import { BookSpread } from '@/components/book/BookSpread';
@@ -14,7 +15,7 @@ import { useSubmissions } from '@/hooks/useSubmissions';
 import { useAuth } from '@/hooks/useAuth';
 import { MessageBank } from '@/components/dashboard/MessageBank';
 import { formatServiceDates } from '@/lib/utils';
-import { ChevronRight, Eye, X, Settings, Trash2 } from 'lucide-react';
+import { ChevronRight, Eye, X, Settings, Trash2, Trash } from 'lucide-react';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -24,11 +25,11 @@ import {
 export default function VaultDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { vault, loading: vaultLoading } = useVault(id);
+  const { vault, loading: vaultLoading, refetch: refetchVault } = useVault(id);
   const { user, profile } = useAuth();
   const { updateVault, deleteVault } = useVaults(user?.id);
   const { book } = useBook(id);
-  const { pending, approved, rejected, submissions } = useSubmissions(id);
+  const { pending, approved, rejected, submissions, deleteSubmission } = useSubmissions(id);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -119,6 +120,13 @@ export default function VaultDetail() {
         <VaultShareWidget submissionToken={vault.submission_token} />
       </div>
 
+      {/* Manager share widget — owner only */}
+      {isOwner && vault.manager_token && (
+        <div className="mt-6">
+          <ManagerShareWidget managerToken={vault.manager_token} />
+        </div>
+      )}
+
       {/* Book status + action */}
       {book && (
         <div className="mt-8 flex items-center justify-between border border-border-light bg-white p-6">
@@ -157,7 +165,7 @@ export default function VaultDetail() {
                 onClick={async () => {
                   if (vault.contributor_page_allowance !== n) {
                     await updateVault(vault.id, { contributor_page_allowance: n });
-                    window.location.reload();
+                    await refetchVault();
                   }
                 }}
                 className="flex-1 py-2 font-inter text-sm transition-colors"

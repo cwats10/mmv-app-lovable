@@ -2,18 +2,19 @@ import { useState } from 'react';
 import type { Submission } from '@/types';
 import { PageTag } from '@/components/common/PageTag';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { Check, X, Clock } from 'lucide-react';
+import { Check, X, Clock, Trash } from 'lucide-react';
 
 interface SubmissionCardProps {
   submission: Submission;
   bookId?: string;
   onApprove?: (id: string, bookId: string) => Promise<void>;
   onReject?: (id: string) => Promise<void>;
+  onDelete?: (id: string) => Promise<void>;
   readonly?: boolean;
 }
 
-export function SubmissionCard({ submission, bookId, onApprove, onReject, readonly }: SubmissionCardProps) {
-  const [acting, setActing] = useState<'approving' | 'rejecting' | null>(null);
+export function SubmissionCard({ submission, bookId, onApprove, onReject, onDelete, readonly }: SubmissionCardProps) {
+  const [acting, setActing] = useState<'approving' | 'rejecting' | 'deleting' | null>(null);
 
   const statusColors = {
     pending: 'border-amber-200 bg-amber-50',
@@ -79,6 +80,20 @@ export function SubmissionCard({ submission, bookId, onApprove, onReject, readon
           >
             Reject
           </HeirloomButton>
+        </div>
+      )}
+
+      {/* Delete */}
+      {onDelete && (
+        <div className="mt-3 flex justify-end">
+          <button
+            disabled={acting === 'deleting'}
+            onClick={async () => { setActing('deleting'); await onDelete(submission.id); setActing(null); }}
+            className="flex items-center gap-1 text-xs font-inter text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
+          >
+            <Trash className="h-3 w-3" />
+            {acting === 'deleting' ? 'Deleting…' : 'Delete'}
+          </button>
         </div>
       )}
     </div>
