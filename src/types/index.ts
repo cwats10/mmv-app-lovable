@@ -22,7 +22,7 @@ export interface Vault {
   submission_token: string;
   cover_image_url: string | null;
   cover_theme: 'light' | 'dark';
-  contributor_page_allowance: 1 | 2;
+  contributor_page_allowance?: 1 | 2;
 }
 
 export interface Book {
