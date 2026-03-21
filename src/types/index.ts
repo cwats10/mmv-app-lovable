@@ -76,8 +76,8 @@ export interface Submission {
   message: string;
   media_urls: string[];
   status: 'pending' | 'approved' | 'rejected';
-  page_order: number | null;
-  page_layout: PageLayout | null;
+  page_order?: number | null;
+  page_layout?: PageLayout | null;
 }
 
 export interface Referral {
