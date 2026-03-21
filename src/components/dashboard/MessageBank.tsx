@@ -94,7 +94,7 @@ export function MessageBank({ vaults, profile }: Props) {
   const selectedVault = vaults[0] ?? null;
   const { copiedKey, copy } = useClipboard();
 
-  const selectedVault = vaults.find((v) => v.id === selectedVaultId) ?? vaults[0] ?? null;
+  
   const contributeUrl = selectedVault ? generateShareUrl(selectedVault.submission_token) : '[vault link]';
   const managerUrl = selectedVault ? generateManagerUrl((selectedVault as any).manager_token ?? selectedVault.submission_token) : '[manager link]';
   const missionaryName = selectedVault?.missionary_name ?? '[missionary name]';
