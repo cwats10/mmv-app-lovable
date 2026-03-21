@@ -1,22 +1,33 @@
 
 
-## Fix Book Settings Toggle (Pages Per Contributor)
+## Reorganize Vault Detail Page with Tabs
 
-### Root Cause
+### Current Problem
+Six distinct sections stacked vertically require excessive scrolling. The page feels like a long form rather than a dashboard.
 
-The toggle buttons in VaultDetail.tsx lack `type="button"` and error handling. If the `updateVault` call fails (e.g., due to a timing issue with auth), the error is thrown but never caught — the click appears to do nothing silently. Additionally, the async flow between two separate hooks (`useVaults.updateVault` + `useVault.refetch`) introduces unnecessary complexity.
+### New Layout
 
-### Plan
+**Always visible (top):**
+- Breadcrumb + header (missionary name, mission, dates) — unchanged
+- Stats row (4 boxes) — made more compact (smaller padding)
+- Book status card with "Review Book" button — stays prominent
 
-**`src/pages/VaultDetail.tsx`**
-1. Add `type="button"` to both toggle buttons
-2. Wrap the `onClick` handler in try/catch with a toast error notification
-3. Add a local loading state so the user sees feedback during the update
+**Tabbed section below (3 tabs):**
 
-**`src/hooks/useVaults.ts`**
-4. Add an `updateVault` method directly to the `useVault` (singular) hook so VaultDetail doesn't need to juggle two hooks for one operation. This keeps the update and refetch in the same hook, eliminating race conditions.
+```text
+[ Sharing ]  [ Settings ]  [ Message Bank ]
+```
+
+- **Sharing tab**: Contributor share widget + Manager link widget stacked (or side-by-side on wider screens via a 2-column grid)
+- **Settings tab**: Book settings (page allowance toggle) + Delete vault button at bottom
+- **Message Bank tab**: The existing MessageBank component, unchanged
+
+### Technical approach
+
+Uses the existing `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` components from `@/components/ui/tabs` (already in the project).
 
 ### Files changed
-- `src/hooks/useVaults.ts` — add `updateVault` to `useVault` hook
-- `src/pages/VaultDetail.tsx` — use the new single-hook update, add `type="button"`, add error handling
+- `src/pages/VaultDetail.tsx` — restructure into tabbed layout, import Tabs components, reduce stats padding
+
+No new components or database changes needed.
 
