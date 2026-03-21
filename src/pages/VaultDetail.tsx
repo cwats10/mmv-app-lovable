@@ -91,7 +91,7 @@ export default function VaultDetail() {
       </div>
 
       {/* Compact stats row */}
-      <div className="mt-6 grid grid-cols-4 gap-3">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           { label: 'Total', value: submissions.length },
           { label: 'Pending', value: pending.length },
@@ -106,8 +106,8 @@ export default function VaultDetail() {
       </div>
 
       {/* Book status + preview actions */}
-      <div className="mt-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
           {book && (
             <>
               <PageTag>Memory Book</PageTag>
@@ -138,15 +138,15 @@ export default function VaultDetail() {
 
       {/* Tabbed sections */}
       <Tabs defaultValue="sharing" className="mt-8">
-        <TabsList className="grid w-full grid-cols-3 bg-muted">
-          <TabsTrigger value="sharing" className="gap-1.5 font-inter text-sm">
-            <Share2 className="h-3.5 w-3.5" /> Sharing
+        <TabsList className="grid w-full grid-cols-3 bg-muted h-auto">
+          <TabsTrigger value="sharing" className="gap-1.5 font-inter text-xs sm:text-sm px-2 py-2">
+            <Share2 className="h-3.5 w-3.5 hidden sm:inline-block" /> Sharing
           </TabsTrigger>
-          <TabsTrigger value="settings" className="gap-1.5 font-inter text-sm">
-            <Settings className="h-3.5 w-3.5" /> Settings
+          <TabsTrigger value="settings" className="gap-1.5 font-inter text-xs sm:text-sm px-2 py-2">
+            <Settings className="h-3.5 w-3.5 hidden sm:inline-block" /> Settings
           </TabsTrigger>
-          <TabsTrigger value="messages" className="gap-1.5 font-inter text-sm">
-            <MessageSquare className="h-3.5 w-3.5" /> Messages
+          <TabsTrigger value="messages" className="gap-1.5 font-inter text-xs sm:text-sm px-2 py-2">
+            <MessageSquare className="h-3.5 w-3.5 hidden sm:inline-block" /> Messages
           </TabsTrigger>
         </TabsList>
 
