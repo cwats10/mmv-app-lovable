@@ -80,7 +80,6 @@ serve(async (req) => {
         .from('submissions')
         .select('*')
         .eq('vault_id', vault.id)
-        .is('archived_at', null)
         .order('created_at', { ascending: false });
 
       return ok({ submissions: submissions ?? [] });
