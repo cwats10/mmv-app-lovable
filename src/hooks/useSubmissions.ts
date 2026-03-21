@@ -14,7 +14,7 @@ export function useSubmissions(vaultId: string | undefined) {
       .eq('vault_id', vaultId)
       .order('page_order', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: false });
-    setSubmissions((data as Submission[]) || []);
+    setSubmissions((data as unknown as Submission[]) || []);
     setLoading(false);
   }, [vaultId]);
 
