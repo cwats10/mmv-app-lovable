@@ -165,7 +165,7 @@ export default function VaultDetail() {
                 onClick={async () => {
                   if (vault.contributor_page_allowance !== n) {
                     await updateVault(vault.id, { contributor_page_allowance: n });
-                    window.location.reload();
+                    await refetchVault();
                   }
                 }}
                 className="flex-1 py-2 font-inter text-sm transition-colors"
