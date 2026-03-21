@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
 import { VaultCover } from '@/components/vault/VaultCover';
@@ -13,16 +13,36 @@ import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { useAuth } from '@/hooks/useAuth';
 import { formatServiceDates } from '@/lib/utils';
-import { ChevronRight, Eye, X, Settings } from 'lucide-react';
+import { ChevronRight, Eye, X, Settings, Trash2 } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function VaultDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { vault, loading: vaultLoading } = useVault(id);
   const { user } = useAuth();
-  const { updateVault } = useVaults(user?.id);
+  const { updateVault, deleteVault } = useVaults(user?.id);
   const { book } = useBook(id);
   const { pending, approved, rejected, submissions } = useSubmissions(id);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const isOwner = user?.id === vault?.owner_id;
+
+  const handleDelete = async () => {
+    if (!vault) return;
+    setDeleting(true);
+    try {
+      await deleteVault(vault.id);
+      navigate('/dashboard');
+    } catch {
+      setDeleting(false);
+    }
+  };
 
   if (vaultLoading) {
     return (
