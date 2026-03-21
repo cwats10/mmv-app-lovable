@@ -111,7 +111,7 @@ export default function BookDetail() {
       )}
 
       {/* Filter tabs */}
-      <div className="mb-6 flex">
+      <div className="mb-6 flex flex-wrap">
         {(['all', 'pending', 'approved', 'rejected'] as FilterTab[]).map((t) => {
           const counts = {
             all: submissions.length,
@@ -123,12 +123,11 @@ export default function BookDetail() {
             <button
               key={t}
               onClick={() => setFilter(t)}
-              className="px-4 py-2 font-space-mono text-xs uppercase tracking-wider transition-colors"
+              className="px-3 py-2 font-space-mono text-[10px] uppercase tracking-wider transition-colors sm:px-4 sm:text-xs"
               style={{
                 backgroundColor: filter === t ? '#222222' : 'transparent',
                 color: filter === t ? '#ffffff' : '#555555',
                 border: '1px solid #e0deda',
-                borderRight: t !== 'rejected' ? 'none' : '1px solid #e0deda',
               }}
             >
               {t} ({counts[t]})
