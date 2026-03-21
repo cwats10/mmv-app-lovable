@@ -78,9 +78,15 @@ export function useSubmissions(vaultId: string | undefined) {
     await fetchSubmissions();
   }
 
+  async function deleteSubmission(submissionId: string) {
+    const { error } = await supabase.from('submissions').delete().eq('id', submissionId);
+    if (error) throw error;
+    await fetchSubmissions();
+  }
+
   const pending = submissions.filter((s) => s.status === 'pending');
   const approved = submissions.filter((s) => s.status === 'approved');
   const rejected = submissions.filter((s) => s.status === 'rejected');
 
-  return { submissions, loading, approve, reject, submitContribution, reorderSubmissions, pending, approved, rejected, refetch: fetchSubmissions };
+  return { submissions, loading, approve, reject, deleteSubmission, submitContribution, reorderSubmissions, pending, approved, rejected, refetch: fetchSubmissions };
 }
