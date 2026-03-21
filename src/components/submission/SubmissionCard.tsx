@@ -82,6 +82,20 @@ export function SubmissionCard({ submission, bookId, onApprove, onReject, onDele
           </HeirloomButton>
         </div>
       )}
+
+      {/* Delete */}
+      {onDelete && (
+        <div className="mt-3 flex justify-end">
+          <button
+            disabled={acting === 'deleting'}
+            onClick={async () => { setActing('deleting'); await onDelete(submission.id); setActing(null); }}
+            className="flex items-center gap-1 text-xs font-inter text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
+          >
+            <Trash className="h-3 w-3" />
+            {acting === 'deleting' ? 'Deleting…' : 'Delete'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
