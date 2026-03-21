@@ -129,7 +129,7 @@ export default function VaultDetail() {
 
       {/* Book status + action */}
       {book && (
-        <div className="mt-8 flex items-center justify-between border border-border-light bg-white p-6">
+        <div className="mt-8 flex items-center justify-between border border-accent/30 bg-accent/10 p-6">
           <div className="flex items-center gap-3">
             <PageTag>Memory Book</PageTag>
             <BookStatusBadge status={book.status} />
