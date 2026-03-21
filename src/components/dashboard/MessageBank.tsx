@@ -274,12 +274,12 @@ export function MessageBank({ vaults, profile }: Props) {
       </p>
 
       {/* Main tabs */}
-      <div className="flex gap-0 mb-6" style={{ borderBottom: '1px solid #e0deda' }}>
+      <div className="flex flex-wrap gap-0 mb-6" style={{ borderBottom: '1px solid #e0deda' }}>
         {mainTabs.map(({ id, label }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className="font-space-mono text-xs uppercase tracking-widest px-5 py-2.5 transition-colors"
+            className="font-space-mono text-[10px] uppercase tracking-widest px-3 py-2 transition-colors sm:text-xs sm:px-5 sm:py-2.5"
             style={{
               color: activeTab === id ? '#222222' : '#555555',
               background: 'none',
