@@ -47,7 +47,13 @@ export function useVaults(userId: string | undefined) {
     await fetchVaults();
   }
 
-  return { vaults, loading, createVault, updateVault, refetch: fetchVaults };
+  async function deleteVault(id: string) {
+    const { error } = await supabase.from('vaults').delete().eq('id', id);
+    if (error) throw error;
+    await fetchVaults();
+  }
+
+  return { vaults, loading, createVault, updateVault, deleteVault, refetch: fetchVaults };
 }
 
 export function useVault(vaultId: string | undefined) {

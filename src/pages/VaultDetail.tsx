@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
 import { VaultCover } from '@/components/vault/VaultCover';
@@ -13,16 +13,36 @@ import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { useAuth } from '@/hooks/useAuth';
 import { formatServiceDates } from '@/lib/utils';
-import { ChevronRight, Eye, X, Settings } from 'lucide-react';
+import { ChevronRight, Eye, X, Settings, Trash2 } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function VaultDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { vault, loading: vaultLoading } = useVault(id);
   const { user } = useAuth();
-  const { updateVault } = useVaults(user?.id);
+  const { updateVault, deleteVault } = useVaults(user?.id);
   const { book } = useBook(id);
   const { pending, approved, rejected, submissions } = useSubmissions(id);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const isOwner = user?.id === vault?.owner_id;
+
+  const handleDelete = async () => {
+    if (!vault) return;
+    setDeleting(true);
+    try {
+      await deleteVault(vault.id);
+      navigate('/dashboard');
+    } catch {
+      setDeleting(false);
+    }
+  };
 
   if (vaultLoading) {
     return (
@@ -158,6 +178,37 @@ export default function VaultDetail() {
           </p>
         </div>
       </div>
+
+      {/* Delete vault — owner only */}
+      {isOwner && (
+        <div className="mt-12 border-t border-border-light pt-8">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <HeirloomButton variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Trash2 className="mr-1.5 h-4 w-4" /> Delete Vault
+              </HeirloomButton>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-playfair">Delete this vault?</AlertDialogTitle>
+                <AlertDialogDescription className="font-inter text-sm">
+                  This will permanently delete <strong>{vault.missionary_name}</strong>'s vault, all submissions, and the associated book. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="font-inter text-sm">Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="bg-red-600 text-white hover:bg-red-700 font-inter text-sm"
+                >
+                  {deleting ? 'Deleting…' : 'Delete Vault'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
 
       {/* Book preview modal */}
       {previewOpen && (
