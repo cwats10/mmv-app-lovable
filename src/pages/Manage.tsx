@@ -211,20 +211,19 @@ export default function Manage() {
       )}
 
       {/* Submission list */}
-      <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 sm:py-10">
 
         {/* Filter tabs */}
-        <div className="flex gap-0 mb-6">
+        <div className="flex flex-wrap gap-0 mb-6">
           {(['all', 'pending', 'approved', 'rejected'] as FilterTab[]).map((t) => (
             <button
               key={t}
               onClick={() => setFilter(t)}
-              className="px-4 py-2 text-xs font-space-mono uppercase tracking-wider transition-colors"
+              className="px-3 py-2 text-[10px] font-space-mono uppercase tracking-wider transition-colors sm:px-4 sm:text-xs"
               style={{
                 backgroundColor: filter === t ? '#222222' : '#ffffff',
                 color: filter === t ? '#ffffff' : '#555555',
                 border: '1px solid #e0deda',
-                borderRight: t !== 'rejected' ? 'none' : '1px solid #e0deda',
               }}
             >
               {t} ({counts[t]})

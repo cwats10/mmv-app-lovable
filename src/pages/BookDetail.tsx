@@ -161,7 +161,7 @@ export default function BookDetail() {
 
       {/* Pinned purchase bar */}
       {!isLocked && (
-        <div className="fixed bottom-0 left-0 right-0 flex items-center justify-between border-t border-border-light bg-white px-8 py-4">
+        <div className="fixed bottom-0 left-0 right-0 flex flex-col gap-2 border-t border-border-light bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-4">
           <div>
             <p className="font-inter text-sm text-dark-text">
               {approved.length} approved {approved.length !== 1 ? 'stories' : 'story'}
@@ -172,7 +172,7 @@ export default function BookDetail() {
               </p>
             )}
           </div>
-          <HeirloomButton onClick={() => setPurchaseOpen(true)}>
+          <HeirloomButton onClick={() => setPurchaseOpen(true)} className="w-full sm:w-auto">
             <MapPin className="mr-1.5 h-4 w-4" /> Purchase & Print
           </HeirloomButton>
         </div>
