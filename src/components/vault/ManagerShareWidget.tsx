@@ -18,40 +18,28 @@ export function ManagerShareWidget({ managerToken }: ManagerShareWidgetProps) {
   }
 
   return (
-    <div
-      className="p-6 bg-accent/15 border border-accent/30"
-    >
-      <div className="flex items-start gap-3 mb-4">
-        <Users size={14} strokeWidth={1.5} className="text-[#555555] mt-0.5 flex-shrink-0" />
-        <div>
-          <PageTag className="block mb-1">Manager Link</PageTag>
-          <p className="text-sm text-[#555555]" style={{ lineHeight: 1.7 }}>
+    <div className="min-w-0 border border-accent/30 bg-accent/15 p-4 sm:p-6">
+      <div className="mb-4 flex items-start gap-3 min-w-0">
+        <Users size={14} strokeWidth={1.5} className="mt-0.5 flex-shrink-0 text-muted-foreground" />
+        <div className="min-w-0">
+          <PageTag className="mb-1 block">Manager Link</PageTag>
+          <p className="text-sm leading-relaxed text-muted-foreground">
             Share this link with trusted helpers — family members, a co-organiser, or a
             mission companion — who can review and approve submissions on your behalf.
-            Managers <strong className="text-[#222222] font-medium">cannot</strong> purchase
+            Managers <strong className="font-medium text-foreground">cannot</strong> purchase
             or finalize the book. Only you can do that.
           </p>
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <div
-          className="min-w-0 flex-1 px-4 py-3 text-sm font-space-mono text-[#555555] truncate"
-          style={{
-            backgroundColor: '#ffffff',
-            border: '1px solid #e0deda',
-          }}
-        >
-          {url}
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
+        <div className="min-w-0 flex-1 overflow-hidden border border-border-light bg-white px-4 py-3 text-sm font-space-mono text-muted-foreground">
+          <p className="truncate">{url}</p>
         </div>
         <button
+          type="button"
           onClick={copy}
-          className="flex shrink-0 items-center justify-center gap-2 px-4 py-3 text-sm font-inter transition-colors"
-          style={{
-            backgroundColor: copied ? '#222222' : 'transparent',
-            color: copied ? '#ffffff' : '#222222',
-            border: '1px solid #222222',
-          }}
+          className="flex w-full shrink-0 items-center justify-center gap-2 border border-foreground px-4 py-3 text-sm font-inter text-foreground transition-colors hover:bg-foreground hover:text-background sm:w-auto"
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
           {copied ? 'Copied' : 'Copy'}
