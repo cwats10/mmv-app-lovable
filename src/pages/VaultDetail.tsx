@@ -161,11 +161,15 @@ export default function VaultDetail() {
           <div className="flex max-w-sm">
             {([1, 2] as const).map((n) => (
               <button
+                type="button"
                 key={n}
                 onClick={async () => {
                   if (vault.contributor_page_allowance !== n) {
-                    await updateVault(vault.id, { contributor_page_allowance: n });
-                    await refetchVault();
+                    try {
+                      await updateSingleVault({ contributor_page_allowance: n });
+                    } catch (e) {
+                      console.error('Failed to update vault', e);
+                    }
                   }
                 }}
                 className="flex-1 py-2 font-inter text-sm transition-colors"
