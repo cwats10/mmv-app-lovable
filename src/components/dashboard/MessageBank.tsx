@@ -91,7 +91,7 @@ const PLATFORM_TABS: { id: Platform; label: string }[] = [
 export function MessageBank({ vaults, profile }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('contributors');
   const [platform, setPlatform] = useState<Platform>('text');
-  const [selectedVaultId, setSelectedVaultId] = useState<string>(vaults[0]?.id ?? '');
+  const selectedVault = vaults[0] ?? null;
   const { copiedKey, copy } = useClipboard();
 
   const selectedVault = vaults.find((v) => v.id === selectedVaultId) ?? vaults[0] ?? null;
