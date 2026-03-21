@@ -59,7 +59,6 @@ serve(async (req) => {
       .from('vaults')
       .select('id, missionary_name, mission_name, mission_start, mission_end, vault_type')
       .eq('manager_token', manager_token)
-      .is('archived_at', null)
       .single();
 
     if (vaultErr || !vault) return err('Invalid or expired manager link', 403);
