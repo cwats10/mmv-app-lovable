@@ -2,13 +2,14 @@ import { useState } from 'react';
 import type { Submission } from '@/types';
 import { PageTag } from '@/components/common/PageTag';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { Check, X, Clock } from 'lucide-react';
+import { Check, X, Clock, Trash } from 'lucide-react';
 
 interface SubmissionCardProps {
   submission: Submission;
   bookId?: string;
   onApprove?: (id: string, bookId: string) => Promise<void>;
   onReject?: (id: string) => Promise<void>;
+  onDelete?: (id: string) => Promise<void>;
   readonly?: boolean;
 }
 
