@@ -73,5 +73,12 @@ export function useVault(vaultId: string | undefined) {
 
   useEffect(() => { fetchVault(); }, [fetchVault]);
 
-  return { vault, loading, refetch: fetchVault };
+  async function updateVault(updates: Partial<Vault>) {
+    if (!vaultId) throw new Error('No vault ID');
+    const { error } = await supabase.from('vaults').update(updates).eq('id', vaultId);
+    if (error) throw error;
+    await fetchVault();
+  }
+
+  return { vault, loading, refetch: fetchVault, updateVault };
 }
