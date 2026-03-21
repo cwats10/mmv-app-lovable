@@ -120,6 +120,13 @@ export default function VaultDetail() {
         <VaultShareWidget submissionToken={vault.submission_token} />
       </div>
 
+      {/* Manager share widget — owner only */}
+      {isOwner && vault.manager_token && (
+        <div className="mt-6">
+          <ManagerShareWidget managerToken={vault.manager_token} />
+        </div>
+      )}
+
       {/* Book status + action */}
       {book && (
         <div className="mt-8 flex items-center justify-between border border-border-light bg-white p-6">
