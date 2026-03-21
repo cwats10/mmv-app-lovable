@@ -114,16 +114,18 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
         <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
           Your Relationship to {missionaryName} *
         </label>
-        <select
+        <input
+          list="relation-suggestions"
           value={form.relation}
           onChange={(e) => set('relation', e.target.value)}
-          className="w-full appearance-none border border-border-light bg-white px-4 py-3 font-inter text-sm text-dark-text outline-none"
-        >
-          <option value="">Select your relationship…</option>
+          placeholder="e.g. Mother, Friend, Mission Companion…"
+          className="w-full border border-border-light bg-white px-4 py-3 font-inter text-sm text-dark-text outline-none"
+        />
+        <datalist id="relation-suggestions">
           {RELATIONS.map((r) => (
-            <option key={r} value={r}>{r}</option>
+            <option key={r} value={r} />
           ))}
-        </select>
+        </datalist>
       </div>
 
       {/* Message */}
