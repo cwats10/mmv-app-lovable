@@ -98,7 +98,6 @@ function ImageTopTextBottomPage({ submission, layout }: { submission: Submission
       {/* Text area */}
       <div className="flex flex-1 flex-col justify-between p-5" style={{ textAlign: align }}>
         <div>
-          <PageTag>[ {submission.relation} ]</PageTag>
           <Divider className="my-2" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
