@@ -12,13 +12,24 @@ interface BookSpreadProps {
 }
 
 export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover }: BookSpreadProps) {
-  if (isCover || isBackCover) {
+  const theme = vault.cover_theme || 'dark';
+  const bgColor = theme === 'light' ? '#f4f1ec' : '#2b2b2a';
+
+  if (isBackCover) {
+    return (
+      <div
+        className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden border border-border-light shadow-xl"
+        style={{ backgroundColor: bgColor }}
+      />
+    );
+  }
+
+  if (isCover) {
     return (
       <div className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden border border-border-light shadow-xl">
         <VaultCover
-          missionaryName={isBackCover ? '' : vault.missionary_name}
-          theme={vault.cover_theme || 'dark'}
-          bleedSafe
+          missionaryName={vault.missionary_name}
+          theme={theme}
           className="h-full w-full"
         />
       </div>
