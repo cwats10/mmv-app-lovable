@@ -153,6 +153,7 @@ export default function BookDetail() {
               bookId={book.id}
               onApprove={handleApprove}
               onReject={handleReject}
+              onDelete={(id) => deleteSubmission(id)}
               readonly={isLocked}
             />
           ))}
