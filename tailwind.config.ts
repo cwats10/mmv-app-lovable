@@ -58,6 +58,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        forest: {
+          DEFAULT: "hsl(var(--forest))",
+          foreground: "hsl(var(--forest-foreground))",
+        },
+        "warm-surface": "hsl(var(--warm-surface))",
         // MMV custom colors
         "stone-bg": "#f4f1ec",
         "stone-dark": "#d1cfcb",
