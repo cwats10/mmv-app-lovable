@@ -152,7 +152,7 @@ export default function VaultDetail() {
 
         {/* Sharing Tab */}
         <TabsContent value="sharing" className="mt-6">
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2 [&>*]:min-w-0">
             <VaultShareWidget submissionToken={vault.submission_token} />
             {isOwner && vault.manager_token && (
               <ManagerShareWidget managerToken={vault.manager_token} />
