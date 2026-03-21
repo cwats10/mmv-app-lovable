@@ -56,7 +56,7 @@ function MessageCard({ msgKey, text, label, copiedKey, onCopy }: {
           {isCopied ? 'Copied' : 'Copy'}
         </button>
       </div>
-      <p className="px-4 py-4 text-sm text-[#555555] font-inter whitespace-pre-wrap" style={{ lineHeight: 1.75 }}>
+      <p className="px-4 py-4 text-sm text-[#555555] font-inter whitespace-pre-wrap break-words" style={{ lineHeight: 1.75, overflowWrap: 'anywhere' }}>
         {text}
       </p>
     </div>
