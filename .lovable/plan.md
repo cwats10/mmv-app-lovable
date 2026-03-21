@@ -1,45 +1,22 @@
 
 
-## Fix Vault Settings, Submissions, and Add Missing Features
+## Fix Book Settings Toggle (Pages Per Contributor)
 
-### Problems Found
+### Root Cause
 
-From the network errors and code inspection:
-
-1. **Book Settings broken**: The `contributor_page_allowance` column does not exist on the `vaults` table — the PATCH request returns a 400 error.
-2. **Submissions broken**: The `page_order` and `page_layout` columns do not exist on the `submissions` table — the SELECT query returns a 400 error, which means no submissions load at all.
-3. **Manager invite link missing**: The `ManagerShareWidget` component exists but is not imported or rendered in `VaultDetail.tsx`.
-4. **No delete for contributions**: Neither the vault owner nor managers can delete individual submissions.
+The toggle buttons in VaultDetail.tsx lack `type="button"` and error handling. If the `updateVault` call fails (e.g., due to a timing issue with auth), the error is thrown but never caught — the click appears to do nothing silently. Additionally, the async flow between two separate hooks (`useVaults.updateVault` + `useVault.refetch`) introduces unnecessary complexity.
 
 ### Plan
 
-#### 1. Database migration — add missing columns
+**`src/pages/VaultDetail.tsx`**
+1. Add `type="button"` to both toggle buttons
+2. Wrap the `onClick` handler in try/catch with a toast error notification
+3. Add a local loading state so the user sees feedback during the update
 
-Run a single migration adding:
-- `contributor_page_allowance` (integer, default 1) to `vaults`
-- `page_order` (integer, nullable) to `submissions`
-- `page_layout` (jsonb, nullable) to `submissions`
-
-#### 2. Add ManagerShareWidget to VaultDetail
-
-Import `ManagerShareWidget` and render it below the existing `VaultShareWidget`, passing `vault.manager_token`. Only show it for the vault owner (using the existing `isOwner` check).
-
-#### 3. Add delete submission capability
-
-- **`useSubmissions.ts`**: Add a `deleteSubmission(id)` function that calls `supabase.from('submissions').delete().eq('id', id)`.
-- **`VaultDetail.tsx`** (or the relevant submission list UI): Add a delete button on each submission card for the owner.
-- **`Manage.tsx`**: Add the same delete button for managers.
-- **Database**: Add an RLS policy allowing vault owners to delete submissions on their vaults (managers already operate via the manager page which may need a separate approach — will check the Manage page pattern).
-
-#### 4. Fix VaultDetail Book Settings UI
-
-Remove the `window.location.reload()` hack. After calling `updateVault`, refetch the vault data instead — update `useVault` to expose a `refetch` method, or use the existing `useVaults.updateVault` flow properly.
+**`src/hooks/useVaults.ts`**
+4. Add an `updateVault` method directly to the `useVault` (singular) hook so VaultDetail doesn't need to juggle two hooks for one operation. This keeps the update and refetch in the same hook, eliminating race conditions.
 
 ### Files changed
-
-- **New migration**: Add 3 columns + 1 RLS policy for owner delete on submissions
-- `src/hooks/useSubmissions.ts` — add `deleteSubmission`
-- `src/hooks/useVaults.ts` — expose `refetch` on `useVault`
-- `src/pages/VaultDetail.tsx` — add ManagerShareWidget, wire delete, fix reload hack
-- `src/pages/Manage.tsx` — add delete button for managers (if submissions are shown there)
+- `src/hooks/useVaults.ts` — add `updateVault` to `useVault` hook
+- `src/pages/VaultDetail.tsx` — use the new single-hook update, add `type="button"`, add error handling
 
