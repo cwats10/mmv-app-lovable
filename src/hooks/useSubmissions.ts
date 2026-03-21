@@ -72,7 +72,7 @@ export function useSubmissions(vaultId: string | undefined) {
 
   async function reorderSubmissions(orderedIds: string[]) {
     const updates = orderedIds.map((id, index) =>
-      supabase.from('submissions').update({ page_order: index }).eq('id', id)
+      supabase.from('submissions').update({ page_order: index } as any).eq('id', id)
     );
     await Promise.all(updates);
     await fetchSubmissions();

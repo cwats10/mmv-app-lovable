@@ -132,8 +132,6 @@ export type Database = {
           id: string
           media_urls: string[]
           message: string
-          page_layout: Json | null
-          page_order: number | null
           relation: string
           status: string
           vault_id: string
@@ -145,8 +143,6 @@ export type Database = {
           id?: string
           media_urls?: string[]
           message: string
-          page_layout?: Json | null
-          page_order?: number | null
           relation: string
           status?: string
           vault_id: string
@@ -158,8 +154,6 @@ export type Database = {
           id?: string
           media_urls?: string[]
           message?: string
-          page_layout?: Json | null
-          page_order?: number | null
           relation?: string
           status?: string
           vault_id?: string
@@ -183,7 +177,6 @@ export type Database = {
       }
       vaults: {
         Row: {
-          contributor_page_allowance: number
           cover_image_url: string | null
           cover_theme: string
           created_at: string
@@ -198,7 +191,6 @@ export type Database = {
           vault_type: string
         }
         Insert: {
-          contributor_page_allowance?: number
           cover_image_url?: string | null
           cover_theme?: string
           created_at?: string
@@ -213,7 +205,6 @@ export type Database = {
           vault_type?: string
         }
         Update: {
-          contributor_page_allowance?: number
           cover_image_url?: string | null
           cover_theme?: string
           created_at?: string

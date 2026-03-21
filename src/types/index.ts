@@ -22,7 +22,7 @@ export interface Vault {
   submission_token: string;
   cover_image_url: string | null;
   cover_theme: 'light' | 'dark';
-  contributor_page_allowance: 1 | 2;
+  contributor_page_allowance?: 1 | 2;
 }
 
 export interface Book {
@@ -76,8 +76,8 @@ export interface Submission {
   message: string;
   media_urls: string[];
   status: 'pending' | 'approved' | 'rejected';
-  page_order: number | null;
-  page_layout: PageLayout | null;
+  page_order?: number | null;
+  page_layout?: PageLayout | null;
 }
 
 export interface Referral {
