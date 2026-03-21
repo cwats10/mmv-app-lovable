@@ -99,9 +99,9 @@ export default function VaultDetail() {
           { label: 'Approved', value: approved.length },
           { label: 'Rejected', value: rejected.length },
         ].map(({ label, value }) => (
-          <div key={label} className="bg-forest p-4 text-center">
-            <p className="font-playfair text-2xl font-semibold text-forest-foreground">{value}</p>
-            <p className="font-space-mono text-[10px] uppercase tracking-wider text-forest-foreground/70">{label}</p>
+          <div key={label} className="border border-border bg-card p-4 text-center">
+            <p className="font-playfair text-2xl font-semibold text-foreground">{value}</p>
+            <p className="font-space-mono text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
           </div>
         ))}
       </div>
