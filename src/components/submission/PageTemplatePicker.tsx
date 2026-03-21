@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import type { PageLayout, PageTemplate } from '@/types';
 import { PAGE_TEMPLATES } from '@/components/book/pageTemplates';
+import { PagePreview } from '@/components/submission/PagePreview';
 
 interface Props {
   layout: PageLayout;
   hasImages: boolean;
   onChange: (layout: PageLayout) => void;
+  message?: string;
+  contributorName?: string;
+  relation?: string;
+  photoUrls?: string[];
 }
 
 /** Mini page preview icon showing the template's image/text split */
@@ -184,7 +189,7 @@ function CustomSplitEditor({ layout, onChange }: { layout: PageLayout; onChange:
   );
 }
 
-export function PageTemplatePicker({ layout, hasImages, onChange }: Props) {
+export function PageTemplatePicker({ layout, hasImages, onChange, message, contributorName, relation, photoUrls }: Props) {
   const [showCustom, setShowCustom] = useState(layout.template === 'custom');
 
   const available = PAGE_TEMPLATES.filter(
@@ -228,6 +233,17 @@ export function PageTemplatePicker({ layout, hasImages, onChange }: Props) {
       </div>
 
       {showCustom && <CustomSplitEditor layout={layout} onChange={onChange} />}
+
+      {/* Live preview — always shown so contributors see exactly what their page will look like */}
+      <div className="mt-5 flex justify-center">
+        <PagePreview
+          layout={layout}
+          message={message ?? ''}
+          contributorName={contributorName ?? ''}
+          relation={relation ?? ''}
+          photoUrls={photoUrls ?? []}
+        />
+      </div>
     </div>
   );
 }

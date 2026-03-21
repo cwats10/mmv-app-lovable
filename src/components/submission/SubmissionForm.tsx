@@ -184,6 +184,10 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
           layout={pageLayout}
           hasImages={hasImages}
           onChange={setPageLayout}
+          message={form.message}
+          contributorName={form.contributor_name}
+          relation={form.relation}
+          photoUrls={photos.map((p) => p.url)}
         />
       </div>
 

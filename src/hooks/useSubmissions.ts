@@ -65,7 +65,7 @@ export function useSubmissions(vaultId: string | undefined) {
       relation: params.relation,
       message: params.message,
       media_urls: params.media_urls,
-      page_layout: params.page_layout ?? null,
+      page_layout: (params.page_layout ?? null) as any,
     });
     if (error) throw error;
   }

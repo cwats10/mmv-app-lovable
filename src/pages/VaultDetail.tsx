@@ -135,7 +135,7 @@ export default function VaultDetail() {
                 key={n}
                 onClick={async () => {
                   if (vault.contributor_page_allowance !== n) {
-                    await updateVault(vault.id, { contributor_page_allowance: n } as any);
+                    await updateVault(vault.id, { contributor_page_allowance: n });
                     window.location.reload();
                   }
                 }}

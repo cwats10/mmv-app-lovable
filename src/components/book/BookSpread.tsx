@@ -12,7 +12,7 @@ interface BookSpreadProps {
 }
 
 /** Resolve the effective layout for a submission, falling back to defaults. */
-function resolveLayout(submission?: Submission): PageLayout {
+export function resolveLayout(submission?: Submission): PageLayout {
   if (submission?.page_layout) return submission.page_layout;
   const hasImages = (submission?.media_urls?.length ?? 0) > 0;
   return { template: hasImages ? 'image-top-text-bottom' : 'text-only' };
@@ -249,7 +249,7 @@ function TextOnlyPage({ submission, layout }: { submission: Submission; layout: 
 }
 
 /** Renders a single contributor page based on their chosen template */
-function ContributorPage({ submission, layout }: { submission: Submission; layout: PageLayout }) {
+export function ContributorPage({ submission, layout }: { submission: Submission; layout: PageLayout }) {
   const template = layout.template;
 
   switch (template) {
