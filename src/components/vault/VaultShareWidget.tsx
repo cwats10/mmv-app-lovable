@@ -18,7 +18,7 @@ export function VaultShareWidget({ submissionToken }: VaultShareWidgetProps) {
   }
 
   return (
-    <div className="border border-border-light bg-white p-6">
+    <div className="border border-forest/20 bg-forest p-6">
       <PageTag>Share This Vault</PageTag>
       <p className="mt-2 font-inter text-sm text-muted-text">
         Send this link to family, friends, and mission companions. Anyone with the link can submit a memory.
