@@ -63,7 +63,6 @@ function FullImageCaptionPage({ submission }: { submission: Submission }) {
       </div>
       {/* Caption area */}
       <div className="flex flex-col gap-1 p-4" style={{ flexBasis: '22%' }}>
-        <PageTag>[ {submission.relation} ]</PageTag>
         <p className="font-inter text-xs leading-relaxed text-muted-text line-clamp-3">
           {submission.message}
         </p>
@@ -99,7 +98,6 @@ function ImageTopTextBottomPage({ submission, layout }: { submission: Submission
       {/* Text area */}
       <div className="flex flex-1 flex-col justify-between p-5" style={{ textAlign: align }}>
         <div>
-          <PageTag>[ {submission.relation} ]</PageTag>
           <Divider className="my-2" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
@@ -121,7 +119,6 @@ function TextTopImageBottomPage({ submission, layout }: { submission: Submission
     <div className="flex h-full flex-col">
       {/* Text area */}
       <div className="flex flex-col p-5" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
-        <PageTag>[ {submission.relation} ]</PageTag>
         <Divider className="my-2" />
         <p className="font-inter text-xs leading-relaxed text-muted-text">
           {submission.message}
@@ -175,7 +172,6 @@ function SideBySideLeftPage({ submission, layout }: { submission: Submission; la
       {/* Text area */}
       <div className="flex flex-1 flex-col justify-between p-5" style={{ textAlign: align }}>
         <div>
-          <PageTag>[ {submission.relation} ]</PageTag>
           <Divider className="my-2" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
@@ -198,7 +194,6 @@ function SideBySideRightPage({ submission, layout }: { submission: Submission; l
       {/* Text area */}
       <div className="flex flex-col justify-between p-5" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
         <div>
-          <PageTag>[ {submission.relation} ]</PageTag>
           <Divider className="my-2" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
@@ -232,7 +227,6 @@ function TextOnlyPage({ submission, layout }: { submission: Submission; layout: 
   return (
     <div className="flex h-full flex-col justify-between p-8" style={{ textAlign: align }}>
       <div>
-        <PageTag>[ {submission.relation} ]</PageTag>
         <Divider className="my-4" />
         {submission.message.length > 0 && (
           <h3 className="mb-4 font-playfair text-lg italic text-dark-text">
@@ -353,7 +347,6 @@ export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover
         {/* Right Page — text + optional second image */}
         <div className="relative flex w-1/2 flex-col justify-between border-l border-border-light p-8">
           <div className="flex-1 overflow-hidden">
-            <PageTag>[ {submission.relation} ]</PageTag>
             <Divider className="my-3" />
             {submission.message.length > 0 && (
               <h3 className="mb-3 font-playfair text-lg italic text-dark-text">
