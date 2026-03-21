@@ -148,7 +148,7 @@ export default function VaultDetail() {
       )}
 
       {/* Book Settings */}
-      <div className="mt-8 border border-border-light bg-white p-6">
+      <div className="mt-8 border border-border bg-warm-surface p-6">
         <div className="flex items-center gap-2 mb-4">
           <Settings className="h-4 w-4 text-muted-text" />
           <PageTag>Book Settings</PageTag>
