@@ -347,7 +347,6 @@ export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover
         {/* Right Page — text + optional second image */}
         <div className="relative flex w-1/2 flex-col justify-between border-l border-border-light p-8">
           <div className="flex-1 overflow-hidden">
-            <PageTag>[ {submission.relation} ]</PageTag>
             <Divider className="my-3" />
             {submission.message.length > 0 && (
               <h3 className="mb-3 font-playfair text-lg italic text-dark-text">
