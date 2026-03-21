@@ -51,24 +51,17 @@ export default function VaultDetail() {
       </div>
 
       {/* Header */}
-      <div className="flex gap-6">
-        <VaultCover
-          missionaryName={vault.missionary_name}
-          theme={(vault as any).cover_theme || 'dark'}
-          className="hidden h-32 w-32 shrink-0 sm:flex"
-        />
-        <div>
-          <PageTag>{vault.vault_type === 'post' ? 'Post-Mission Vault' : 'Pre-Mission Vault'}</PageTag>
-          <h1 className="mt-1 font-playfair text-3xl font-semibold text-dark-text">
-            {vault.missionary_name}
-          </h1>
-          <p className="font-inter text-sm text-muted-text">{vault.mission_name}</p>
-          {(vault.mission_start || vault.mission_end) && (
-            <p className="mt-1 font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-              {formatServiceDates(vault.mission_start, vault.mission_end)}
-            </p>
-          )}
-        </div>
+      <div>
+        <PageTag>{vault.vault_type === 'post' ? 'Post-Mission Vault' : 'Pre-Mission Vault'}</PageTag>
+        <h1 className="mt-1 font-playfair text-3xl font-semibold text-dark-text">
+          {vault.missionary_name}
+        </h1>
+        <p className="font-inter text-sm text-muted-text">{vault.mission_name}</p>
+        {(vault.mission_start || vault.mission_end) && (
+          <p className="mt-1 font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+            {formatServiceDates(vault.mission_start, vault.mission_end)}
+          </p>
+        )}
       </div>
 
       <Divider className="my-8" />
