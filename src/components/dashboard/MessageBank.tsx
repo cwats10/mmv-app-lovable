@@ -263,7 +263,7 @@ export function MessageBank({ vaults, profile }: Props) {
   else if (activeTab === 'referrals') messages = referralMessages[platform];
 
   return (
-    <div>
+    <div className="bg-warm-surface border border-border p-6 rounded-sm">
       <div className="flex items-center gap-2 mb-6">
         <MessageSquare size={15} strokeWidth={1.5} className="text-[#555555]" />
         <PageTag>Message Bank</PageTag>
