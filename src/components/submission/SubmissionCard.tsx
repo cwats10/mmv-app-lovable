@@ -13,8 +13,8 @@ interface SubmissionCardProps {
   readonly?: boolean;
 }
 
-export function SubmissionCard({ submission, bookId, onApprove, onReject, readonly }: SubmissionCardProps) {
-  const [acting, setActing] = useState<'approving' | 'rejecting' | null>(null);
+export function SubmissionCard({ submission, bookId, onApprove, onReject, onDelete, readonly }: SubmissionCardProps) {
+  const [acting, setActing] = useState<'approving' | 'rejecting' | 'deleting' | null>(null);
 
   const statusColors = {
     pending: 'border-amber-200 bg-amber-50',
