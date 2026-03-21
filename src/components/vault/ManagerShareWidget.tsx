@@ -19,8 +19,7 @@ export function ManagerShareWidget({ managerToken }: ManagerShareWidgetProps) {
 
   return (
     <div
-      className="p-6"
-      style={{ border: '1px solid #e0deda', backgroundColor: '#f4f2ef' }}
+      className="p-6 bg-accent/15 border border-accent/30"
     >
       <div className="flex items-start gap-3 mb-4">
         <Users size={14} strokeWidth={1.5} className="text-[#555555] mt-0.5 flex-shrink-0" />
