@@ -179,6 +179,37 @@ export default function VaultDetail() {
         </div>
       </div>
 
+      {/* Delete vault — owner only */}
+      {isOwner && (
+        <div className="mt-12 border-t border-border-light pt-8">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <HeirloomButton variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Trash2 className="mr-1.5 h-4 w-4" /> Delete Vault
+              </HeirloomButton>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-playfair">Delete this vault?</AlertDialogTitle>
+                <AlertDialogDescription className="font-inter text-sm">
+                  This will permanently delete <strong>{vault.missionary_name}</strong>'s vault, all submissions, and the associated book. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="font-inter text-sm">Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="bg-red-600 text-white hover:bg-red-700 font-inter text-sm"
+                >
+                  {deleting ? 'Deleting…' : 'Delete Vault'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
+
       {/* Book preview modal */}
       {previewOpen && (
         <div className="fixed inset-0 z-50 overflow-auto bg-dark-text/95 p-8">
