@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
-import { BookOpen } from 'lucide-react';
+
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -49,8 +49,7 @@ export default function Auth() {
     <div className="flex min-h-screen items-center justify-center bg-stone-bg px-4">
       <div className="w-full max-w-md border border-border-light bg-white">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2 pt-8">
-          <BookOpen className="h-5 w-5 text-dark-text" />
+        <div className="flex items-center justify-center pt-8">
           <span className="font-playfair text-lg font-semibold text-dark-text">Mission Memory Vault</span>
         </div>
 

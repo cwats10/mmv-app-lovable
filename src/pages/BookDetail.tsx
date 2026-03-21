@@ -4,6 +4,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import { SubmissionCard } from '@/components/submission/SubmissionCard';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import { BookSpread } from '@/components/book/BookSpread';
+import { PageReorderList } from '@/components/book/PageReorderList';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
@@ -11,7 +12,7 @@ import { PurchaseModal } from '@/components/book/PurchaseModal';
 import { useVault } from '@/hooks/useVaults';
 import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
-import { ChevronRight, Eye, X, MapPin } from 'lucide-react';
+import { ChevronRight, Eye, X, MapPin, ArrowUpDown } from 'lucide-react';
 
 type FilterTab = 'all' | 'pending' | 'approved' | 'rejected';
 
@@ -19,11 +20,12 @@ export default function BookDetail() {
   const { id: vaultId, bookId } = useParams<{ id: string; bookId: string }>();
   const { vault } = useVault(vaultId);
   const { book } = useBook(vaultId);
-  const { submissions, pending, approved, reject, approve, refetch } = useSubmissions(vaultId);
+  const { submissions, pending, approved, reject, approve, reorderSubmissions, refetch } = useSubmissions(vaultId);
 
   const [filter, setFilter] = useState<FilterTab>('all');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
+  const [reorderOpen, setReorderOpen] = useState(false);
 
   const isLocked = !!(book && !['collecting', 'review'].includes(book.status));
 
@@ -80,6 +82,33 @@ export default function BookDetail() {
       </div>
 
       <Divider className="my-6" />
+
+      {/* Page reorder section */}
+      {approved.length > 1 && !isLocked && (
+        <div className="mb-6">
+          <button
+            onClick={() => setReorderOpen(!reorderOpen)}
+            className="flex items-center gap-2 px-4 py-2 font-space-mono text-xs uppercase tracking-wider transition-colors"
+            style={{
+              border: '1px solid #e0deda',
+              backgroundColor: reorderOpen ? '#222222' : 'transparent',
+              color: reorderOpen ? '#ffffff' : '#555555',
+            }}
+          >
+            <ArrowUpDown className="h-3.5 w-3.5" />
+            Arrange Page Order
+          </button>
+
+          {reorderOpen && (
+            <div className="mt-4">
+              <PageReorderList
+                submissions={approved}
+                onReorder={reorderSubmissions}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Filter tabs */}
       <div className="mb-6 flex">

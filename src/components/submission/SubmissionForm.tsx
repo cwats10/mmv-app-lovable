@@ -1,7 +1,9 @@
 import { useState, useRef } from 'react';
 import { Upload, X } from 'lucide-react';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
+import { PageTemplatePicker } from '@/components/submission/PageTemplatePicker';
 import { supabase } from '@/integrations/supabase/client';
+import type { PageLayout } from '@/types';
 
 const RELATIONS = [
   'Mother', 'Father', 'Sister', 'Brother', 'Grandparent',
@@ -18,6 +20,7 @@ interface SubmissionFormProps {
     relation: string;
     message: string;
     media_urls: string[];
+    page_layout: PageLayout;
   }) => Promise<void>;
 }
 
@@ -25,6 +28,7 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<{ url: string; name: string }[]>([]);
+  const [pageLayout, setPageLayout] = useState<PageLayout>({ template: 'image-top-text-bottom' });
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
@@ -54,10 +58,20 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
     }
     setPhotos((p) => [...p, ...uploaded].slice(0, 6));
     setUploading(false);
+
+    // If this is the first image and template is text-only, auto-switch
+    if (photos.length === 0 && uploaded.length > 0 && pageLayout.template === 'text-only') {
+      setPageLayout({ ...pageLayout, template: 'image-top-text-bottom' });
+    }
   }
 
   function removePhoto(url: string) {
-    setPhotos((p) => p.filter((ph) => ph.url !== url));
+    const remaining = photos.filter((ph) => ph.url !== url);
+    setPhotos(remaining);
+    // If no images left, switch to text-only
+    if (remaining.length === 0 && pageLayout.template !== 'text-only') {
+      setPageLayout({ ...pageLayout, template: 'text-only' });
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -71,6 +85,7 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
         relation: form.relation,
         message: form.message.trim(),
         media_urls: photos.map((p) => p.url),
+        page_layout: pageLayout,
       });
     } finally {
       setLoading(false);
@@ -78,6 +93,7 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
   }
 
   const charCount = form.message.length;
+  const hasImages = photos.length > 0;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -160,6 +176,19 @@ export function SubmissionForm({ vaultId, missionaryName, onSubmit }: Submission
             ))}
           </div>
         )}
+      </div>
+
+      {/* Page Layout Picker */}
+      <div className="border-t border-border-light pt-5">
+        <PageTemplatePicker
+          layout={pageLayout}
+          hasImages={hasImages}
+          onChange={setPageLayout}
+          message={form.message}
+          contributorName={form.contributor_name}
+          relation={form.relation}
+          photoUrls={photos.map((p) => p.url)}
+        />
       </div>
 
       <HeirloomButton type="submit" loading={loading} className="w-full" size="lg">

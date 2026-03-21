@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
 import { VaultCover } from '@/components/vault/VaultCover';
@@ -8,18 +8,41 @@ import { BookSpread } from '@/components/book/BookSpread';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { useVault } from '@/hooks/useVaults';
+import { useVault, useVaults } from '@/hooks/useVaults';
 import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
+import { useAuth } from '@/hooks/useAuth';
 import { formatServiceDates } from '@/lib/utils';
-import { ChevronRight, Eye, X } from 'lucide-react';
+import { ChevronRight, Eye, X, Settings, Trash2 } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function VaultDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { vault, loading: vaultLoading } = useVault(id);
+  const { user } = useAuth();
+  const { updateVault, deleteVault } = useVaults(user?.id);
   const { book } = useBook(id);
   const { pending, approved, rejected, submissions } = useSubmissions(id);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const isOwner = user?.id === vault?.owner_id;
+
+  const handleDelete = async () => {
+    if (!vault) return;
+    setDeleting(true);
+    try {
+      await deleteVault(vault.id);
+      navigate('/dashboard');
+    } catch {
+      setDeleting(false);
+    }
+  };
 
   if (vaultLoading) {
     return (
@@ -112,6 +135,78 @@ export default function VaultDetail() {
               {book.status === 'collecting' ? 'Review Book' : 'View Book'}
             </HeirloomButton>
           </Link>
+        </div>
+      )}
+
+      {/* Book Settings */}
+      <div className="mt-8 border border-border-light bg-white p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Settings className="h-4 w-4 text-muted-text" />
+          <PageTag>Book Settings</PageTag>
+        </div>
+
+        <div>
+          <label className="mb-2 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+            Pages Per Contributor
+          </label>
+          <div className="flex max-w-sm">
+            {([1, 2] as const).map((n) => (
+              <button
+                key={n}
+                onClick={async () => {
+                  if (vault.contributor_page_allowance !== n) {
+                    await updateVault(vault.id, { contributor_page_allowance: n });
+                    window.location.reload();
+                  }
+                }}
+                className="flex-1 py-2 font-inter text-sm transition-colors"
+                style={{
+                  backgroundColor: (vault.contributor_page_allowance ?? 1) === n ? '#2b2b2a' : 'transparent',
+                  color: (vault.contributor_page_allowance ?? 1) === n ? '#fefefe' : '#555555',
+                  border: '1px solid #e0deda',
+                  borderRight: n === 1 ? 'none' : '1px solid #e0deda',
+                }}
+              >
+                {n === 1 ? '1 Page' : '2 Pages (Spread)'}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 font-inter text-[11px] text-muted-text">
+            {(vault.contributor_page_allowance ?? 1) === 1
+              ? 'Each contributor creates one beautifully designed page.'
+              : 'Each contributor gets a full two-page spread with a showcase image and their story.'}
+          </p>
+        </div>
+      </div>
+
+      {/* Delete vault — owner only */}
+      {isOwner && (
+        <div className="mt-12 border-t border-border-light pt-8">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <HeirloomButton variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Trash2 className="mr-1.5 h-4 w-4" /> Delete Vault
+              </HeirloomButton>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-playfair">Delete this vault?</AlertDialogTitle>
+                <AlertDialogDescription className="font-inter text-sm">
+                  This will permanently delete <strong>{vault.missionary_name}</strong>'s vault, all submissions, and the associated book. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="font-inter text-sm">Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="bg-red-600 text-white hover:bg-red-700 font-inter text-sm"
+                >
+                  {deleting ? 'Deleting…' : 'Delete Vault'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
 

@@ -27,6 +27,7 @@ export function useVaults(userId: string | undefined) {
     mission_end: string | null;
     vault_type: 'pre' | 'post';
     cover_theme: 'light' | 'dark';
+    contributor_page_allowance: 1 | 2;
   }): Promise<Vault> {
     const { data, error } = await supabase
       .from('vaults')
@@ -46,7 +47,13 @@ export function useVaults(userId: string | undefined) {
     await fetchVaults();
   }
 
-  return { vaults, loading, createVault, updateVault, refetch: fetchVaults };
+  async function deleteVault(id: string) {
+    const { error } = await supabase.from('vaults').delete().eq('id', id);
+    if (error) throw error;
+    await fetchVaults();
+  }
+
+  return { vaults, loading, createVault, updateVault, deleteVault, refetch: fetchVaults };
 }
 
 export function useVault(vaultId: string | undefined) {
