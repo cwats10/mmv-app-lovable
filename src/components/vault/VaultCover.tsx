@@ -17,7 +17,6 @@ export function VaultCover({ missionaryName, theme, className, bleedSafe }: Vaul
     <div
       className={cn(
         'flex flex-col items-center justify-center gap-2 -mt-[5%]',
-        bleedSafe && 'p-[8%]',
         className
       )}
       style={{ backgroundColor: isLight ? '#f4f1ec' : '#2b2b2a' }}
