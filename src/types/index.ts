@@ -22,6 +22,7 @@ export interface Vault {
   submission_token: string;
   cover_image_url: string | null;
   cover_theme: 'light' | 'dark';
+  contributor_page_allowance: 1 | 2;
 }
 
 export interface Book {
@@ -46,6 +47,25 @@ export interface DeliveryAddress {
   country: string;
 }
 
+export type PageTemplate =
+  | 'full-image-caption'
+  | 'image-top-text-bottom'
+  | 'text-top-image-bottom'
+  | 'side-by-side-left'
+  | 'side-by-side-right'
+  | 'text-only'
+  | 'custom';
+
+export interface PageLayout {
+  template: PageTemplate;
+  customSplit?: {
+    direction: 'horizontal' | 'vertical';
+    ratio: number; // 0.3 to 0.7 — fraction allocated to the image area
+  };
+  imagePosition?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  textAlignment?: 'left' | 'center' | 'right';
+}
+
 export interface Submission {
   id: string;
   created_at: string;
@@ -56,6 +76,8 @@ export interface Submission {
   message: string;
   media_urls: string[];
   status: 'pending' | 'approved' | 'rejected';
+  page_order: number | null;
+  page_layout: PageLayout | null;
 }
 
 export interface Referral {
@@ -87,6 +109,7 @@ export interface GoldenPayload {
 export interface GoldenPage {
   page_number: number;
   template_type: 'cover' | 'standard_text_only' | 'standard_text_with_image';
+  page_layout?: PageLayout;
   content: {
     contributor_name: string;
     relation: string;

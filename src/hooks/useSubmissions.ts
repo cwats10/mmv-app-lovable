@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { Submission } from '@/types';
+import type { Submission, PageLayout } from '@/types';
 
 export function useSubmissions(vaultId: string | undefined) {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -12,6 +12,7 @@ export function useSubmissions(vaultId: string | undefined) {
       .from('submissions')
       .select('*')
       .eq('vault_id', vaultId)
+      .order('page_order', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: false });
     setSubmissions((data as Submission[]) || []);
     setLoading(false);
@@ -56,14 +57,30 @@ export function useSubmissions(vaultId: string | undefined) {
     relation: string;
     message: string;
     media_urls: string[];
+    page_layout?: PageLayout;
   }) {
-    const { error } = await supabase.from('submissions').insert(params);
+    const { error } = await supabase.from('submissions').insert({
+      vault_id: params.vault_id,
+      contributor_name: params.contributor_name,
+      relation: params.relation,
+      message: params.message,
+      media_urls: params.media_urls,
+      page_layout: params.page_layout ?? null,
+    });
     if (error) throw error;
+  }
+
+  async function reorderSubmissions(orderedIds: string[]) {
+    const updates = orderedIds.map((id, index) =>
+      supabase.from('submissions').update({ page_order: index }).eq('id', id)
+    );
+    await Promise.all(updates);
+    await fetchSubmissions();
   }
 
   const pending = submissions.filter((s) => s.status === 'pending');
   const approved = submissions.filter((s) => s.status === 'approved');
   const rejected = submissions.filter((s) => s.status === 'rejected');
 
-  return { submissions, loading, approve, reject, submitContribution, pending, approved, rejected, refetch: fetchSubmissions };
+  return { submissions, loading, approve, reject, submitContribution, reorderSubmissions, pending, approved, rejected, refetch: fetchSubmissions };
 }

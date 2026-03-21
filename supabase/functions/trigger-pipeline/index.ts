@@ -44,12 +44,13 @@ serve(async (req) => {
 
     const vault = book.vaults;
 
-    // ── 2. Fetch approved submissions ─────────────────────────────────────────
+    // ── 2. Fetch approved submissions (ordered by page_order, then created_at) ─
     const { data: submissions, error: subErr } = await supabase
       .from('submissions')
       .select('*')
       .eq('book_id', book_id)
       .eq('status', 'approved')
+      .order('page_order', { ascending: true, nullsFirst: false })
       .order('created_at');
 
     if (subErr) throw new Error(`Failed to fetch submissions: ${subErr.message}`);
@@ -85,12 +86,15 @@ serve(async (req) => {
       const hasImage   = mediaUrls.length > 0;
       // image_layout is stored as JSONB; default to 'bottom' when image present
       const imageLayout = (sub.image_layout as { position: string } | null) ?? (hasImage ? { position: 'bottom' } : null);
+      // New page_layout from the enhanced template system
+      const pageLayout = (sub.page_layout as Record<string, unknown> | null) ?? null;
 
       return {
         page_number   : i + 2,
         template_type : (hasImage ? 'standard_text_with_image' : 'standard_text_only') as
                           'standard_text_with_image' | 'standard_text_only',
         image_layout  : imageLayout,
+        page_layout   : pageLayout,
         content: {
           contributor_name: sub.contributor_name as string,
           relation        : sub.relation as string,

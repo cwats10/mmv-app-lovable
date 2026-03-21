@@ -424,7 +424,7 @@ async function drawContentPage(
   const LABEL_LH    = LABEL_SIZE * 2;
 
   const { contributor_name, relation, message, image_urls } = pdfPage.content;
-  const position = pdfPage.image_layout?.position ?? (image_urls.length > 0 ? 'bottom' : 'none');
+  const { position, ratio: splitRatio } = resolveEffectivePosition(pdfPage);
 
   // Load first image (if any)
   let img: PDFImage | null = null;
@@ -467,6 +467,28 @@ async function drawContentPage(
     return yStart - 26;  // returns y below the label+rule
   }
 
+  // ── Layout: FULL IMAGE + CAPTION ─────────────────────────────────────────────
+  if (img && position === 'full-image') {
+    const imgH = Math.round(availH * splitRatio);
+    const imgBoxY = cTop - imgH;
+
+    // Full-bleed image (covers page width within safe margins)
+    const fit = scaleToCover(img, contSize, imgH, cx, imgBoxY);
+    page.drawImage(img, fit);
+
+    // Caption area below
+    let y = imgBoxY - 8;
+    drawLabel(page, `[ ${relation} ]`, fonts.mono, cx, y, C.mid);
+    y -= 16;
+
+    // Compact message (caption style)
+    const captionText = message.length > 300 ? message.slice(0, 297) + '…' : message;
+    drawWrappedText(page, captionText, fonts.body, BODY_SIZE, BODY_LH, cx, y, contSize, C.mid);
+    drawAttribution();
+    drawPageNumber(page, pageNumber, pagePt, safePt, fonts.mono);
+    return;
+  }
+
   // ── Layout: NO IMAGE ─────────────────────────────────────────────────────────
   if (!img || position === 'none') {
     let y = drawTopLabel(cTop);
@@ -489,7 +511,7 @@ async function drawContentPage(
 
   // ── Layout: TOP ──────────────────────────────────────────────────────────────
   if (position === 'top') {
-    const imgH    = Math.round(availH * 0.38);
+    const imgH    = Math.round(availH * splitRatio);
     const imgBoxY = cTop - imgH;
 
     // Image full width at top
@@ -515,7 +537,7 @@ async function drawContentPage(
   // ── Layout: BOTTOM ───────────────────────────────────────────────────────────
   if (position === 'bottom') {
     // Reserve image space at bottom
-    const imgH     = Math.round(availH * 0.38);
+    const imgH     = Math.round(availH * splitRatio);
     const imgCount = Math.min(image_urls.length, 2);
     const imgGap   = 8;
 
@@ -595,8 +617,8 @@ async function drawContentPage(
   // ── Layout: FLOAT-LEFT / FLOAT-RIGHT ─────────────────────────────────────────
   if (position === 'float-left' || position === 'float-right') {
     const isLeft   = position === 'float-left';
-    const imgW     = Math.round(contSize * 0.42);
-    const imgH     = Math.round(availH  * 0.50);
+    const imgW     = Math.round(contSize * splitRatio);
+    const imgH     = Math.round(availH  * 0.65);
     const imgGap   = 16;
     const txtColW  = contSize - imgW - imgGap;
 
@@ -729,10 +751,27 @@ function drawBackCover(
 
 interface ImageLayout { position: 'top' | 'float-left' | 'float-right' | 'center' | 'bottom' | 'none'; }
 
+type PageTemplate =
+  | 'full-image-caption'
+  | 'image-top-text-bottom'
+  | 'text-top-image-bottom'
+  | 'side-by-side-left'
+  | 'side-by-side-right'
+  | 'text-only'
+  | 'custom';
+
+interface PageLayout {
+  template       : PageTemplate;
+  customSplit?   : { direction: 'horizontal' | 'vertical'; ratio: number };
+  imagePosition? : string;
+  textAlignment? : 'left' | 'center' | 'right';
+}
+
 interface GoldenPage {
   page_number   : number;
   template_type : 'cover' | 'standard_text_only' | 'standard_text_with_image';
   image_layout? : ImageLayout;
+  page_layout?  : PageLayout;
   content: {
     contributor_name: string;
     relation        : string;
@@ -749,6 +788,36 @@ interface GoldenPayload {
   cover_image_url  : string;
   pages            : GoldenPage[];
   book_inches?     : number;  // optional override; defaults to 11
+}
+
+/**
+ * Resolve the effective image position from the new page_layout or legacy image_layout.
+ * Also returns a split ratio for custom layouts.
+ */
+function resolveEffectivePosition(
+  pdfPage: GoldenPage,
+): { position: string; ratio: number } {
+  const pl = pdfPage.page_layout;
+  if (pl) {
+    const ratio = pl.customSplit?.ratio ?? 0.5;
+    switch (pl.template) {
+      case 'full-image-caption':       return { position: 'full-image', ratio: 0.78 };
+      case 'image-top-text-bottom':    return { position: 'top', ratio };
+      case 'text-top-image-bottom':    return { position: 'bottom', ratio };
+      case 'side-by-side-left':        return { position: 'float-left', ratio };
+      case 'side-by-side-right':       return { position: 'float-right', ratio };
+      case 'text-only':                return { position: 'none', ratio: 0 };
+      case 'custom': {
+        const dir = pl.customSplit?.direction ?? 'vertical';
+        if (dir === 'horizontal') return { position: 'float-left', ratio };
+        return { position: 'top', ratio };
+      }
+      default: return { position: 'bottom', ratio: 0.38 };
+    }
+  }
+  // Fallback to legacy image_layout
+  const legacy = pdfPage.image_layout?.position ?? (pdfPage.content.image_urls.length > 0 ? 'bottom' : 'none');
+  return { position: legacy, ratio: 0.38 };
 }
 
 // ─── Main build function ──────────────────────────────────────────────────────

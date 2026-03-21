@@ -8,15 +8,18 @@ import { BookSpread } from '@/components/book/BookSpread';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { useVault } from '@/hooks/useVaults';
+import { useVault, useVaults } from '@/hooks/useVaults';
 import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
+import { useAuth } from '@/hooks/useAuth';
 import { formatServiceDates } from '@/lib/utils';
-import { ChevronRight, Eye, X } from 'lucide-react';
+import { ChevronRight, Eye, X, Settings } from 'lucide-react';
 
 export default function VaultDetail() {
   const { id } = useParams<{ id: string }>();
   const { vault, loading: vaultLoading } = useVault(id);
+  const { user } = useAuth();
+  const { updateVault } = useVaults(user?.id);
   const { book } = useBook(id);
   const { pending, approved, rejected, submissions } = useSubmissions(id);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -114,6 +117,47 @@ export default function VaultDetail() {
           </Link>
         </div>
       )}
+
+      {/* Book Settings */}
+      <div className="mt-8 border border-border-light bg-white p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Settings className="h-4 w-4 text-muted-text" />
+          <PageTag>Book Settings</PageTag>
+        </div>
+
+        <div>
+          <label className="mb-2 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+            Pages Per Contributor
+          </label>
+          <div className="flex max-w-sm">
+            {([1, 2] as const).map((n) => (
+              <button
+                key={n}
+                onClick={async () => {
+                  if (vault.contributor_page_allowance !== n) {
+                    await updateVault(vault.id, { contributor_page_allowance: n } as any);
+                    window.location.reload();
+                  }
+                }}
+                className="flex-1 py-2 font-inter text-sm transition-colors"
+                style={{
+                  backgroundColor: (vault.contributor_page_allowance ?? 1) === n ? '#2b2b2a' : 'transparent',
+                  color: (vault.contributor_page_allowance ?? 1) === n ? '#fefefe' : '#555555',
+                  border: '1px solid #e0deda',
+                  borderRight: n === 1 ? 'none' : '1px solid #e0deda',
+                }}
+              >
+                {n === 1 ? '1 Page' : '2 Pages (Spread)'}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 font-inter text-[11px] text-muted-text">
+            {(vault.contributor_page_allowance ?? 1) === 1
+              ? 'Each contributor creates one beautifully designed page.'
+              : 'Each contributor gets a full two-page spread with a showcase image and their story.'}
+          </p>
+        </div>
+      </div>
 
       {/* Book preview modal */}
       {previewOpen && (

@@ -14,6 +14,7 @@ interface CreateVaultModalProps {
     mission_end: string | null;
     vault_type: 'pre' | 'post';
     cover_theme: 'light' | 'dark';
+    contributor_page_allowance: 1 | 2;
   }) => Promise<unknown>;
 }
 
@@ -27,6 +28,7 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
     mission_end: '',
     vault_type: 'post' as 'pre' | 'post',
     cover_theme: 'dark' as 'light' | 'dark',
+    contributor_page_allowance: 1 as 1 | 2,
   });
 
   function set(key: string, value: string) {
@@ -45,6 +47,7 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
         mission_end: form.mission_end || null,
         vault_type: form.vault_type,
         cover_theme: form.cover_theme,
+        contributor_page_allowance: form.contributor_page_allowance,
       });
       onClose();
     } finally {
@@ -169,6 +172,36 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Contributor page allowance */}
+        <div className="mb-6">
+          <label className="mb-2 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+            Pages Per Contributor
+          </label>
+          <div className="flex">
+            {([1, 2] as const).map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, contributor_page_allowance: n }))}
+                className="flex-1 py-2.5 font-inter text-sm transition-colors"
+                style={{
+                  backgroundColor: form.contributor_page_allowance === n ? '#2b2b2a' : 'transparent',
+                  color: form.contributor_page_allowance === n ? '#fefefe' : '#555555',
+                  border: '1px solid #e0deda',
+                  borderRight: n === 1 ? 'none' : '1px solid #e0deda',
+                }}
+              >
+                {n === 1 ? '1 Page' : '2 Pages (Spread)'}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 font-inter text-[11px] text-muted-text">
+            {form.contributor_page_allowance === 1
+              ? 'Each contributor creates one beautifully designed page.'
+              : 'Each contributor gets a full two-page spread with a showcase image and their story.'}
+          </p>
         </div>
 
         <HeirloomButton type="submit" loading={loading} className="w-full">
