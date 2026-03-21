@@ -8,7 +8,7 @@ import type { PageLayout } from '@/types';
 const RELATIONS = [
   'Mother', 'Father', 'Sister', 'Brother', 'Grandparent',
   'Aunt / Uncle', 'Friend', 'Mission Companion', 'Ward Member',
-  'Mission President', 'Other',
+  'Mission President',
 ];
 
 interface SubmissionFormProps {
