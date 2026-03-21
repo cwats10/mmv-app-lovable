@@ -194,7 +194,6 @@ function SideBySideRightPage({ submission, layout }: { submission: Submission; l
       {/* Text area */}
       <div className="flex flex-col justify-between p-5" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
         <div>
-          <PageTag>[ {submission.relation} ]</PageTag>
           <Divider className="my-2" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
