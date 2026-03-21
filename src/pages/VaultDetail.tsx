@@ -106,7 +106,7 @@ export default function VaultDetail() {
       </div>
 
       {/* Book status + preview actions */}
-      <div className="mt-4 flex items-center justify-between gap-4">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           {book && (
             <>
