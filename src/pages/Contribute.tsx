@@ -6,7 +6,7 @@ import { Divider } from '@/components/common/Divider';
 
 import { supabase } from '@/integrations/supabase/client';
 import type { Vault } from '@/types';
-import { BookOpen, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { useSubmissions } from '@/hooks/useSubmissions';
 
 export default function Contribute() {
