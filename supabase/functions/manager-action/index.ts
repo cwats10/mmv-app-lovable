@@ -67,7 +67,7 @@ serve(async (req) => {
     if (action === 'get-context') {
       const { data: book } = await supabase
         .from('books')
-        .select('id, status, locked_at')
+        .select('id, status')
         .eq('vault_id', vault.id)
         .single();
 
