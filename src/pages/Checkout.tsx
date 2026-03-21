@@ -22,8 +22,7 @@ export default function Checkout() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-stone-bg px-4 text-center">
-      <div className="flex items-center gap-2 text-dark-text">
-        <BookOpen className="h-5 w-5" />
+      <div className="flex items-center text-dark-text">
         <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
       </div>
       <Divider className="my-6 w-32" />

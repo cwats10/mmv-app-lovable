@@ -49,8 +49,7 @@ export default function Auth() {
     <div className="flex min-h-screen items-center justify-center bg-stone-bg px-4">
       <div className="w-full max-w-md border border-border-light bg-white">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2 pt-8">
-          <BookOpen className="h-5 w-5 text-dark-text" />
+        <div className="flex items-center justify-center pt-8">
           <span className="font-playfair text-lg font-semibold text-dark-text">Mission Memory Vault</span>
         </div>
 

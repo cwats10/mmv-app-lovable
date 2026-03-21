@@ -80,8 +80,7 @@ export default function Contribute() {
       <section className="relative border-b border-border-light px-8 py-16 text-center">
         
         <div className="relative z-10 mx-auto max-w-2xl">
-          <div className="flex items-center justify-center gap-2 text-dark-text">
-            <BookOpen className="h-5 w-5" />
+          <div className="flex items-center justify-center text-dark-text">
             <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
           </div>
           <Divider className="my-5" />

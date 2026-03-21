@@ -15,8 +15,7 @@ export function DashboardNav() {
   return (
     <header className="border-b border-border-light bg-white px-8 py-4">
       <div className="mx-auto flex max-w-5xl items-center justify-between">
-        <Link to="/dashboard" className="flex items-center gap-2 text-dark-text">
-          <BookOpen className="h-5 w-5" />
+        <Link to="/dashboard" className="text-dark-text">
           <span className="font-playfair text-lg font-semibold">Mission Memory Vault</span>
         </Link>
 
