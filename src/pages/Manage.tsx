@@ -257,6 +257,7 @@ export default function Manage() {
                 submission={submission}
                 onApprove={isLocked ? undefined : (_id) => handleApprove(submission.id)}
                 onReject={isLocked ? undefined : (_id) => handleReject(submission.id)}
+                onDelete={() => handleDelete(submission.id)}
                 readonly={isLocked}
               />
             ))}

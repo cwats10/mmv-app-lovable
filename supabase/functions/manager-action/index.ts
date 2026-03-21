@@ -137,6 +137,20 @@ serve(async (req) => {
       return ok({ success: true });
     }
 
+    // ── delete ───────────────────────────────────────────────────────────────
+    if (action === 'delete') {
+      if (!submission_id) return err('submission_id is required');
+
+      const { error: deleteErr } = await supabase
+        .from('submissions')
+        .delete()
+        .eq('id', submission_id)
+        .eq('vault_id', vault.id);
+
+      if (deleteErr) throw deleteErr;
+      return ok({ success: true });
+    }
+
     return err(`Unknown action: ${action}`);
   } catch (e: unknown) {
     return err((e as Error).message ?? 'Internal server error', 500);
