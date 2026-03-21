@@ -34,22 +34,19 @@ export function ManagerShareWidget({ managerToken }: ManagerShareWidgetProps) {
         </div>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <div
-          className="flex-1 px-4 py-3 text-sm font-space-mono text-[#555555] overflow-hidden"
+          className="min-w-0 flex-1 px-4 py-3 text-sm font-space-mono text-[#555555] truncate"
           style={{
             backgroundColor: '#ffffff',
             border: '1px solid #e0deda',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
           }}
         >
           {url}
         </div>
         <button
           onClick={copy}
-          className="flex items-center gap-2 px-4 py-3 text-sm font-inter transition-colors"
+          className="flex shrink-0 items-center justify-center gap-2 px-4 py-3 text-sm font-inter transition-colors"
           style={{
             backgroundColor: copied ? '#222222' : 'transparent',
             color: copied ? '#ffffff' : '#222222',
