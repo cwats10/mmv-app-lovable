@@ -29,7 +29,7 @@ export default function VaultDetail() {
   const { user, profile } = useAuth();
   const { updateVault, deleteVault } = useVaults(user?.id);
   const { book } = useBook(id);
-  const { pending, approved, rejected, submissions } = useSubmissions(id);
+  const { pending, approved, rejected, submissions, deleteSubmission } = useSubmissions(id);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
