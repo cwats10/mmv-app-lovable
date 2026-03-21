@@ -91,7 +91,7 @@ export default function VaultDetail() {
       </div>
 
       {/* Compact stats row */}
-      <div className="mt-6 grid grid-cols-4 gap-3">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           { label: 'Total', value: submissions.length },
           { label: 'Pending', value: pending.length },
