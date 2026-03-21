@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { BookOpen, Home, Gift, LogOut } from 'lucide-react';
+import { Home, Gift, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const links = [
