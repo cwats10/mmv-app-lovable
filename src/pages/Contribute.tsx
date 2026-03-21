@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { SubmissionForm } from '@/components/submission/SubmissionForm';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
@@ -11,10 +11,12 @@ import { useSubmissions } from '@/hooks/useSubmissions';
 
 export default function Contribute() {
   const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
   const [vault, setVault] = useState<Vault | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [countdown, setCountdown] = useState(5);
 
   const { submitContribution } = useSubmissions(vault?.id);
 
@@ -31,6 +33,13 @@ export default function Contribute() {
         setLoading(false);
       });
   }, [token]);
+
+  useEffect(() => {
+    if (!submitted) return;
+    if (countdown <= 0) { navigate('/'); return; }
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [submitted, countdown, navigate]);
 
   async function handleSubmit(data: Parameters<typeof submitContribution>[0]) {
     await submitContribution(data);
@@ -69,6 +78,9 @@ export default function Contribute() {
           Your memory has been received and will be reviewed for inclusion in{' '}
           <strong>{vault.missionary_name}</strong>'s Memory Book.
           This is a gift that will last generations.
+        </p>
+        <p className="mt-6 font-space-mono text-xs text-muted-text">
+          Redirecting to the home page in <span className="font-semibold text-dark-text">{countdown}</span> second{countdown !== 1 ? 's' : ''}…
         </p>
       </div>
     );
