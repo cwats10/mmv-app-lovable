@@ -12,6 +12,7 @@ import { useVault, useVaults } from '@/hooks/useVaults';
 import { useBook } from '@/hooks/useBook';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { useAuth } from '@/hooks/useAuth';
+import { MessageBank } from '@/components/dashboard/MessageBank';
 import { formatServiceDates } from '@/lib/utils';
 import { ChevronRight, Eye, X, Settings, Trash2 } from 'lucide-react';
 import {
