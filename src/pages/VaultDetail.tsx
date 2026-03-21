@@ -15,7 +15,7 @@ import { useSubmissions } from '@/hooks/useSubmissions';
 import { useAuth } from '@/hooks/useAuth';
 import { MessageBank } from '@/components/dashboard/MessageBank';
 import { formatServiceDates } from '@/lib/utils';
-import { ChevronRight, Eye, X, Settings, Trash2 } from 'lucide-react';
+import { ChevronRight, Eye, X, Settings, Trash2, Trash } from 'lucide-react';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
