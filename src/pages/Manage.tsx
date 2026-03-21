@@ -87,6 +87,16 @@ export default function Manage() {
     }
   }
 
+  async function handleDelete(submissionId: string) {
+    setActionError('');
+    try {
+      await callManager({ action: 'delete', submission_id: submissionId });
+      await loadSubmissions();
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : 'Something went wrong.');
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f4f2ef' }}>
