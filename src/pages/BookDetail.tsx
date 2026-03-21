@@ -56,22 +56,22 @@ export default function BookDetail() {
   return (
     <AppShell>
       {/* Breadcrumb */}
-      <div className="mb-6 flex items-center gap-2 font-inter text-sm text-muted-text">
+      <div className="mb-6 flex flex-wrap items-center gap-2 font-inter text-sm text-muted-text">
         <Link to="/dashboard" className="hover:text-dark-text">Vaults</Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <Link to={`/vault/${vaultId}`} className="hover:text-dark-text">{vault.missionary_name}</Link>
+        <Link to={`/vault/${vaultId}`} className="hover:text-dark-text truncate max-w-[120px] sm:max-w-none">{vault.missionary_name}</Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="text-dark-text">Book</span>
       </div>
 
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <PageTag>Memory Book</PageTag>
-          <h1 className="mt-1 font-playfair text-3xl font-semibold text-dark-text">{vault.missionary_name}</h1>
+          <h1 className="mt-1 font-playfair text-2xl font-semibold text-dark-text sm:text-3xl">{vault.missionary_name}</h1>
           <p className="font-inter text-sm text-muted-text">{vault.mission_name}</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <BookStatusBadge status={book.status} />
           {approved.length > 0 && (
             <HeirloomButton variant="ghost" size="sm" onClick={() => setPreviewOpen(true)}>
@@ -111,7 +111,7 @@ export default function BookDetail() {
       )}
 
       {/* Filter tabs */}
-      <div className="mb-6 flex">
+      <div className="mb-6 flex flex-wrap">
         {(['all', 'pending', 'approved', 'rejected'] as FilterTab[]).map((t) => {
           const counts = {
             all: submissions.length,
@@ -123,12 +123,11 @@ export default function BookDetail() {
             <button
               key={t}
               onClick={() => setFilter(t)}
-              className="px-4 py-2 font-space-mono text-xs uppercase tracking-wider transition-colors"
+              className="px-3 py-2 font-space-mono text-[10px] uppercase tracking-wider transition-colors sm:px-4 sm:text-xs"
               style={{
                 backgroundColor: filter === t ? '#222222' : 'transparent',
                 color: filter === t ? '#ffffff' : '#555555',
                 border: '1px solid #e0deda',
-                borderRight: t !== 'rejected' ? 'none' : '1px solid #e0deda',
               }}
             >
               {t} ({counts[t]})
@@ -162,7 +161,7 @@ export default function BookDetail() {
 
       {/* Pinned purchase bar */}
       {!isLocked && (
-        <div className="fixed bottom-0 left-0 right-0 flex items-center justify-between border-t border-border-light bg-white px-8 py-4">
+        <div className="fixed bottom-0 left-0 right-0 flex flex-col gap-2 border-t border-border-light bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-4">
           <div>
             <p className="font-inter text-sm text-dark-text">
               {approved.length} approved {approved.length !== 1 ? 'stories' : 'story'}
@@ -173,7 +172,7 @@ export default function BookDetail() {
               </p>
             )}
           </div>
-          <HeirloomButton onClick={() => setPurchaseOpen(true)}>
+          <HeirloomButton onClick={() => setPurchaseOpen(true)} className="w-full sm:w-auto">
             <MapPin className="mr-1.5 h-4 w-4" /> Purchase & Print
           </HeirloomButton>
         </div>

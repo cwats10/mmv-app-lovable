@@ -263,7 +263,7 @@ export function MessageBank({ vaults, profile }: Props) {
   else if (activeTab === 'referrals') messages = referralMessages[platform];
 
   return (
-    <div className="bg-warm-surface border border-border p-6 rounded-sm">
+    <div className="bg-warm-surface border border-border p-4 rounded-sm sm:p-6">
       <div className="flex items-center gap-2 mb-6">
         <MessageSquare size={15} strokeWidth={1.5} className="text-[#555555]" />
         <PageTag>Message Bank</PageTag>
@@ -274,12 +274,12 @@ export function MessageBank({ vaults, profile }: Props) {
       </p>
 
       {/* Main tabs */}
-      <div className="flex gap-0 mb-6" style={{ borderBottom: '1px solid #e0deda' }}>
+      <div className="flex flex-wrap gap-0 mb-6" style={{ borderBottom: '1px solid #e0deda' }}>
         {mainTabs.map(({ id, label }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className="font-space-mono text-xs uppercase tracking-widest px-5 py-2.5 transition-colors"
+            className="font-space-mono text-[10px] uppercase tracking-widest px-3 py-2 transition-colors sm:text-xs sm:px-5 sm:py-2.5"
             style={{
               color: activeTab === id ? '#222222' : '#555555',
               background: 'none',

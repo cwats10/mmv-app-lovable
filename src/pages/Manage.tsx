@@ -150,8 +150,8 @@ export default function Manage() {
         style={{ backgroundColor: '#f4f2ef', borderBottom: '1px solid #e0deda' }}
       >
         <GridOverlay />
-        <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 flex flex-col">
-          <div className="flex items-center gap-2 mb-8">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-8 sm:px-6 sm:py-12 flex flex-col">
+          <div className="flex items-center gap-2 mb-6 sm:mb-8">
             <Users size={16} strokeWidth={1.5} className="text-[#555555]" />
             <span className="font-space-mono text-xs text-[#555555] uppercase tracking-widest">
               Manager View
@@ -161,7 +161,7 @@ export default function Manage() {
           <PageTag className="block mb-4">Submission Review</PageTag>
 
           <h1
-            className="font-playfair text-4xl sm:text-5xl font-normal text-[#222222]"
+            className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-normal text-[#222222]"
             style={{ lineHeight: 1.1, letterSpacing: '-0.02em' }}
           >
             {vault.mission_name || `${vault.missionary_name}'s Mission`}
@@ -169,7 +169,7 @@ export default function Manage() {
 
           <Divider className="my-6" />
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-[#555555]" style={{ lineHeight: 1.8 }}>
               You have been invited to help review memories for{' '}
               <strong className="text-[#222222] font-medium">{vault.missionary_name}</strong>.
@@ -180,7 +180,7 @@ export default function Manage() {
 
             {/* Permission reminder */}
             <div
-              className="ml-8 flex-shrink-0 px-4 py-3 text-xs font-space-mono text-[#555555] uppercase tracking-widest"
+              className="flex-shrink-0 px-4 py-3 text-xs font-space-mono text-[#555555] uppercase tracking-widest"
               style={{ border: '1px solid #e0deda', backgroundColor: '#ffffff', lineHeight: 1.6 }}
             >
               Can: Approve · Reject<br />
@@ -211,20 +211,19 @@ export default function Manage() {
       )}
 
       {/* Submission list */}
-      <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 sm:py-10">
 
         {/* Filter tabs */}
-        <div className="flex gap-0 mb-6">
+        <div className="flex flex-wrap gap-0 mb-6">
           {(['all', 'pending', 'approved', 'rejected'] as FilterTab[]).map((t) => (
             <button
               key={t}
               onClick={() => setFilter(t)}
-              className="px-4 py-2 text-xs font-space-mono uppercase tracking-wider transition-colors"
+              className="px-3 py-2 text-[10px] font-space-mono uppercase tracking-wider transition-colors sm:px-4 sm:text-xs"
               style={{
                 backgroundColor: filter === t ? '#222222' : '#ffffff',
                 color: filter === t ? '#ffffff' : '#555555',
                 border: '1px solid #e0deda',
-                borderRight: t !== 'rejected' ? 'none' : '1px solid #e0deda',
               }}
             >
               {t} ({counts[t]})

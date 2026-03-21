@@ -22,9 +22,9 @@ export function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-bg">
+    <div className="flex min-h-screen flex-col bg-stone-bg overflow-x-hidden">
       <DashboardNav />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">{children}</main>
     </div>
   );
 }
