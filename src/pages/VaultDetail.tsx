@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
+import { ManagerShareWidget } from '@/components/vault/ManagerShareWidget';
 import { VaultCover } from '@/components/vault/VaultCover';
 import { BookStatusBadge } from '@/components/book/BookStatusBadge';
 import { BookSpread } from '@/components/book/BookSpread';
