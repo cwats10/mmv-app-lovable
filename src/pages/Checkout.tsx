@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
-import { BookOpen, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 export default function Checkout() {
   const [searchParams] = useSearchParams();
