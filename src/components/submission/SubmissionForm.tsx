@@ -207,12 +207,12 @@ export function SubmissionForm({ vaultId, missionaryName, bookSize = '10x10', pa
           value={form.message}
           onChange={(e) => set('message', e.target.value)}
           rows={6}
-          maxLength={2000}
+          maxLength={charLimit}
           className="w-full resize-none border border-border-light bg-white px-4 py-3 font-inter text-sm text-dark-text outline-none"
           placeholder={`Share a memory, story, or message for ${missionaryName}…`}
         />
-        <p className="mt-1 text-right font-space-mono text-[10px] text-muted-text">
-          {charCount} / 2000
+        <p className={`mt-1 text-right font-space-mono text-[10px] ${charCount > charLimit * 0.9 ? 'text-red-500' : 'text-muted-text'}`}>
+          {charCount.toLocaleString()} / {charLimit.toLocaleString()}
         </p>
       </div>
 
