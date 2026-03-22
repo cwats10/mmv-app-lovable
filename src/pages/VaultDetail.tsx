@@ -219,8 +219,8 @@ export default function VaultDetail() {
                       if (vault.book_size !== size) {
                         try {
                           await updateSingleVault({ book_size: size });
-                        } catch (e) {
-                          console.error('Failed to update vault', e);
+                        } catch {
+                          toast.error('Failed to update book size.');
                         }
                       }
                     }}

@@ -42,8 +42,8 @@ export default function Admin() {
         .select('*, vaults(missionary_name, mission_name)')
         .order('created_at', { ascending: false });
       setBooks((data as unknown as AdminBook[]) || []);
-    } catch (err) {
-      console.error(err);
+    } catch {
+      toast.error('Failed to trigger print pipeline.');
     } finally {
       setTriggeringId(null);
     }
