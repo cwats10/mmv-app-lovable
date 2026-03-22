@@ -84,6 +84,13 @@ export default function Dashboard() {
           onCreate={createVault}
         />
       )}
+
+      {showTour && (
+        <OnboardingTour
+          onComplete={dismissTour}
+          onCreateVault={() => setShowCreate(true)}
+        />
+      )}
     </AppShell>
   );
 }
