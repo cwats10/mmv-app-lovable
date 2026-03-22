@@ -62,7 +62,7 @@ function ImageArea({ submission, layout }: { submission: Submission; layout?: Pa
 function FullImageCaptionPage({ submission, layout }: { submission: Submission; layout: PageLayout }) {
   return (
     <div className="flex h-full flex-col">
-      <div className="relative flex-1 overflow-hidden" style={{ flexBasis: '78%' }}>
+      <div className="relative min-h-0 flex-1 overflow-hidden" style={{ flexBasis: '78%' }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
       <div className="flex flex-col gap-1 p-3" style={{ flexBasis: '22%' }}>
@@ -84,7 +84,7 @@ function ImageTopTextBottomPage({ submission, layout }: { submission: Submission
 
   return (
     <div className="flex h-full flex-col">
-      <div className="relative overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
+      <div className="relative min-h-0 overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
       <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
@@ -116,7 +116,7 @@ function TextTopImageBottomPage({ submission, layout }: { submission: Submission
           <ContributorFooter submission={submission} />
         </div>
       </div>
-      <div className="relative flex-1 overflow-hidden">
+      <div className="relative min-h-0 flex-1 overflow-hidden">
         <ImageArea submission={submission} layout={layout} />
       </div>
     </div>
@@ -130,7 +130,7 @@ function SideBySideLeftPage({ submission, layout }: { submission: Submission; la
 
   return (
     <div className="flex h-full flex-row">
-      <div className="relative overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
+      <div className="relative min-h-0 overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
       <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
@@ -162,7 +162,7 @@ function SideBySideRightPage({ submission, layout }: { submission: Submission; l
         </div>
         <ContributorFooter submission={submission} />
       </div>
-      <div className="relative flex-1 overflow-hidden">
+      <div className="relative min-h-0 flex-1 overflow-hidden">
         <ImageArea submission={submission} layout={layout} />
       </div>
     </div>
@@ -300,7 +300,7 @@ export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover
     <div className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden border border-border-light bg-white shadow-xl">
       {submission ? (
         <div className="flex h-full flex-col">
-          <div className="flex-1 overflow-hidden">
+          <div className="min-h-0 flex-1 overflow-y-auto">
             <ContributorPage submission={submission} layout={layout} />
           </div>
           {pageNumber && (
