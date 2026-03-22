@@ -171,8 +171,17 @@ export default function BookDetail() {
                 {pending.length} pending review
               </p>
             )}
+            {approved.length === 0 && (
+              <p className="font-space-mono text-[10px] text-red-600">
+                Approve at least one submission before purchasing.
+              </p>
+            )}
           </div>
-          <HeirloomButton onClick={() => setPurchaseOpen(true)} className="w-full sm:w-auto">
+          <HeirloomButton
+            onClick={() => setPurchaseOpen(true)}
+            disabled={approved.length === 0}
+            className="w-full sm:w-auto"
+          >
             <MapPin className="mr-1.5 h-4 w-4" /> Purchase & Print
           </HeirloomButton>
         </div>
@@ -213,6 +222,7 @@ export default function BookDetail() {
         onClose={() => setPurchaseOpen(false)}
         book={book}
         vault={vault}
+        approvedCount={approved.length}
       />
     </AppShell>
   );
