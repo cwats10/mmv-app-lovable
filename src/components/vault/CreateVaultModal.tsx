@@ -49,6 +49,7 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
         vault_type: form.vault_type,
         cover_theme: form.cover_theme,
         contributor_page_allowance: form.contributor_page_allowance,
+        book_size: form.book_size,
       });
       onClose();
     } finally {
