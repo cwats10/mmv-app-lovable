@@ -300,7 +300,7 @@ export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover
     <div className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden border border-border-light bg-white shadow-xl">
       {submission ? (
         <div className="flex h-full flex-col">
-          <div className="flex-1 overflow-hidden">
+          <div className="min-h-0 flex-1 overflow-y-auto">
             <ContributorPage submission={submission} layout={layout} />
           </div>
           {pageNumber && (
