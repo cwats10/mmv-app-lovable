@@ -228,6 +228,7 @@ export default function VaultDetail() {
         </div>
       )}
 
+      <Tabs defaultValue="sharing" className="mt-8">
         <TabsList className="grid w-full grid-cols-3 bg-muted h-auto">
           <TabsTrigger value="sharing" className="gap-1.5 font-inter text-xs sm:text-sm px-2 py-2">
             <Share2 className="h-3.5 w-3.5 hidden sm:inline-block" /> Sharing
