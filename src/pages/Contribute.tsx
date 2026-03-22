@@ -116,6 +116,7 @@ export default function Contribute() {
         <SubmissionForm
           vaultId={vault.id}
           missionaryName={vault.missionary_name}
+          bookSize={(vault.book_size as '10x10' | '12x12') ?? '10x10'}
           pageAllowance={vault.contributor_page_allowance ?? 1}
           onSubmit={handleSubmit}
         />

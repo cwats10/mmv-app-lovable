@@ -42,6 +42,7 @@ const RELATIONS = [
 interface SubmissionFormProps {
   vaultId: string;
   missionaryName: string;
+  bookSize?: '10x10' | '12x12';
   pageAllowance?: 1 | 2;
   onSubmit: (data: {
     vault_id: string;
