@@ -65,10 +65,12 @@ function FullImageCaptionPage({ submission, layout }: { submission: Submission; 
       <div className="relative flex-1 overflow-hidden" style={{ flexBasis: '78%' }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
-      <div className="flex flex-col gap-1 p-4" style={{ flexBasis: '22%' }}>
-        <p className="font-inter text-xs leading-relaxed text-muted-text line-clamp-3">
-          {submission.message}
-        </p>
+      <div className="flex flex-col gap-1 p-3" style={{ flexBasis: '22%' }}>
+        <div className="flex-1 overflow-y-auto">
+          <p className="font-inter text-xs leading-relaxed text-muted-text">
+            {submission.message}
+          </p>
+        </div>
         <ContributorFooter submission={submission} />
       </div>
     </div>
