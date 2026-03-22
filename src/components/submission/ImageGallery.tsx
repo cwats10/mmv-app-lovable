@@ -23,14 +23,7 @@ export function ImageGallery({ imageUrls, className = '', imagePosition = 'cente
   const backgroundStyle = { objectPosition };
 
   const renderImageCell = (url: string, key: number | string, extraClassName = '') => (
-    <div key={key} className={`relative min-h-0 overflow-hidden bg-muted/20 ${extraClassName}`}>
-      <img
-        src={url}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full scale-105 object-cover opacity-15 blur-xl"
-        style={backgroundStyle}
-      />
+    <div key={key} className={`relative min-h-0 overflow-hidden bg-white ${extraClassName}`}>
       <div className="relative flex h-full w-full min-h-0 items-center justify-center p-1">
         <img
           src={url}
