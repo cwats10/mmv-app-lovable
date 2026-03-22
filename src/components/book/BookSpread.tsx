@@ -107,15 +107,15 @@ function TextTopImageBottomPage({ submission, layout }: { submission: Submission
   const align = layout.textAlignment ?? 'left';
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex flex-col overflow-y-auto p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex flex-col overflow-hidden p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
         <Divider className="my-1" variant="brand" />
-        <p className="font-inter text-xs leading-relaxed text-muted-text">
-          {submission.message}
-        </p>
-        <div className="mt-auto">
-          <ContributorFooter submission={submission} />
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <p className="font-inter text-xs leading-relaxed text-muted-text">
+            {submission.message}
+          </p>
         </div>
+        <ContributorFooter submission={submission} />
       </div>
       <div className="relative min-h-0 flex-1 overflow-hidden">
         <ImageArea submission={submission} layout={layout} />
