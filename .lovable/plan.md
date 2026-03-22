@@ -1,28 +1,19 @@
 
 
-## Fix Image Collapse While Keeping Text/Space Improvements
+## Fix: Contributor name/relation getting cut off on book pages
 
-### Root cause
-The image containers inside flex layouts collapse because of a common flexbox issue: flex children default to `min-height: auto`, which can cause unpredictable sizing when combined with `overflow-hidden`. The images have `h-full w-full object-cover` but their parent containers don't reliably resolve a height, so images shrink to zero or get clipped.
+### Problem
+The `ContributorFooter` (name + relationship) is being clipped at the bottom of pages — particularly visible on the right page of a two-page spread. The text area uses `overflow-y-auto` or `overflow-hidden` and the footer has no guaranteed minimum space, so when the message text is long, the footer gets pushed out of view.
 
-### Changes
+### Solution
+Ensure the `ContributorFooter` never gets pushed out by making the message text area shrinkable while the footer remains fixed:
 
-**`src/components/book/BookSpread.tsx`**:
-- Add `min-h-0` to the image container divs in all templates — this is the standard flexbox fix that allows flex children to shrink below their content size while still filling available space
-- Add `h-full` explicitly to image container wrappers so the ImageGallery receives a resolved height
-- On the single-page outer wrapper (line 303), change `overflow-hidden` to `overflow-y-auto min-h-0` so images aren't clipped but text can still scroll
+1. **`ContributorFooter`** — add `shrink-0` (flex-shrink: 0) so it never collapses.
 
-**`src/components/submission/ImageGallery.tsx`**:
-- Add `min-h-0` to the root containers so flex-based gallery layouts don't collapse
-- Ensure each `<img>` has explicit `min-h-0` to prevent flex collapse
+2. **All template layouts** (`ImageTopTextBottomPage`, `TextTopImageBottomPage`, `SideBySideLeftPage`, `SideBySideRightPage`, `TextOnlyPage`, `FullImageCaptionPage`) — restructure the text section so:
+   - The message `<p>` is inside a `min-h-0 flex-1 overflow-y-auto` container (it scrolls/clips if too long).
+   - The `ContributorFooter` sits outside that scrollable area with `flex-shrink-0`, guaranteeing it's always visible.
 
-### What stays the same
-- `object-cover` on images (fills frame, no letterboxing)
-- Reduced padding (`p-3`, `p-4`)
-- `overflow-y-auto` on text containers
-- 45% default split ratio
-
-### Files to change
-- `src/components/book/BookSpread.tsx`
-- `src/components/submission/ImageGallery.tsx`
+### File changed
+- `src/components/book/BookSpread.tsx` — add `shrink-0` to `ContributorFooter` wrapper and ensure each template wraps the message in a scrollable flex-1 div while keeping the footer pinned.
 
