@@ -737,47 +737,40 @@ async function drawContentPage(
 function drawBackCover(
   page: PDFPage,
   pagePt: number,
-  safePt: number,
-  contSize: number,
+  _safePt: number,
+  _contSize: number,
   fonts: FontSet,
-  missionaryName: string,
+  _missionaryName: string,
+  coverTheme: 'light' | 'dark' = 'dark',
 ) {
-  fillBackground(page, pagePt, C.cream);
-  drawCreamGrid(page, pagePt, safePt, contSize);
+  const isLight = coverTheme === 'light';
+  const bgColor = isLight ? C.cream : C.dark;
+  const textColor = isLight ? C.dark : C.cream;
 
-  const cx   = safePt;
-  const cTop = pagePt - safePt;
+  fillBackground(page, pagePt, bgColor);
 
-  // Centred vertical alignment
+  const cx = pagePt / 2;
   const centerY = pagePt / 2;
 
-  drawRule(page, cx, centerY + 40, contSize, C.light, 0.5);
-
-  page.drawText('Memory Vault', {
-    x    : cx + contSize / 2 - fonts.serif.widthOfTextAtSize('Memory Vault', 22) / 2,
-    y    : centerY + 12,
-    size : 22,
-    font : fonts.serif,
-    color: C.dark,
-  });
-  page.drawText('Heirloom Memory Books', {
-    x    : cx + contSize / 2 - fonts.mono.widthOfTextAtSize('Heirloom Memory Books', 8) / 2,
-    y    : centerY - 6,
-    size : 8,
-    font : fonts.mono,
-    color: C.mid,
+  // "Mission Memory Vault" centered
+  const brandText = 'Mission Memory Vault';
+  const brandSize = 18;
+  const brandW = fonts.serif.widthOfTextAtSize(brandText, brandSize);
+  page.drawText(brandText, {
+    x: cx - brandW / 2,
+    y: centerY + 10,
+    size: brandSize,
+    font: fonts.serif,
+    color: textColor,
   });
 
-  drawRule(page, cx, centerY - 20, contSize, C.light, 0.5);
-
-  const tagline = `A collection of memories for ${missionaryName}`;
-  const tagW    = fonts.mono.widthOfTextAtSize(tagline, 7.5);
-  page.drawText(tagline, {
-    x    : cx + contSize / 2 - tagW / 2,
-    y    : safePt + 20,
-    size : 7.5,
-    font : fonts.mono,
-    color: C.light,
+  // Gold divider
+  const lineW = pagePt * 0.2;
+  page.drawLine({
+    start: { x: cx - lineW / 2, y: centerY - 4 },
+    end: { x: cx + lineW / 2, y: centerY - 4 },
+    thickness: 0.75,
+    color: C.gold,
   });
 }
 
