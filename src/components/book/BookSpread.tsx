@@ -116,7 +116,7 @@ function TextTopImageBottomPage({ submission, layout }: { submission: Submission
           <ContributorFooter submission={submission} />
         </div>
       </div>
-      <div className="relative flex-1 overflow-hidden">
+      <div className="relative min-h-0 flex-1 overflow-hidden">
         <ImageArea submission={submission} layout={layout} />
       </div>
     </div>
