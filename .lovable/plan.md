@@ -1,28 +1,26 @@
 
 
-## Fix Page Content: Text Cutoff, Wasted Space, Image Cropping
+## Fix Image Collapse While Keeping Text/Space Improvements
 
-### Root Causes
-
-1. **Text cutoff**: Page templates use `overflow-hidden` on the outer container, and text has no scroll or size adaptation — long messages get clipped silently.
-
-2. **Excessive white space**: Padding values (`p-5`, `p-8`) and divider margins are sized for a large printed page but render in a small on-screen preview, wasting proportionally too much space.
-
-3. **Images not fully visible**: `ImageGallery` uses `object-contain` (correct for showing full images) but the image containers are constrained by rigid flex ratios (55% image / 45% text) that don't leave enough room. The image area gets clipped by `overflow-hidden`.
+### Root cause
+The image containers inside flex layouts collapse because of a common flexbox issue: flex children default to `min-height: auto`, which can cause unpredictable sizing when combined with `overflow-hidden`. The images have `h-full w-full object-cover` but their parent containers don't reliably resolve a height, so images shrink to zero or get clipped.
 
 ### Changes
 
-**`src/components/book/BookSpread.tsx`** — all page template functions:
-- Reduce padding: `p-5` → `p-3`, `p-8` → `p-4`
-- Reduce divider margins: `my-4` → `my-1`, `my-2` → `my-1`
-- Add `overflow-y-auto` to text containers so long messages scroll instead of being cut off
-- Change default image/text split ratio from `0.55` to `0.45` to give more room to text
-- In `TextOnlyPage`, remove the duplicate quoted excerpt that wastes space
-- In `FullImageCaptionPage`, remove `line-clamp-3` so text isn't artificially truncated
+**`src/components/book/BookSpread.tsx`**:
+- Add `min-h-0` to the image container divs in all templates — this is the standard flexbox fix that allows flex children to shrink below their content size while still filling available space
+- Add `h-full` explicitly to image container wrappers so the ImageGallery receives a resolved height
+- On the single-page outer wrapper (line 303), change `overflow-hidden` to `overflow-y-auto min-h-0` so images aren't clipped but text can still scroll
 
 **`src/components/submission/ImageGallery.tsx`**:
-- Change `object-contain` to `object-cover` so images fill their containers without letterboxing (the current approach leaves large beige gaps around images)
-- This matches what users expect from a printed book — images fill the frame
+- Add `min-h-0` to the root containers so flex-based gallery layouts don't collapse
+- Ensure each `<img>` has explicit `min-h-0` to prevent flex collapse
+
+### What stays the same
+- `object-cover` on images (fills frame, no letterboxing)
+- Reduced padding (`p-3`, `p-4`)
+- `overflow-y-auto` on text containers
+- 45% default split ratio
 
 ### Files to change
 - `src/components/book/BookSpread.tsx`
