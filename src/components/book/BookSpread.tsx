@@ -133,9 +133,9 @@ function SideBySideLeftPage({ submission, layout }: { submission: Submission; la
       <div className="relative overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
-      <div className="flex flex-1 flex-col justify-between p-5" style={{ textAlign: align }}>
+      <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
         <div>
-          <Divider className="my-2" />
+          <Divider className="my-1" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
