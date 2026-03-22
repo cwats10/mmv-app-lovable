@@ -222,6 +222,7 @@ export default function BookDetail() {
         onClose={() => setPurchaseOpen(false)}
         book={book}
         vault={vault}
+        approvedCount={approved.length}
       />
     </AppShell>
   );
