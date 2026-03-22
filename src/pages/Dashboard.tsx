@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Plus, BookOpen } from 'lucide-react';
+import { Plus, BookOpen, Archive } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultCard } from '@/components/vault/VaultCard';
 import { CreateVaultModal } from '@/components/vault/CreateVaultModal';
