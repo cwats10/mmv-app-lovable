@@ -22,7 +22,7 @@ export function resolveLayout(submission?: Submission): PageLayout {
 /** Contributor attribution footer */
 function ContributorFooter({ submission }: { submission: Submission }) {
   return (
-    <div className="border-t border-primary pt-2">
+    <div className="shrink-0 border-t border-primary pt-2">
       <p className="font-playfair text-sm font-semibold text-dark-text">
         {submission.contributor_name}
       </p>
@@ -61,13 +61,13 @@ function ImageArea({ submission, layout }: { submission: Submission; layout?: Pa
 /** Full-bleed image with a caption bar at the bottom */
 function FullImageCaptionPage({ submission, layout }: { submission: Submission; layout: PageLayout }) {
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1 overflow-hidden" style={{ flexBasis: '78%' }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
       <Divider className="mx-3 my-1" variant="brand" />
-      <div className="flex flex-col gap-1 px-3 pb-3" style={{ flexBasis: '22%' }}>
-        <div className="flex-1 overflow-y-auto">
+      <div className="flex shrink-0 flex-col gap-1 px-3 pb-3" style={{ maxHeight: '22%' }}>
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -84,13 +84,13 @@ function ImageTopTextBottomPage({ submission, layout }: { submission: Submission
   const align = layout.textAlignment ?? 'left';
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col overflow-hidden">
       <div className="relative min-h-0 overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
-      <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
-        <div>
-          <Divider className="my-1" variant="brand" />
+      <div className="flex min-h-0 flex-1 flex-col p-3" style={{ textAlign: align }}>
+        <Divider className="my-1" variant="brand" />
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -107,15 +107,15 @@ function TextTopImageBottomPage({ submission, layout }: { submission: Submission
   const align = layout.textAlignment ?? 'left';
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex flex-col overflow-y-auto p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex flex-col overflow-hidden p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
         <Divider className="my-1" variant="brand" />
-        <p className="font-inter text-xs leading-relaxed text-muted-text">
-          {submission.message}
-        </p>
-        <div className="mt-auto">
-          <ContributorFooter submission={submission} />
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <p className="font-inter text-xs leading-relaxed text-muted-text">
+            {submission.message}
+          </p>
         </div>
+        <ContributorFooter submission={submission} />
       </div>
       <div className="relative min-h-0 flex-1 overflow-hidden">
         <ImageArea submission={submission} layout={layout} />
@@ -130,13 +130,13 @@ function SideBySideLeftPage({ submission, layout }: { submission: Submission; la
   const align = layout.textAlignment ?? 'left';
 
   return (
-    <div className="flex h-full flex-row">
+    <div className="flex h-full flex-row overflow-hidden">
       <div className="relative min-h-0 overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
-      <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
-        <div>
-          <Divider className="my-1" variant="brand" />
+      <div className="flex min-h-0 flex-1 flex-col p-3" style={{ textAlign: align }}>
+        <Divider className="my-1" variant="brand" />
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -153,10 +153,10 @@ function SideBySideRightPage({ submission, layout }: { submission: Submission; l
   const align = layout.textAlignment ?? 'left';
 
   return (
-    <div className="flex h-full flex-row">
-      <div className="flex flex-col justify-between overflow-y-auto p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
-        <div>
-          <Divider className="my-1" variant="brand" />
+    <div className="flex h-full flex-row overflow-hidden">
+      <div className="flex min-h-0 flex-col p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
+        <Divider className="my-1" variant="brand" />
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -175,9 +175,9 @@ function TextOnlyPage({ submission, layout }: { submission: Submission; layout: 
   const align = layout.textAlignment ?? 'left';
 
   return (
-    <div className="flex h-full flex-col justify-between p-4" style={{ textAlign: align }}>
-      <div className="flex-1 overflow-y-auto">
-        <Divider className="my-1" variant="brand" />
+    <div className="flex h-full flex-col overflow-hidden p-4" style={{ textAlign: align }}>
+      <Divider className="my-1" variant="brand" />
+      <div className="min-h-0 flex-1 overflow-y-auto">
         <p className="font-inter text-sm leading-relaxed text-muted-text">
           {submission.message}
         </p>
