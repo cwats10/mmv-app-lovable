@@ -10,6 +10,7 @@ const Contribute = lazy(() => import('@/pages/Contribute'));
 const Checkout = lazy(() => import('@/pages/Checkout'));
 const Referral = lazy(() => import('@/pages/Referral'));
 const Admin = lazy(() => import('@/pages/Admin'));
+const Manage = lazy(() => import('@/pages/Manage'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 function PageLoader() {
