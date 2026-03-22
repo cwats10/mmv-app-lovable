@@ -17,7 +17,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { MessageBank } from '@/components/dashboard/MessageBank';
 import { formatServiceDates } from '@/lib/utils';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { ChevronRight, Eye, X, Settings, Trash2, Share2, MessageSquare } from 'lucide-react';
+import { ChevronRight, Eye, X, Settings, Trash2, Share2, MessageSquare, Check, Circle, Mail } from 'lucide-react';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -150,6 +150,81 @@ export default function VaultDetail() {
               You have ${(profile as any).reward_balance} in rewards to apply
             </p>
           )}
+        </div>
+      )}
+
+      {/* Order Status Timeline */}
+      {book && ['purchased', 'printing', 'delivered', 'disputed'].includes(book.status) && (
+        <div className="mt-4 border border-border bg-card px-4 py-5 sm:px-6">
+          <PageTag>Order Status</PageTag>
+
+          <div className="mt-4 flex items-start gap-0">
+            {([
+              { key: 'purchased', label: 'Order Placed' },
+              { key: 'generating', label: 'Generating PDF' },
+              { key: 'printing', label: 'Sent to Printer' },
+              { key: 'shipped', label: 'Shipped' },
+              { key: 'delivered', label: 'Delivered' },
+            ] as const).map((step, i, arr) => {
+              const statusOrder = ['purchased', 'generating', 'printing', 'shipped', 'delivered'];
+              const currentIdx = book.status === 'delivered' ? 4
+                : book.status === 'printing' ? (book.pdf_url ? 2 : 1)
+                : 0;
+              const done = i <= currentIdx;
+              const active = i === currentIdx;
+
+              return (
+                <div key={step.key} className="flex flex-1 flex-col items-center text-center">
+                  {/* Dot + connector */}
+                  <div className="flex w-full items-center">
+                    {i > 0 && (
+                      <div
+                        className="h-0.5 flex-1 transition-colors"
+                        style={{ backgroundColor: done ? '#2b2b2a' : '#e0deda' }}
+                      />
+                    )}
+                    <div
+                      className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full transition-colors"
+                      style={{
+                        backgroundColor: done ? '#2b2b2a' : '#f4f1ec',
+                        border: done ? 'none' : '1.5px solid #e0deda',
+                      }}
+                    >
+                      {done ? (
+                        <Check className="h-3 w-3 text-white" strokeWidth={2.5} />
+                      ) : (
+                        <Circle className="h-2 w-2 text-muted-foreground" />
+                      )}
+                    </div>
+                    {i < arr.length - 1 && (
+                      <div
+                        className="h-0.5 flex-1 transition-colors"
+                        style={{ backgroundColor: i < currentIdx ? '#2b2b2a' : '#e0deda' }}
+                      />
+                    )}
+                  </div>
+                  <span
+                    className="mt-1.5 font-space-mono text-[9px] uppercase tracking-wider sm:text-[10px]"
+                    style={{ color: done ? '#2b2b2a' : '#999' }}
+                  >
+                    {step.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-inter text-xs text-muted-foreground">
+              Estimated delivery: 2–3 weeks from purchase
+            </p>
+            <a
+              href="mailto:support@missionmemoryvault.com"
+              className="inline-flex items-center gap-1 font-inter text-xs text-muted-foreground underline transition-colors hover:text-foreground"
+            >
+              <Mail className="h-3 w-3" /> Contact Support
+            </a>
+          </div>
         </div>
       )}
 
