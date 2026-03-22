@@ -12,14 +12,15 @@ interface VaultCoverProps {
 
 export function VaultCover({ missionaryName, theme, className, bleedSafe }: VaultCoverProps) {
   const isLight = theme === 'light';
+  const bg = isLight ? '#f4f1ec' : '#2b2b2a';
 
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-2 -mt-[5%]',
+        'flex h-full w-full flex-col items-center justify-center gap-2',
         className
       )}
-      style={{ backgroundColor: isLight ? '#f4f1ec' : '#2b2b2a' }}
+      style={{ backgroundColor: bg }}
     >
       <img
         src={isLight ? logoDark : logoLight}
@@ -28,7 +29,7 @@ export function VaultCover({ missionaryName, theme, className, bleedSafe }: Vaul
       />
       <p
         className="font-playfair text-base font-medium tracking-wide"
-        style={{ color: isLight ? '#2b2b2a' : '#f4f1ec' }}
+        style={{ color: '#c9a96e' }}
       >
         {missionaryName}
       </p>
