@@ -62,7 +62,16 @@ export default function Auth() {
       }
       navigate('/dashboard');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      const msg = err instanceof Error ? err.message : '';
+      if (/already registered/i.test(msg)) {
+        setError('An account with this email already exists. Try signing in instead.');
+      } else if (/invalid login credentials/i.test(msg)) {
+        setError('Incorrect email or password. Please try again.');
+      } else if (/email not confirmed/i.test(msg)) {
+        setError('Please check your email to confirm your account before signing in.');
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
