@@ -17,7 +17,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { MessageBank } from '@/components/dashboard/MessageBank';
 import { formatServiceDates } from '@/lib/utils';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { ChevronRight, Eye, X, Settings, Trash2, Share2, MessageSquare } from 'lucide-react';
+import { ChevronRight, Eye, X, Settings, Trash2, Share2, MessageSquare, Check, Circle, Mail } from 'lucide-react';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
