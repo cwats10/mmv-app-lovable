@@ -62,6 +62,7 @@ export function PageReorderList({ submissions, onReorder }: Props) {
     setSaving(true);
     try {
       await onReorder(items.map((s) => s.id));
+      prevIdsRef.current = items.map(s => s.id).join(',');
     } finally {
       setSaving(false);
     }
