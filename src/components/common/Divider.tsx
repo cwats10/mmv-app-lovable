@@ -1,9 +1,18 @@
 import { cn } from '@/lib/utils';
 
-export function Divider({ className }: { className?: string }) {
+interface DividerProps {
+  className?: string;
+  variant?: 'default' | 'brand';
+}
+
+export function Divider({ className, variant = 'default' }: DividerProps) {
   return (
     <hr
-      className={cn('border-t border-border-light', className)}
+      className={cn(
+        'border-t',
+        variant === 'brand' ? 'border-primary' : 'border-border-light',
+        className,
+      )}
     />
   );
 }

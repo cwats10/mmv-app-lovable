@@ -89,7 +89,7 @@ function ImageTopTextBottomPage({ submission, layout }: { submission: Submission
       </div>
       <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
         <div>
-          <Divider className="my-1" />
+          <Divider className="my-1" variant="brand" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -108,7 +108,7 @@ function TextTopImageBottomPage({ submission, layout }: { submission: Submission
   return (
     <div className="flex h-full flex-col">
       <div className="flex flex-col overflow-y-auto p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
-        <Divider className="my-1" />
+        <Divider className="my-1" variant="brand" />
         <p className="font-inter text-xs leading-relaxed text-muted-text">
           {submission.message}
         </p>
@@ -135,7 +135,7 @@ function SideBySideLeftPage({ submission, layout }: { submission: Submission; la
       </div>
       <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
         <div>
-          <Divider className="my-1" />
+          <Divider className="my-1" variant="brand" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -155,7 +155,7 @@ function SideBySideRightPage({ submission, layout }: { submission: Submission; l
     <div className="flex h-full flex-row">
       <div className="flex flex-col justify-between overflow-y-auto p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
         <div>
-          <Divider className="my-1" />
+          <Divider className="my-1" variant="brand" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -176,7 +176,7 @@ function TextOnlyPage({ submission, layout }: { submission: Submission; layout: 
   return (
     <div className="flex h-full flex-col justify-between p-4" style={{ textAlign: align }}>
       <div className="flex-1 overflow-y-auto">
-        <Divider className="my-1" />
+        <Divider className="my-1" variant="brand" />
         <p className="font-inter text-sm leading-relaxed text-muted-text">
           {submission.message}
         </p>
