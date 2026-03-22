@@ -994,12 +994,14 @@ serve(async (req) => {
 
     if (uploadErr) throw new Error(`Storage upload failed: ${uploadErr.message}`);
 
-    const { data: urlData } = supabase.storage
+    const { data: signedData, error: signedErr } = await supabase.storage
       .from('book-pdfs')
-      .getPublicUrl(fileName);
+      .createSignedUrl(fileName, 7200); // 2-hour expiry for print pipeline
+
+    if (signedErr) throw new Error(`Failed to create signed URL: ${signedErr.message}`);
 
     const result = {
-      pdf_url    : urlData.publicUrl,
+      pdf_url    : signedData.signedUrl,
       page_count : payload.pages.length + 2,  // cover + content + back cover
     };
 
