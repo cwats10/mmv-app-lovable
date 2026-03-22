@@ -207,6 +207,36 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
           </p>
         </div>
 
+        {/* Book dimensions */}
+        <div className="mb-6">
+          <label className="mb-2 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+            Book Size
+          </label>
+          <div className="flex">
+            {(['10x10', '12x12'] as const).map((size) => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, book_size: size }))}
+                className="flex-1 py-2.5 font-inter text-sm transition-colors"
+                style={{
+                  backgroundColor: form.book_size === size ? '#2b2b2a' : 'transparent',
+                  color: form.book_size === size ? '#fefefe' : '#555555',
+                  border: '1px solid #e0deda',
+                  borderRight: size === '10x10' ? 'none' : '1px solid #e0deda',
+                }}
+              >
+                {size === '10x10' ? '10×10 in' : '12×12 in'}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 font-inter text-[11px] text-muted-text">
+            {form.book_size === '10x10'
+              ? '10×10 inch — compact format, $10 less per book.'
+              : '12×12 inch — larger premium format.'}
+          </p>
+        </div>
+
         <HeirloomButton type="submit" loading={loading} className="w-full">
           Create Vault
         </HeirloomButton>
