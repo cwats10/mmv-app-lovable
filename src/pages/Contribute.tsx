@@ -89,7 +89,7 @@ export default function Contribute() {
   return (
     <div className="min-h-screen bg-stone-bg">
       {/* Book-style header */}
-      <section className="relative border-b border-border-light px-8 py-16 text-center">
+      <section className="relative border-b border-border-light px-4 py-10 text-center sm:px-8 sm:py-16">
         
         <div className="relative z-10 mx-auto max-w-2xl">
           <div className="flex items-center justify-center text-dark-text">
@@ -97,7 +97,7 @@ export default function Contribute() {
           </div>
           <Divider className="my-5" />
           <PageTag>You've been invited to contribute</PageTag>
-          <h1 className="mt-3 font-playfair text-3xl font-semibold text-dark-text">
+          <h1 className="mt-3 font-playfair text-2xl font-semibold text-dark-text sm:text-3xl">
             {vault.mission_name || `${vault.missionary_name}'s Mission`}
           </h1>
           <p className="mt-3 font-inter text-sm text-muted-text">
@@ -109,7 +109,7 @@ export default function Contribute() {
       </section>
 
       {/* Form */}
-      <section className="mx-auto max-w-xl px-6 py-12">
+      <section className="mx-auto max-w-xl px-4 py-8 sm:px-6 sm:py-12">
         <PageTag>Your Contribution</PageTag>
         <h2 className="mt-2 font-playfair text-2xl font-semibold text-dark-text">Share your memory</h2>
         <Divider className="my-5" />

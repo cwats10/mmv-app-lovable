@@ -64,7 +64,7 @@ export default function Landing() {
   return (
     <PublicShell>
       {/* Hero */}
-      <section className="relative px-8 py-24 text-center bg-white">
+      <section className="relative px-4 py-16 text-center bg-white sm:px-8 sm:py-24">
         <img
           src={worldMap}
           alt=""
@@ -74,7 +74,7 @@ export default function Landing() {
         <GridOverlay />
         <div className="relative z-10 mx-auto max-w-3xl">
           
-          <h1 className="mt-4 font-playfair text-4xl font-semibold leading-tight text-dark-text md:text-5xl lg:text-6xl">
+          <h1 className="mt-4 font-playfair text-3xl font-semibold leading-tight text-dark-text sm:text-4xl md:text-5xl lg:text-6xl">
             Your child served.{' '}
             <em className="font-normal italic">The world felt it.</em>{' '}
             Now hold it forever.
@@ -93,7 +93,7 @@ export default function Landing() {
       </section>
 
       {/* Book Preview */}
-      <section className="px-8 py-16">
+      <section className="px-4 py-10 sm:px-8 sm:py-16">
         <div className="mx-auto max-w-4xl">
           <PageTag className="mb-4 block text-center">Museum-Grade Printed Book, 100% Heirloom Quality</PageTag>
           <BookSpread vault={DEMO_VAULT} submission={DEMO_SUBMISSION} isCover />
@@ -101,7 +101,7 @@ export default function Landing() {
       </section>
 
       {/* How It Works */}
-      <section className="px-8 py-16">
+      <section className="px-4 py-10 sm:px-8 sm:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <PageTag>How It Works</PageTag>
           <h2 className="mt-3 font-playfair text-3xl font-semibold text-dark-text">
@@ -127,7 +127,7 @@ export default function Landing() {
       <TestimonialCarousel />
 
       {/* Pricing */}
-      <section className="px-8 py-16">
+      <section className="px-4 py-10 sm:px-8 sm:py-16">
         <div className="mx-auto max-w-4xl text-center">
           <PageTag>Pricing</PageTag>
           <h2 className="mt-3 font-playfair text-3xl font-semibold text-dark-text">
@@ -137,11 +137,11 @@ export default function Landing() {
             Create your vault and collect stories for free. Purchase your book when you're ready, and we'll deliver a printed keepsake along with a digital PDF copy.
           </p>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="mt-8 grid gap-6 sm:grid-cols-2">
             {/* Standard */}
             <div className="border border-border-light bg-white p-8 text-left">
               <PageTag>Standard</PageTag>
-              <p className="mt-2 font-playfair text-5xl font-semibold text-dark-text">$149</p>
+              <p className="mt-2 font-playfair text-4xl font-semibold text-dark-text sm:text-5xl">$149</p>
               <Divider className="my-5" />
               <p className="font-inter text-sm text-muted-text">
                 High-quality hardcover print
@@ -172,7 +172,7 @@ export default function Landing() {
                 Client's Choice
               </span>
               <PageTag className="text-stone-400">Heirloom</PageTag>
-              <p className="mt-2 font-playfair text-5xl font-semibold text-white">$449</p>
+              <p className="mt-2 font-playfair text-4xl font-semibold text-white sm:text-5xl">$449</p>
               <Divider className="my-5 border-white/20" />
               <p className="font-inter text-sm text-stone-300">
                 Vegan leather or fabric layflat book
@@ -205,7 +205,7 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="px-8 py-24 text-center">
+      <section className="px-4 py-16 text-center sm:px-8 sm:py-24">
         <div className="mx-auto max-w-2xl">
           <PageTag>Begin Today</PageTag>
           <h2 className="mt-3 font-playfair text-3xl font-semibold text-dark-text md:text-4xl">
