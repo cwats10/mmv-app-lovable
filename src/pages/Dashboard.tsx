@@ -34,21 +34,29 @@ export default function Dashboard() {
       <Divider className="my-8" />
 
       {loading ? (
-        <div className="py-20 text-center">
-          <p className="font-inter text-sm text-muted-text">Loading…</p>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="border border-border-light bg-white p-6 space-y-4">
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          ))}
         </div>
       ) : vaults.length === 0 ? (
-        <div className="mx-auto max-w-md py-20 text-center">
-          <BookOpen className="mx-auto h-12 w-12 text-border-light" />
-          <PageTag className="mt-4 block">No Vaults Yet</PageTag>
-          <h2 className="mt-2 font-playfair text-2xl font-semibold text-dark-text">
-            Create Your First Vault
+        <div className="mx-auto max-w-md py-20 text-center border border-border-light bg-white p-10">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-stone-bg">
+            <Archive className="h-8 w-8 text-muted-text" />
+          </div>
+          <h2 className="mt-6 font-playfair text-2xl font-semibold text-dark-text">
+            Start Your First Memory Vault
           </h2>
-          <p className="mt-2 font-inter text-sm text-muted-text">
-            A vault holds all the memories gathered for your missionary. Share the link and watch the stories arrive.
+          <p className="mt-3 font-inter text-sm leading-relaxed text-muted-text">
+            Create a vault to start collecting memories, stories, and photos from family and friends.
           </p>
-          <HeirloomButton onClick={() => setShowCreate(true)} size="lg" className="mt-6">
-            Create a Vault
+          <HeirloomButton onClick={() => setShowCreate(true)} size="lg" className="mt-8">
+            <Plus className="mr-1.5 h-4 w-4" /> Create Vault
           </HeirloomButton>
         </div>
       ) : (
