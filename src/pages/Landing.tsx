@@ -24,6 +24,7 @@ const DEMO_VAULT: Vault = {
   cover_image_url: null,
   cover_theme: 'dark',
   manager_token: null,
+  book_size: '12x12',
 };
 
 const DEMO_SUBMISSION: Submission = {

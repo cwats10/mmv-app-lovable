@@ -136,7 +136,7 @@ export function PagePreview({
       <div className="mx-auto overflow-hidden border border-border-light bg-white shadow-lg"
         style={{
           width: 280,
-          aspectRatio: '1 / 1.3',
+          aspectRatio: '1 / 1',
         }}
       >
         <div className="h-full w-full overflow-hidden">
