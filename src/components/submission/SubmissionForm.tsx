@@ -66,6 +66,7 @@ export function SubmissionForm({ vaultId, missionaryName, bookSize = '10x10', pa
   const [pageLayout, setPageLayout] = useState<PageLayout>({ template: 'image-top-text-bottom' });
   const [page2Layout, setPage2Layout] = useState<PageLayout>({ template: 'text-only' });
   const [activePage, setActivePage] = useState<1 | 2>(1);
+  const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
