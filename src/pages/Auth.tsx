@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
+import { ErrorBanner } from '@/components/common/ErrorBanner';
 import { Divider } from '@/components/common/Divider';
 
 

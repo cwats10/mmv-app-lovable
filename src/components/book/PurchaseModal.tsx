@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { PageTag } from '@/components/common/PageTag';
+import { ErrorBanner } from '@/components/common/ErrorBanner';
 import { Divider } from '@/components/common/Divider';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { X, Minus, Plus } from 'lucide-react';

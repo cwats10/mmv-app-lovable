@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
+import { ErrorBanner } from '@/components/common/ErrorBanner';
 import { Divider } from '@/components/common/Divider';
 import { Eye, EyeOff } from 'lucide-react';
 
