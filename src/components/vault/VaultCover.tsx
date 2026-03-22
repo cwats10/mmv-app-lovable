@@ -15,24 +15,47 @@ export function VaultCover({ missionaryName, theme, className }: VaultCoverProps
   return (
     <div
       className={cn(
-        'flex h-full w-full flex-col items-center justify-center gap-4',
+        'flex h-full w-full flex-col items-center justify-between',
         className
       )}
       style={{ backgroundColor: bg }}
     >
-      <h1
-        className="text-4xl font-bold tracking-wide"
-        style={{ color: textColor, fontFamily: "'DM Serif Display', serif" }}
-      >
-        Mission Memory Vault
-      </h1>
-      <hr className="w-1/2 border-t" style={{ borderColor: '#E7D192' }} />
-      <p
-        className="text-base font-normal tracking-wide"
-        style={{ color: textColor, fontFamily: "'DM Serif Display', serif" }}
-      >
-        {missionaryName}
-      </p>
+      {/* Top section */}
+      <div className="flex flex-1 flex-col items-center justify-center gap-4">
+        {isLight ? (
+          <>
+            <p
+              className="text-base font-normal tracking-wide"
+              style={{ color: textColor, fontFamily: "'DM Serif Display', serif" }}
+            >
+              {missionaryName}
+            </p>
+            <hr className="w-1/2 border-t" style={{ borderColor: '#E7D192' }} />
+            <h1
+              className="text-4xl font-bold tracking-wide"
+              style={{ color: textColor, fontFamily: "'DM Serif Display', serif" }}
+            >
+              Mission Memory Vault
+            </h1>
+          </>
+        ) : (
+          <>
+            <h1
+              className="text-4xl font-bold tracking-wide"
+              style={{ color: textColor, fontFamily: "'DM Serif Display', serif" }}
+            >
+              Mission Memory Vault
+            </h1>
+            <hr className="w-1/2 border-t" style={{ borderColor: '#E7D192' }} />
+            <p
+              className="text-base font-normal tracking-wide"
+              style={{ color: textColor, fontFamily: "'DM Serif Display', serif" }}
+            >
+              {missionaryName}
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }
