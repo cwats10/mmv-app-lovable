@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Plus, BookOpen, Archive } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AppShell } from '@/components/layout/AppShell';
@@ -7,13 +7,24 @@ import { CreateVaultModal } from '@/components/vault/CreateVaultModal';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
 import { Divider } from '@/components/common/Divider';
+import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { useAuth } from '@/hooks/useAuth';
 import { useVaults } from '@/hooks/useVaults';
+
+const TOUR_DISMISSED_KEY = 'mmv_tour_dismissed';
 
 export default function Dashboard() {
   const { user, profile } = useAuth();
   const { vaults, loading, createVault } = useVaults(user?.id);
   const [showCreate, setShowCreate] = useState(false);
+  const [tourDismissed, setTourDismissed] = useState(() => !!localStorage.getItem(TOUR_DISMISSED_KEY));
+
+  const showTour = !loading && vaults.length === 0 && !tourDismissed;
+
+  const dismissTour = useCallback(() => {
+    localStorage.setItem(TOUR_DISMISSED_KEY, '1');
+    setTourDismissed(true);
+  }, []);
 
   return (
     <AppShell>
