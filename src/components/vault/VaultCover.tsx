@@ -21,7 +21,7 @@ export function VaultCover({ missionaryName, theme, className }: VaultCoverProps
       style={{ backgroundColor: bg }}
     >
       <h1
-        className="text-3xl font-bold tracking-wide"
+        className="text-4xl font-bold tracking-wide"
         style={{ color: textColor, fontFamily: "'DM Serif Display', serif" }}
       >
         Mission Memory Vault
