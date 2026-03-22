@@ -36,8 +36,8 @@ const DEMO_SUBMISSION: Submission = {
   relation: 'Mother',
   message: 'We missed you every single day. But we knew you were exactly where you were meant to be. The letters you sent home were read aloud at Sunday dinner. Your little sister has memorized the one you wrote about the family you baptized in Sendai.',
   media_urls: [
-    'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=600',
-    'https://images.unsplash.com/photo-1544465544-1b71aee9dfa3?auto=format&fit=crop&q=80&w=600',
+    '/demo-family.jpg',
+    '/demo-mission.jpg',
   ],
   status: 'approved',
 };
