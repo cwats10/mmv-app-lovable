@@ -172,7 +172,7 @@ export default function Landing() {
                 Client's Choice
               </span>
               <PageTag className="text-stone-400">Heirloom</PageTag>
-              <p className="mt-2 font-playfair text-5xl font-semibold text-white">$449</p>
+              <p className="mt-2 font-playfair text-4xl font-semibold text-white sm:text-5xl">$449</p>
               <Divider className="my-5 border-white/20" />
               <p className="font-inter text-sm text-stone-300">
                 Vegan leather or fabric layflat book
