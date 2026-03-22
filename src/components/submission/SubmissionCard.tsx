@@ -3,6 +3,17 @@ import type { Submission } from '@/types';
 import { PageTag } from '@/components/common/PageTag';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { Check, X, Clock, Trash } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface SubmissionCardProps {
   submission: Submission;
@@ -21,6 +32,20 @@ export function SubmissionCard({ submission, bookId, onApprove, onReject, onDele
     approved: 'border-emerald-200 bg-emerald-50',
     rejected: 'border-red-100 bg-red-50',
   };
+
+  async function handleReject() {
+    if (!onReject) return;
+    setActing('rejecting');
+    await onReject(submission.id);
+    setActing(null);
+  }
+
+  async function handleDelete() {
+    if (!onDelete) return;
+    setActing('deleting');
+    await onDelete(submission.id);
+    setActing(null);
+  }
 
   return (
     <div className={`border ${statusColors[submission.status]} p-5`}>
@@ -72,28 +97,56 @@ export function SubmissionCard({ submission, bookId, onApprove, onReject, onDele
           >
             Approve
           </HeirloomButton>
-          <HeirloomButton
-            variant="danger"
-            size="sm"
-            loading={acting === 'rejecting'}
-            onClick={async () => { setActing('rejecting'); await onReject(submission.id); setActing(null); }}
-          >
-            Reject
-          </HeirloomButton>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <HeirloomButton variant="danger" size="sm" loading={acting === 'rejecting'}>
+                Reject
+              </HeirloomButton>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reject submission?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to reject this submission from{' '}
+                  <strong>{submission.contributor_name}</strong>? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleReject}>Yes, reject</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
 
       {/* Delete */}
       {onDelete && (
         <div className="mt-3 flex justify-end">
-          <button
-            disabled={acting === 'deleting'}
-            onClick={async () => { setActing('deleting'); await onDelete(submission.id); setActing(null); }}
-            className="flex items-center gap-1 text-xs font-inter text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
-          >
-            <Trash className="h-3 w-3" />
-            {acting === 'deleting' ? 'Deleting…' : 'Delete'}
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button
+                disabled={acting === 'deleting'}
+                className="flex items-center gap-1 text-xs font-inter text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
+              >
+                <Trash className="h-3 w-3" />
+                {acting === 'deleting' ? 'Deleting…' : 'Delete'}
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete submission?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete this submission from{' '}
+                  <strong>{submission.contributor_name}</strong>? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>Yes, delete</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
     </div>
