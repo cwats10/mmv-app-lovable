@@ -1,9 +1,14 @@
 import { useState, useRef } from 'react';
 import { Upload, X, BookOpen } from 'lucide-react';
+import { toast } from 'sonner';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTemplatePicker } from '@/components/submission/PageTemplatePicker';
 import { supabase } from '@/integrations/supabase/client';
 import type { PageLayout, PageTemplate } from '@/types';
+
+const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_TOTAL_SIZE = 25 * 1024 * 1024; // 25 MB
 
 /** Character limits by template and book size (based on 12pt / 4mm font at 10×10 or 12×12 inches) */
 const CHAR_LIMITS: Record<string, Record<PageTemplate, number>> = {
@@ -76,6 +81,29 @@ export function SubmissionForm({ vaultId, missionaryName, bookSize = '10x10', pa
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
+
+    // Validate file types
+    const unsupported = files.filter((f) => !ACCEPTED_TYPES.includes(f.type));
+    if (unsupported.length > 0) {
+      toast.error('Unsupported file type. Please upload JPG, PNG, WebP, or HEIC images only.');
+      return;
+    }
+
+    // Validate individual file sizes
+    const oversized = files.filter((f) => f.size > MAX_FILE_SIZE);
+    if (oversized.length > 0) {
+      toast.error('Each photo must be under 10MB.');
+      return;
+    }
+
+    // Validate total combined size
+    const existingSize = 0; // We can't track existing sizes after upload, so validate new batch
+    const batchSize = files.reduce((sum, f) => sum + f.size, 0);
+    if (batchSize > MAX_TOTAL_SIZE) {
+      toast.error('Total upload size must be under 25MB.');
+      return;
+    }
+
     setUploading(true);
 
     const uploaded: { url: string; name: string }[] = [];
@@ -221,7 +249,7 @@ export function SubmissionForm({ vaultId, missionaryName, bookSize = '10x10', pa
         <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
           Photos (optional, up to 6)
         </label>
-        <input type="file" ref={fileRef} className="hidden" accept="image/*" multiple onChange={handlePhotoUpload} />
+        <input type="file" ref={fileRef} className="hidden" accept=".jpg,.jpeg,.png,.webp,.heic" multiple onChange={handlePhotoUpload} />
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
