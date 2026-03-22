@@ -906,12 +906,57 @@ async function buildPdf(payload: GoldenPayload): Promise<Uint8Array> {
   const coverPage = pdfDoc.addPage([pagePt, pagePt]);
   await drawCoverPage(coverPage, pagePt, safePt, contSize, pdfDoc, fonts, payload);
 
-  // ── Content pages (skip page_number === 1 — that's the cover) ────────────────
+  // ── Content pages (skip cover; handle 2-page spreads) ─────────────────────
   const contentPages = payload.pages.filter((p) => p.template_type !== 'cover');
-  for (let i = 0; i < contentPages.length; i++) {
-    const pg   = contentPages[i];
-    const page = pdfDoc.addPage([pagePt, pagePt]);
-    await drawContentPage(page, pagePt, safePt, contSize, pdfDoc, fonts, pg, i + 2);
+  let pageNum = 2;
+  for (const pg of contentPages) {
+    const spreadPage2 = (pg.page_layout as PageLayout & { spreadPage2?: PageLayout })?.spreadPage2 ?? null;
+
+    if (spreadPage2) {
+      // Split images between pages
+      const urls = pg.content.image_urls;
+      const page1Images = urls.length > 1 ? urls.slice(0, Math.ceil(urls.length / 2)) : urls;
+      const page2Images = urls.length > 1 ? urls.slice(Math.ceil(urls.length / 2)) : [];
+
+      // Split message text
+      const msg = pg.content.message;
+      const paragraphs = msg.split(/\n\n+/);
+      let msg1: string, msg2: string;
+      if (paragraphs.length >= 2) {
+        const mid = Math.ceil(paragraphs.length / 2);
+        msg1 = paragraphs.slice(0, mid).join('\n\n');
+        msg2 = paragraphs.slice(mid).join('\n\n');
+      } else {
+        const charMid = Math.ceil(msg.length / 2);
+        const spaceIdx = msg.indexOf(' ', charMid);
+        const breakAt = spaceIdx > -1 ? spaceIdx : charMid;
+        msg1 = msg.slice(0, breakAt);
+        msg2 = msg.slice(breakAt).trimStart();
+      }
+
+      // Page 1
+      const splitPg1: GoldenPage = {
+        ...pg,
+        content: { ...pg.content, message: msg1, image_urls: page1Images },
+      };
+      const p1 = pdfDoc.addPage([pagePt, pagePt]);
+      await drawContentPage(p1, pagePt, safePt, contSize, pdfDoc, fonts, splitPg1, pageNum);
+      pageNum++;
+
+      // Page 2
+      const splitPg2: GoldenPage = {
+        ...pg,
+        page_layout: spreadPage2,
+        content: { ...pg.content, message: msg2, image_urls: page2Images },
+      };
+      const p2 = pdfDoc.addPage([pagePt, pagePt]);
+      await drawContentPage(p2, pagePt, safePt, contSize, pdfDoc, fonts, splitPg2, pageNum);
+      pageNum++;
+    } else {
+      const page = pdfDoc.addPage([pagePt, pagePt]);
+      await drawContentPage(page, pagePt, safePt, contSize, pdfDoc, fonts, pg, pageNum);
+      pageNum++;
+    }
   }
 
   // ── Back cover ────────────────────────────────────────────────────────────────
