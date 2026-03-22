@@ -137,7 +137,22 @@ export default function VaultDetail() {
         </div>
       </div>
 
-      {/* Tabbed sections */}
+      {/* Pricing summary */}
+      {book && book.status === 'collecting' && (
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border border-border bg-card px-4 py-2.5">
+          <p className="font-inter text-xs text-muted-foreground">
+            {vault.book_size === '10x10'
+              ? 'Classic 10×10 — $149 · Heirloom 10×10 — $439'
+              : 'Classic 12×12 — $149 · Heirloom 12×12 — $449'}
+          </p>
+          {profile && (profile as any).reward_balance > 0 && (
+            <p className="font-inter text-xs font-medium text-emerald-600">
+              You have ${(profile as any).reward_balance} in rewards to apply
+            </p>
+          )}
+        </div>
+      )}
+
       <Tabs defaultValue="sharing" className="mt-8">
         <TabsList className="grid w-full grid-cols-3 bg-muted h-auto">
           <TabsTrigger value="sharing" className="gap-1.5 font-inter text-xs sm:text-sm px-2 py-2">
