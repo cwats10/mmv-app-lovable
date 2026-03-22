@@ -82,7 +82,7 @@ export function PagePreview({
         {/* Spread preview showing both pages */}
         <div
           className="mx-auto flex overflow-hidden border border-border-light bg-white shadow-lg"
-          style={{ width: 480, aspectRatio: '2 / 1.3' }}
+          style={{ width: 480, aspectRatio: '2 / 1' }}
         >
           {/* Page 1 */}
           <div
