@@ -12,6 +12,7 @@ const Referral = lazy(() => import('@/pages/Referral'));
 const Admin = lazy(() => import('@/pages/Admin'));
 const Manage = lazy(() => import('@/pages/Manage'));
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const Terms = lazy(() => import('@/pages/Terms'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 function PageLoader() {
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/referral" element={<Referral />} />
           <Route path="/manage/:token" element={<Manage />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
