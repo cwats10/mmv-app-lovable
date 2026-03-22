@@ -64,7 +64,7 @@ export default function Landing() {
   return (
     <PublicShell>
       {/* Hero */}
-      <section className="relative px-8 py-24 text-center bg-white">
+      <section className="relative px-4 py-16 text-center bg-white sm:px-8 sm:py-24">
         <img
           src={worldMap}
           alt=""
