@@ -31,11 +31,34 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    const trimmedEmail = form.email.trim();
+    const trimmedName = form.name.trim();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError('Please enter a valid email address.');
+      setLoading(false);
+      return;
+    }
+
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      setLoading(false);
+      return;
+    }
+
+    if (tab === 'signup' && !trimmedName) {
+      setError('Please enter your name.');
+      setLoading(false);
+      return;
+    }
+
     try {
       if (tab === 'signup') {
-        await signUp(form.email, form.password, form.name, form.referral || undefined);
+        await signUp(trimmedEmail, form.password, trimmedName, form.referral.trim() || undefined);
       } else {
-        await signIn(form.email, form.password);
+        await signIn(trimmedEmail, form.password);
       }
       navigate('/dashboard');
     } catch (err: unknown) {
