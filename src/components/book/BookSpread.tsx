@@ -300,7 +300,7 @@ export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover
 
   // ── Single page mode ────────────────────────────────────────────────────
   return (
-    <div className="relative mx-auto aspect-[1/1.3] w-full max-w-xl overflow-hidden border border-border-light bg-white shadow-xl">
+    <div className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden border border-border-light bg-white shadow-xl">
       {submission ? (
         <div className="flex h-full flex-col">
           <div className="flex-1 overflow-hidden">

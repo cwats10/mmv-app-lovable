@@ -24,6 +24,7 @@ export interface Vault {
   cover_theme: 'light' | 'dark';
   contributor_page_allowance?: 1 | 2;
   manager_token: string | null;
+  book_size: '10x10' | '12x12';
 }
 
 export interface Book {
