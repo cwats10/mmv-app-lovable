@@ -141,7 +141,7 @@ export default function Landing() {
             {/* Standard */}
             <div className="border border-border-light bg-white p-8 text-left">
               <PageTag>Standard</PageTag>
-              <p className="mt-2 font-playfair text-5xl font-semibold text-dark-text">$149</p>
+              <p className="mt-2 font-playfair text-4xl font-semibold text-dark-text sm:text-5xl">$149</p>
               <Divider className="my-5" />
               <p className="font-inter text-sm text-muted-text">
                 High-quality hardcover print
