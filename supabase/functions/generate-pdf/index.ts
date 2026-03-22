@@ -955,7 +955,7 @@ async function buildPdf(payload: GoldenPayload): Promise<Uint8Array> {
 
   // ── Back cover ────────────────────────────────────────────────────────────────
   const backPage = pdfDoc.addPage([pagePt, pagePt]);
-  drawBackCover(backPage, pagePt, safePt, contSize, fonts, payload.missionary_name);
+  drawBackCover(backPage, pagePt, safePt, contSize, fonts, payload.missionary_name, payload.cover_theme ?? 'dark');
 
   return pdfDoc.save();
 }
