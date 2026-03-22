@@ -29,7 +29,7 @@ export function VaultCover({ missionaryName, theme, className, bleedSafe }: Vaul
       />
       <p
         className="font-playfair text-base font-medium tracking-wide"
-        style={{ color: '#c9a96e' }}
+        style={{ color: isLight ? '#2b2b2a' : '#f4f1ec' }}
       >
         {missionaryName}
       </p>
