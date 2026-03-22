@@ -7,6 +7,7 @@ export interface Profile {
   stripe_customer_id: string | null;
   referral_code: string;
   referred_by: string | null;
+  reward_balance: number;
   is_admin: boolean;
 }
 
