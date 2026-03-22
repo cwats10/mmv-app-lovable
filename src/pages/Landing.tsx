@@ -74,7 +74,7 @@ export default function Landing() {
         <GridOverlay />
         <div className="relative z-10 mx-auto max-w-3xl">
           
-          <h1 className="mt-4 font-playfair text-4xl font-semibold leading-tight text-dark-text md:text-5xl lg:text-6xl">
+          <h1 className="mt-4 font-playfair text-3xl font-semibold leading-tight text-dark-text sm:text-4xl md:text-5xl lg:text-6xl">
             Your child served.{' '}
             <em className="font-normal italic">The world felt it.</em>{' '}
             Now hold it forever.
