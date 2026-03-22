@@ -296,7 +296,7 @@ export default function VaultDetail() {
 
       {/* Book preview modal */}
       {previewOpen && (
-        <div className="fixed inset-0 z-50 overflow-auto bg-foreground/95 p-8">
+        <div className="fixed inset-0 z-50 overflow-auto bg-foreground/95 p-4 sm:p-8">
           <div className="mx-auto max-w-5xl">
             <button
               onClick={() => setPreviewOpen(false)}

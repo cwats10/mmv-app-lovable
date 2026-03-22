@@ -109,7 +109,7 @@ export default function Contribute() {
       </section>
 
       {/* Form */}
-      <section className="mx-auto max-w-xl px-6 py-12">
+      <section className="mx-auto max-w-xl px-4 py-8 sm:px-6 sm:py-12">
         <PageTag>Your Contribution</PageTag>
         <h2 className="mt-2 font-playfair text-2xl font-semibold text-dark-text">Share your memory</h2>
         <Divider className="my-5" />

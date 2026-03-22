@@ -205,7 +205,7 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="px-8 py-24 text-center">
+      <section className="px-4 py-16 text-center sm:px-8 sm:py-24">
         <div className="mx-auto max-w-2xl">
           <PageTag>Begin Today</PageTag>
           <h2 className="mt-3 font-playfair text-3xl font-semibold text-dark-text md:text-4xl">
