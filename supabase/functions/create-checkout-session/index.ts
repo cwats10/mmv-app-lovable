@@ -109,9 +109,10 @@ serve(async (req) => {
     // ── Stripe Checkout session ─────────────────────────────────────────────
     const origin  = req.headers.get('origin') || Deno.env.get('SITE_URL') || 'http://localhost:5173';
     const session = await stripe.checkout.sessions.create({
-      customer    : customerId,
-      mode        : 'payment',
-      line_items  : lineItems,
+      customer      : customerId,
+      mode          : 'payment',
+      line_items    : lineItems,
+      automatic_tax : { enabled: true },
       ...(discounts ? { discounts } : {}),
       metadata    : {
         book_id,
