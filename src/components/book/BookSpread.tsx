@@ -153,9 +153,9 @@ function SideBySideRightPage({ submission, layout }: { submission: Submission; l
 
   return (
     <div className="flex h-full flex-row">
-      <div className="flex flex-col justify-between p-5" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
+      <div className="flex flex-col justify-between overflow-y-auto p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
         <div>
-          <Divider className="my-2" />
+          <Divider className="my-1" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
