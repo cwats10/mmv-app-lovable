@@ -470,8 +470,8 @@ async function drawContentPage(
   const cx   = safePt;
   const cTop = pagePt - safePt;
 
-  const BODY_SIZE   = 10.5;
-  const BODY_LH     = BODY_SIZE * 1.85;   // ~19.4pt — generous leading
+  const BODY_SIZE   = 12;             // 12pt ≈ 4mm — matches app char limits
+  const BODY_LH     = BODY_SIZE * 1.65; // ~19.8pt leading
   const PULL_SIZE   = 26;
   const PULL_LH     = PULL_SIZE * 1.25;
   const LABEL_SIZE  = 7;
