@@ -249,7 +249,7 @@ export function SubmissionForm({ vaultId, missionaryName, bookSize = '10x10', pa
         <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
           Photos (optional, up to 6)
         </label>
-        <input type="file" ref={fileRef} className="hidden" accept="image/*" multiple onChange={handlePhotoUpload} />
+        <input type="file" ref={fileRef} className="hidden" accept=".jpg,.jpeg,.png,.webp,.heic" multiple onChange={handlePhotoUpload} />
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
