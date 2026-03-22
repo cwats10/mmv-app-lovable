@@ -84,7 +84,7 @@ function ImageTopTextBottomPage({ submission, layout }: { submission: Submission
 
   return (
     <div className="flex h-full flex-col">
-      <div className="relative overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
+      <div className="relative min-h-0 overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
       <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
