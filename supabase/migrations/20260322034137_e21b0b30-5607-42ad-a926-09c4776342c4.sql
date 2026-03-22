@@ -1,0 +1,1 @@
+INSERT INTO storage.buckets (id, name, public) VALUES ('book-pdfs', 'book-pdfs', true) ON CONFLICT (id) DO NOTHING;

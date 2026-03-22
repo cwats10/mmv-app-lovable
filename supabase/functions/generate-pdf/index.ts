@@ -57,12 +57,13 @@ function dims(bookIn: number) {
 // ─── Colors ──────────────────────────────────────────────────────────────────
 
 const C = {
-  cream   : rgb(0.957, 0.949, 0.937),  // #f4f2ef
+  cream   : rgb(0.957, 0.945, 0.925),  // #f4f1ec
   white   : rgb(1,     1,     1    ),
-  dark    : rgb(0.133, 0.133, 0.133),  // #222222
+  dark    : rgb(0.169, 0.169, 0.165),  // #2b2b2a
   mid     : rgb(0.333, 0.333, 0.333),  // #555555
   light   : rgb(0.878, 0.871, 0.855),  // #e0deda
   warmGray: rgb(0.820, 0.812, 0.800),  // #d1cfcb
+  gold    : rgb(0.906, 0.820, 0.573),  // #E7D192
 };
 
 // ─── CORS ────────────────────────────────────────────────────────────────────
@@ -378,89 +379,67 @@ function drawImageGrid(
 async function drawCoverPage(
   page: PDFPage,
   pagePt: number,
-  safePt: number,
-  contSize: number,
+  _safePt: number,
+  _contSize: number,
   pdfDoc: PDFDocument,
   fonts: FontSet,
   payload: GoldenPayload,
 ) {
-  // Background — flood-fill entire page including bleed zone
-  fillBackground(page, pagePt, C.cream);
-  drawCreamGrid(page, pagePt, safePt, contSize);
+  const isLight = payload.cover_theme === 'light';
+  const bgColor = isLight ? C.cream : C.dark;
+  const textColor = isLight ? C.dark : C.cream;
 
-  const cx = safePt;            // content left
-  const cTop = pagePt - safePt; // content top (y-up)
+  // Flood-fill entire page (including bleed)
+  fillBackground(page, pagePt, bgColor);
 
-  // ── Top label ────────────────────────────────────────────────────────────────
-  drawLabel(page, 'Memory Vault · Heirloom Book', fonts.mono, cx, cTop - 10, C.mid);
-
-  // ── Thin rule below label ─────────────────────────────────────────────────────
-  drawRule(page, cx, cTop - 22, contSize, C.light, 0.5);
-
-  // ── Cover image (upper 54% of content height) ─────────────────────────────────
-  const imgH     = Math.round(contSize * 0.54);
-  const imgTop   = cTop - 36;
-  const imgBotY  = imgTop - imgH;  // bottom-left y for image box
-
-  if (payload.cover_image_url) {
-    const img = await embedImageFromUrl(pdfDoc, payload.cover_image_url);
-    if (img) {
-      // Clip to the image box by drawing image then overlaying a warm tint
-      const fit = scaleToFit(img, contSize, imgH, cx, imgBotY);
-      page.drawImage(img, fit);
-
-      // Warm sepia-tone overlay (semi-transparent cream rectangle)
-      page.drawRectangle({
-        x: fit.x, y: fit.y, width: fit.width, height: fit.height,
-        color: C.cream,
-        opacity: 0.18,
-      });
-    }
-  } else {
-    // Placeholder rectangle when no cover image
-    page.drawRectangle({
-      x: cx, y: imgBotY, width: contSize, height: imgH,
-      color: C.warmGray,
-    });
-    page.drawText('[ No Cover Image ]', {
-      x: cx + contSize / 2 - 60,
-      y: imgBotY + imgH / 2 - 5,
-      size: 10,
-      font: fonts.mono,
-      color: C.mid,
-    });
+  // Fetch DM Serif Display for cover
+  let coverFont: PDFFont = fonts.serif;
+  const dmSerifBytes = await fetchGoogleFont('DM Serif Display', 400);
+  if (dmSerifBytes) {
+    coverFont = await pdfDoc.embedFont(dmSerifBytes);
   }
 
-  // ── Thin rule below image ─────────────────────────────────────────────────────
-  drawRule(page, cx, imgBotY - 6, contSize, C.light, 0.5);
+  const cx = pagePt / 2; // centre x
 
-  // ── Missionary name (large Playfair) ──────────────────────────────────────────
-  const nameSize   = 44;
-  const nameY      = imgBotY - 6 - nameSize - 18;
-  const nameFit    = wrapText(payload.missionary_name, fonts.serif, nameSize, contSize);
-  let ny = nameY;
-  for (const line of nameFit) {
-    page.drawText(line, { x: cx, y: ny, size: nameSize, font: fonts.serif, color: C.dark });
-    ny -= nameSize * 1.15;
-  }
+  // ── "Mission Memory Vault" brand text ────────────────────────────────────
+  const brandText = 'Mission Memory Vault';
+  const brandSize = 44;
+  const brandW = coverFont.widthOfTextAtSize(brandText, brandSize);
+  const brandY = pagePt / 2 + 30;
 
-  // ── Mission name (Space Mono, smaller) ────────────────────────────────────────
-  const msnSize = 9.5;
-  const msnY    = ny - 18;
-  page.drawText(payload.mission_name.toUpperCase(), {
-    x: cx, y: msnY, size: msnSize, font: fonts.mono, color: C.mid,
+  page.drawText(brandText, {
+    x: cx - brandW / 2,
+    y: brandY,
+    size: brandSize,
+    font: coverFont,
+    color: textColor,
   });
 
-  // ── Service dates ─────────────────────────────────────────────────────────────
-  if (payload.service_dates) {
-    page.drawText(payload.service_dates, {
-      x: cx, y: msnY - 18, size: 8.5, font: fonts.mono, color: C.mid,
-    });
-  }
+  // ── Gold divider line ────────────────────────────────────────────────────
+  const lineW = pagePt * 0.35;
+  const lineY = brandY - 24;
+  page.drawLine({
+    start: { x: cx - lineW / 2, y: lineY },
+    end: { x: cx + lineW / 2, y: lineY },
+    thickness: 1,
+    color: C.gold,
+  });
 
-  // ── Bottom decorative rule ────────────────────────────────────────────────────
-  drawRule(page, cx, safePt + 14, contSize, C.light, 0.5);
-  drawLabel(page, 'A Collection of Memories · Service · Stories', fonts.mono, cx, safePt + 4, C.light);
+  // ── Missionary name ──────────────────────────────────────────────────────
+  const nameSize = 22;
+  const nameLines = wrapText(payload.missionary_name, coverFont, nameSize, pagePt * 0.7);
+  let nameY = lineY - 30;
+  for (const line of nameLines) {
+    const lineW2 = coverFont.widthOfTextAtSize(line, nameSize);
+    page.drawText(line, {
+      x: cx - lineW2 / 2,
+      y: nameY,
+      size: nameSize,
+      font: coverFont,
+      color: textColor,
+    });
+    nameY -= nameSize * 1.3;
+  }
 }
 
 // ─── Content pages ────────────────────────────────────────────────────────────
@@ -491,8 +470,8 @@ async function drawContentPage(
   const cx   = safePt;
   const cTop = pagePt - safePt;
 
-  const BODY_SIZE   = 10.5;
-  const BODY_LH     = BODY_SIZE * 1.85;   // ~19.4pt — generous leading
+  const BODY_SIZE   = 12;             // 12pt ≈ 4mm — matches app char limits
+  const BODY_LH     = BODY_SIZE * 1.65; // ~19.8pt leading
   const PULL_SIZE   = 26;
   const PULL_LH     = PULL_SIZE * 1.25;
   const LABEL_SIZE  = 7;
@@ -758,47 +737,40 @@ async function drawContentPage(
 function drawBackCover(
   page: PDFPage,
   pagePt: number,
-  safePt: number,
-  contSize: number,
+  _safePt: number,
+  _contSize: number,
   fonts: FontSet,
-  missionaryName: string,
+  _missionaryName: string,
+  coverTheme: 'light' | 'dark' = 'dark',
 ) {
-  fillBackground(page, pagePt, C.cream);
-  drawCreamGrid(page, pagePt, safePt, contSize);
+  const isLight = coverTheme === 'light';
+  const bgColor = isLight ? C.cream : C.dark;
+  const textColor = isLight ? C.dark : C.cream;
 
-  const cx   = safePt;
-  const cTop = pagePt - safePt;
+  fillBackground(page, pagePt, bgColor);
 
-  // Centred vertical alignment
+  const cx = pagePt / 2;
   const centerY = pagePt / 2;
 
-  drawRule(page, cx, centerY + 40, contSize, C.light, 0.5);
-
-  page.drawText('Memory Vault', {
-    x    : cx + contSize / 2 - fonts.serif.widthOfTextAtSize('Memory Vault', 22) / 2,
-    y    : centerY + 12,
-    size : 22,
-    font : fonts.serif,
-    color: C.dark,
-  });
-  page.drawText('Heirloom Memory Books', {
-    x    : cx + contSize / 2 - fonts.mono.widthOfTextAtSize('Heirloom Memory Books', 8) / 2,
-    y    : centerY - 6,
-    size : 8,
-    font : fonts.mono,
-    color: C.mid,
+  // "Mission Memory Vault" centered
+  const brandText = 'Mission Memory Vault';
+  const brandSize = 18;
+  const brandW = fonts.serif.widthOfTextAtSize(brandText, brandSize);
+  page.drawText(brandText, {
+    x: cx - brandW / 2,
+    y: centerY + 10,
+    size: brandSize,
+    font: fonts.serif,
+    color: textColor,
   });
 
-  drawRule(page, cx, centerY - 20, contSize, C.light, 0.5);
-
-  const tagline = `A collection of memories for ${missionaryName}`;
-  const tagW    = fonts.mono.widthOfTextAtSize(tagline, 7.5);
-  page.drawText(tagline, {
-    x    : cx + contSize / 2 - tagW / 2,
-    y    : safePt + 20,
-    size : 7.5,
-    font : fonts.mono,
-    color: C.light,
+  // Gold divider
+  const lineW = pagePt * 0.2;
+  page.drawLine({
+    start: { x: cx - lineW / 2, y: centerY - 4 },
+    end: { x: cx + lineW / 2, y: centerY - 4 },
+    thickness: 0.75,
+    color: C.gold,
   });
 }
 
@@ -820,6 +792,7 @@ interface PageLayout {
   customSplit?   : { direction: 'horizontal' | 'vertical'; ratio: number };
   imagePosition? : string;
   textAlignment? : 'left' | 'center' | 'right';
+  spreadPage2?   : PageLayout;
 }
 
 interface GoldenPage {
@@ -841,8 +814,9 @@ interface GoldenPayload {
   mission_name     : string;
   service_dates    : string;
   cover_image_url  : string;
+  cover_theme      : 'light' | 'dark';
   pages            : GoldenPage[];
-  book_inches?     : number;  // optional override; defaults to 11
+  book_inches?     : number;  // optional override; defaults to 12
 }
 
 /**
@@ -878,7 +852,7 @@ function resolveEffectivePosition(
 // ─── Main build function ──────────────────────────────────────────────────────
 
 async function buildPdf(payload: GoldenPayload): Promise<Uint8Array> {
-  const bookIn  = payload.book_inches ?? 11;
+  const bookIn  = payload.book_inches ?? 12;
   const { pagePt, safePt, contSize } = dims(bookIn);
 
   // ── Load fonts ────────────────────────────────────────────────────────────────
@@ -926,17 +900,62 @@ async function buildPdf(payload: GoldenPayload): Promise<Uint8Array> {
   const coverPage = pdfDoc.addPage([pagePt, pagePt]);
   await drawCoverPage(coverPage, pagePt, safePt, contSize, pdfDoc, fonts, payload);
 
-  // ── Content pages (skip page_number === 1 — that's the cover) ────────────────
+  // ── Content pages (skip cover; handle 2-page spreads) ─────────────────────
   const contentPages = payload.pages.filter((p) => p.template_type !== 'cover');
-  for (let i = 0; i < contentPages.length; i++) {
-    const pg   = contentPages[i];
-    const page = pdfDoc.addPage([pagePt, pagePt]);
-    await drawContentPage(page, pagePt, safePt, contSize, pdfDoc, fonts, pg, i + 2);
+  let pageNum = 2;
+  for (const pg of contentPages) {
+    const spreadPage2 = (pg.page_layout as PageLayout & { spreadPage2?: PageLayout })?.spreadPage2 ?? null;
+
+    if (spreadPage2) {
+      // Split images between pages
+      const urls = pg.content.image_urls;
+      const page1Images = urls.length > 1 ? urls.slice(0, Math.ceil(urls.length / 2)) : urls;
+      const page2Images = urls.length > 1 ? urls.slice(Math.ceil(urls.length / 2)) : [];
+
+      // Split message text
+      const msg = pg.content.message;
+      const paragraphs = msg.split(/\n\n+/);
+      let msg1: string, msg2: string;
+      if (paragraphs.length >= 2) {
+        const mid = Math.ceil(paragraphs.length / 2);
+        msg1 = paragraphs.slice(0, mid).join('\n\n');
+        msg2 = paragraphs.slice(mid).join('\n\n');
+      } else {
+        const charMid = Math.ceil(msg.length / 2);
+        const spaceIdx = msg.indexOf(' ', charMid);
+        const breakAt = spaceIdx > -1 ? spaceIdx : charMid;
+        msg1 = msg.slice(0, breakAt);
+        msg2 = msg.slice(breakAt).trimStart();
+      }
+
+      // Page 1
+      const splitPg1: GoldenPage = {
+        ...pg,
+        content: { ...pg.content, message: msg1, image_urls: page1Images },
+      };
+      const p1 = pdfDoc.addPage([pagePt, pagePt]);
+      await drawContentPage(p1, pagePt, safePt, contSize, pdfDoc, fonts, splitPg1, pageNum);
+      pageNum++;
+
+      // Page 2
+      const splitPg2: GoldenPage = {
+        ...pg,
+        page_layout: spreadPage2,
+        content: { ...pg.content, message: msg2, image_urls: page2Images },
+      };
+      const p2 = pdfDoc.addPage([pagePt, pagePt]);
+      await drawContentPage(p2, pagePt, safePt, contSize, pdfDoc, fonts, splitPg2, pageNum);
+      pageNum++;
+    } else {
+      const page = pdfDoc.addPage([pagePt, pagePt]);
+      await drawContentPage(page, pagePt, safePt, contSize, pdfDoc, fonts, pg, pageNum);
+      pageNum++;
+    }
   }
 
   // ── Back cover ────────────────────────────────────────────────────────────────
   const backPage = pdfDoc.addPage([pagePt, pagePt]);
-  drawBackCover(backPage, pagePt, safePt, contSize, fonts, payload.missionary_name);
+  drawBackCover(backPage, pagePt, safePt, contSize, fonts, payload.missionary_name, payload.cover_theme ?? 'dark');
 
   return pdfDoc.save();
 }
