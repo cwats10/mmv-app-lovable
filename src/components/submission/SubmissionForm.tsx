@@ -3,7 +3,35 @@ import { Upload, X, BookOpen } from 'lucide-react';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTemplatePicker } from '@/components/submission/PageTemplatePicker';
 import { supabase } from '@/integrations/supabase/client';
-import type { PageLayout } from '@/types';
+import type { PageLayout, PageTemplate } from '@/types';
+
+/** Character limits by template and book size (based on 12pt / 4mm font at 10×10 or 12×12 inches) */
+const CHAR_LIMITS: Record<string, Record<PageTemplate, number>> = {
+  '10x10': {
+    'text-only': 3800,
+    'image-top-text-bottom': 2000,
+    'text-top-image-bottom': 2000,
+    'side-by-side-left': 1900,
+    'side-by-side-right': 1900,
+    'full-image-caption': 1500,
+    'custom': 2000,
+  },
+  '12x12': {
+    'text-only': 5800,
+    'image-top-text-bottom': 3100,
+    'text-top-image-bottom': 3100,
+    'side-by-side-left': 2900,
+    'side-by-side-right': 2900,
+    'full-image-caption': 2200,
+    'custom': 3100,
+  },
+};
+
+function getCharLimit(bookSize: string, template: PageTemplate, pageAllowance: 1 | 2): number {
+  const sizeMap = CHAR_LIMITS[bookSize] || CHAR_LIMITS['10x10'];
+  const base = sizeMap[template] || sizeMap['text-only'];
+  return pageAllowance === 2 ? Math.round(base * 1.8) : base;
+}
 
 const RELATIONS = [
   'Mother', 'Father', 'Sister', 'Brother', 'Grandparent',
