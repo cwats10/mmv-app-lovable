@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import type { Profile } from '@/types';
 
 interface AuthState {
@@ -44,12 +45,20 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  async function fetchProfile(userId: string): Promise<Profile | null> {
-    const { data } = await supabase
+  async function fetchProfile(userId: string, retry = true): Promise<Profile | null> {
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .single();
+    if (error) {
+      if (retry) {
+        await new Promise((r) => setTimeout(r, 1000));
+        return fetchProfile(userId, false);
+      }
+      toast.error('Failed to load your profile. Please refresh the page.');
+      return null;
+    }
     return data as Profile | null;
   }
 
