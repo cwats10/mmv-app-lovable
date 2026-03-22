@@ -29,6 +29,7 @@ export function CreateVaultModal({ onClose, onCreate }: CreateVaultModalProps) {
     vault_type: 'post' as 'pre' | 'post',
     cover_theme: 'dark' as 'light' | 'dark',
     contributor_page_allowance: 1 as 1 | 2,
+    book_size: '12x12' as '10x10' | '12x12',
   });
 
   function set(key: string, value: string) {
