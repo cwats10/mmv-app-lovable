@@ -36,6 +36,7 @@ export default function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/referral" element={<Referral />} />
           <Route path="/manage/:token" element={<Manage />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
