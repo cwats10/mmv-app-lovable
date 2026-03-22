@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 const links = [
   { to: '/dashboard', label: 'Vaults', icon: Home },
   { to: '/referral', label: 'Referrals', icon: Gift },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function DashboardNav() {
