@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTag } from '@/components/common/PageTag';
+import { ErrorBanner } from '@/components/common/ErrorBanner';
 import { Divider } from '@/components/common/Divider';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -122,11 +123,7 @@ export default function ResetPassword() {
                 />
               </div>
 
-              {error && (
-                <div className="mb-4 border border-red-200 bg-red-50 px-4 py-2">
-                  <p className="font-inter text-sm text-red-600">{error}</p>
-                </div>
-              )}
+              <ErrorBanner message={error} className="mb-4" />
 
               <HeirloomButton type="submit" loading={loading} className="w-full">
                 Update Password
