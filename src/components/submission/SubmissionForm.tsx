@@ -138,6 +138,7 @@ export function SubmissionForm({ vaultId, missionaryName, bookSize = '10x10', pa
     }
   }
 
+  const charLimit = getCharLimit(bookSize, pageLayout.template, pageAllowance);
   const charCount = form.message.length;
   const hasImages = photos.length > 0;
   const isSpread = pageAllowance === 2;
