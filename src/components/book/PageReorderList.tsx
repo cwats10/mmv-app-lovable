@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { GripVertical } from 'lucide-react';
 import type { Submission } from '@/types';
 
@@ -13,11 +13,16 @@ export function PageReorderList({ submissions, onReorder }: Props) {
   const [overIdx, setOverIdx] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const dragItem = useRef<number | null>(null);
+  const prevIdsRef = useRef<string>('');
 
-  // Sync external submissions changes
-  if (submissions.length !== items.length || submissions.some((s, i) => s.id !== items[i]?.id)) {
-    setItems(submissions);
-  }
+  // Only sync when the source submission IDs actually change (new DB data)
+  useEffect(() => {
+    const sourceKey = submissions.map(s => s.id).join(',');
+    if (sourceKey !== prevIdsRef.current) {
+      prevIdsRef.current = sourceKey;
+      setItems(submissions);
+    }
+  }, [submissions]);
 
   const handleDragStart = useCallback((idx: number) => {
     dragItem.current = idx;
