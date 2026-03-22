@@ -28,8 +28,8 @@ export function VaultCover({ missionaryName, theme, className, bleedSafe }: Vaul
         className="w-4/5 max-w-[280px] object-contain"
       />
       <p
-        className="font-playfair text-base font-medium tracking-wide"
-        style={{ color: isLight ? '#2b2b2a' : '#f4f1ec' }}
+        className="text-base font-normal tracking-wide"
+        style={{ color: isLight ? '#2b2b2a' : '#f4f1ec', fontFamily: "'DM Serif Display', serif" }}
       >
         {missionaryName}
       </p>
