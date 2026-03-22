@@ -97,7 +97,7 @@ export default function Contribute() {
           </div>
           <Divider className="my-5" />
           <PageTag>You've been invited to contribute</PageTag>
-          <h1 className="mt-3 font-playfair text-3xl font-semibold text-dark-text">
+          <h1 className="mt-3 font-playfair text-2xl font-semibold text-dark-text sm:text-3xl">
             {vault.mission_name || `${vault.missionary_name}'s Mission`}
           </h1>
           <p className="mt-3 font-inter text-sm text-muted-text">
