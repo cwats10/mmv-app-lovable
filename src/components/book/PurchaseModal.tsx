@@ -14,6 +14,33 @@ const PRICING = {
   heirloom: { base: 449, extra: 349, label: 'Heirloom' },
 } as const;
 
+const US_STATES = [
+  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
+  'HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+  'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+  'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+  'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY',
+  'DC','AS','GU','MP','PR','VI',
+] as const;
+
+const ZIP_RE = /^\d{5}(-\d{4})?$/;
+
+interface FieldErrors {
+  street?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+}
+
+function validateAddress(addr: DeliveryAddress): FieldErrors {
+  const errors: FieldErrors = {};
+  if (addr.street.trim().length < 5) errors.street = 'Street address must be at least 5 characters.';
+  if (addr.city.trim().length < 2) errors.city = 'City must be at least 2 characters.';
+  if (!addr.state) errors.state = 'Please select a state.';
+  if (!ZIP_RE.test(addr.zip.trim())) errors.zip = 'Enter a valid ZIP code (e.g. 84601 or 84601-1234).';
+  return errors;
+}
+
 interface PurchaseModalProps {
   open: boolean;
   onClose: () => void;
@@ -21,10 +48,15 @@ interface PurchaseModalProps {
   vault: Vault;
 }
 
+const inputClass = 'w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none';
+const labelClass = 'mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text';
+const fieldErrorClass = 'mt-1 font-inter text-xs text-red-600';
+
 export function PurchaseModal({ open, onClose, book, vault }: PurchaseModalProps) {
   const [tier, setTier] = useState<Tier>('classic');
   const [extraCopies, setExtraCopies] = useState(0);
   const [address, setAddress] = useState<DeliveryAddress>({ street: '', city: '', state: '', zip: '', country: 'United States' });
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState('');
 
@@ -34,15 +66,31 @@ export function PurchaseModal({ open, onClose, book, vault }: PurchaseModalProps
   const sizeDiscount = vault.book_size === '10x10' ? 10 : 0;
   const subtotal = pricing.base + pricing.extra * extraCopies - sizeDiscount;
 
+  function set(field: keyof DeliveryAddress, value: string) {
+    setAddress((a) => ({ ...a, [field]: value }));
+    setFieldErrors((e) => ({ ...e, [field]: undefined }));
+  }
+
   async function handlePurchase() {
-    if (!address.street || !address.city || !address.state || !address.zip) {
-      setError('Please complete all required address fields.');
+    const errors = validateAddress(address);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      setError('');
       return;
     }
+
+    const trimmed: DeliveryAddress = {
+      street: address.street.trim(),
+      city: address.city.trim(),
+      state: address.state,
+      zip: address.zip.trim(),
+      country: address.country,
+    };
+
     setError('');
     setPurchasing(true);
     try {
-      await supabase.from('books').update({ delivery_address: address as unknown as null }).eq('id', book.id);
+      await supabase.from('books').update({ delivery_address: trimmed as unknown as null }).eq('id', book.id);
       const { data, error: fnError } = await supabase.functions.invoke('create-checkout-session', {
         body: { book_id: book.id, design_tier: tier, extra_copies: extraCopies },
       });
@@ -128,18 +176,70 @@ export function PurchaseModal({ open, onClose, book, vault }: PurchaseModalProps
           Delivery Address
         </label>
         <div className="space-y-3">
-          {(['street', 'city', 'state', 'zip', 'country'] as (keyof DeliveryAddress)[]).map((field) => (
-            <div key={field}>
-              <label className="mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
-                {field.charAt(0).toUpperCase() + field.slice(1)}
-              </label>
-              <input
-                value={address[field]}
-                onChange={(e) => setAddress((a) => ({ ...a, [field]: e.target.value }))}
-                className="w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none"
-              />
-            </div>
-          ))}
+          {/* Street */}
+          <div>
+            <label className={labelClass}>Street</label>
+            <input
+              value={address.street}
+              onChange={(e) => set('street', e.target.value)}
+              placeholder="123 Main St, Apt 4"
+              className={inputClass}
+            />
+            {fieldErrors.street && <p className={fieldErrorClass}>{fieldErrors.street}</p>}
+          </div>
+
+          {/* City */}
+          <div>
+            <label className={labelClass}>City</label>
+            <input
+              value={address.city}
+              onChange={(e) => set('city', e.target.value)}
+              placeholder="Provo"
+              className={inputClass}
+            />
+            {fieldErrors.city && <p className={fieldErrorClass}>{fieldErrors.city}</p>}
+          </div>
+
+          {/* State */}
+          <div>
+            <label className={labelClass}>State</label>
+            <select
+              value={address.state}
+              onChange={(e) => set('state', e.target.value)}
+              className={inputClass}
+            >
+              <option value="">Select state…</option>
+              {US_STATES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+            {fieldErrors.state && <p className={fieldErrorClass}>{fieldErrors.state}</p>}
+          </div>
+
+          {/* ZIP */}
+          <div>
+            <label className={labelClass}>ZIP Code</label>
+            <input
+              value={address.zip}
+              onChange={(e) => set('zip', e.target.value)}
+              placeholder="84601"
+              maxLength={10}
+              className={inputClass}
+            />
+            {fieldErrors.zip && <p className={fieldErrorClass}>{fieldErrors.zip}</p>}
+          </div>
+
+          {/* Country */}
+          <div>
+            <label className={labelClass}>Country</label>
+            <select
+              value={address.country}
+              onChange={(e) => set('country', e.target.value)}
+              className={inputClass}
+            >
+              <option value="United States">United States</option>
+            </select>
+          </div>
         </div>
 
         <ErrorBanner message={error} className="mt-4" />
