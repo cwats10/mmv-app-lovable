@@ -1,0 +1,1 @@
+ALTER TABLE public.vaults ADD COLUMN book_size text NOT NULL DEFAULT '12x12';

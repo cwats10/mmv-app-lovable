@@ -247,15 +247,14 @@ export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover
   const layout = resolveLayout(submission);
 
   // ── 2-page spread mode ──────────────────────────────────────────────────
-  if (pageAllowance === 2 && submission) {
-    const hasImages = submission.media_urls.length > 0;
-
+  // Only render as spread if allowance is 2 AND submission has spreadPage2 layout data
+  const hasSpreadData = !!layout.spreadPage2;
+  if (pageAllowance === 2 && submission && hasSpreadData) {
     // Resolve layouts for each page
     const layout1 = layout;
     const layout2 = layout.spreadPage2 ?? { template: 'text-only' as const };
-    const hasPage2Images = submission.media_urls.length > 1;
 
-    // Split images between pages: first image(s) for page 1, rest for page 2
+    // Split images between pages
     const page1Images = submission.media_urls.length <= 1
       ? submission.media_urls
       : submission.media_urls.slice(0, Math.ceil(submission.media_urls.length / 2));
@@ -263,12 +262,26 @@ export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover
       ? []
       : submission.media_urls.slice(Math.ceil(submission.media_urls.length / 2));
 
-    // Build mock submissions for each page with their allocated images
-    const page1Submission: Submission = { ...submission, media_urls: page1Images };
-    const page2Submission: Submission = { ...submission, media_urls: page2Images.length > 0 ? page2Images : [] };
+    // Split message text between pages (by paragraph, then by midpoint)
+    const splitMessage = (msg: string): [string, string] => {
+      const paragraphs = msg.split(/\n\n+/);
+      if (paragraphs.length >= 2) {
+        const mid = Math.ceil(paragraphs.length / 2);
+        return [paragraphs.slice(0, mid).join('\n\n'), paragraphs.slice(mid).join('\n\n')];
+      }
+      const charMid = Math.ceil(msg.length / 2);
+      const spaceIdx = msg.indexOf(' ', charMid);
+      const breakAt = spaceIdx > -1 ? spaceIdx : charMid;
+      return [msg.slice(0, breakAt), msg.slice(breakAt).trimStart()];
+    };
+
+    const [msg1, msg2] = splitMessage(submission.message);
+
+    const page1Submission: Submission = { ...submission, media_urls: page1Images, message: msg1 };
+    const page2Submission: Submission = { ...submission, media_urls: page2Images.length > 0 ? page2Images : [], message: msg2 };
 
     return (
-      <div className="relative mx-auto flex aspect-[2/1.3] w-full max-w-4xl overflow-hidden border border-border-light bg-white shadow-xl">
+      <div className="relative mx-auto flex aspect-square w-full max-w-4xl overflow-hidden border border-border-light bg-white shadow-xl">
         {/* Binding crease */}
         <div className="absolute inset-y-0 left-1/2 z-10 w-px -translate-x-1/2 bg-border-light" />
 
@@ -287,7 +300,7 @@ export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover
 
   // ── Single page mode ────────────────────────────────────────────────────
   return (
-    <div className="relative mx-auto aspect-[1/1.3] w-full max-w-xl overflow-hidden border border-border-light bg-white shadow-xl">
+    <div className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden border border-border-light bg-white shadow-xl">
       {submission ? (
         <div className="flex h-full flex-col">
           <div className="flex-1 overflow-hidden">

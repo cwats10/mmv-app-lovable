@@ -46,6 +46,19 @@ export function PagePreview({
 }: Props) {
   const isSpread = pageAllowance === 2;
 
+  // Split message text between pages for spread mode
+  const splitMessage = (msg: string): [string, string] => {
+    const paragraphs = msg.split(/\n\n+/);
+    if (paragraphs.length >= 2) {
+      const mid = Math.ceil(paragraphs.length / 2);
+      return [paragraphs.slice(0, mid).join('\n\n'), paragraphs.slice(mid).join('\n\n')];
+    }
+    const charMid = Math.ceil(msg.length / 2);
+    const spaceIdx = msg.indexOf(' ', charMid);
+    const breakAt = spaceIdx > -1 ? spaceIdx : charMid;
+    return [msg.slice(0, breakAt), msg.slice(breakAt).trimStart()];
+  };
+
   // For spread mode, split images between pages
   const page1Photos = isSpread && photoUrls.length > 1
     ? photoUrls.slice(0, Math.ceil(photoUrls.length / 2))
@@ -55,9 +68,10 @@ export function PagePreview({
     : [];
 
   if (isSpread) {
-    const mock1 = buildMockSubmission(layout, message, contributorName, relation, page1Photos);
+    const [msg1, msg2] = splitMessage(message);
+    const mock1 = buildMockSubmission(layout, msg1, contributorName, relation, page1Photos);
     const effectivePage2Layout = page2Layout ?? { template: 'text-only' as const };
-    const mock2 = buildMockSubmission(effectivePage2Layout, message, contributorName, relation, page2Photos);
+    const mock2 = buildMockSubmission(effectivePage2Layout, msg2, contributorName, relation, page2Photos);
 
     return (
       <div>
@@ -68,7 +82,7 @@ export function PagePreview({
         {/* Spread preview showing both pages */}
         <div
           className="mx-auto flex overflow-hidden border border-border-light bg-white shadow-lg"
-          style={{ width: 480, aspectRatio: '2 / 1.3' }}
+          style={{ width: 480, aspectRatio: '2 / 1' }}
         >
           {/* Page 1 */}
           <div
@@ -122,7 +136,7 @@ export function PagePreview({
       <div className="mx-auto overflow-hidden border border-border-light bg-white shadow-lg"
         style={{
           width: 280,
-          aspectRatio: '1 / 1.3',
+          aspectRatio: '1 / 1',
         }}
       >
         <div className="h-full w-full overflow-hidden">

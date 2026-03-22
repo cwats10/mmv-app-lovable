@@ -203,6 +203,44 @@ export default function VaultDetail() {
                   : 'Each contributor gets a full two-page spread with a showcase image and their story.'}
               </p>
             </div>
+
+            {/* Book Size */}
+            <div className="mt-6">
+              <label className="mb-2 block font-space-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                Book Size
+              </label>
+              <div className="flex max-w-sm">
+                {(['10x10', '12x12'] as const).map((size) => (
+                  <button
+                    type="button"
+                    key={size}
+                    onClick={async () => {
+                      if (vault.book_size !== size) {
+                        try {
+                          await updateSingleVault({ book_size: size });
+                        } catch (e) {
+                          console.error('Failed to update vault', e);
+                        }
+                      }
+                    }}
+                    className="flex-1 py-2 font-inter text-sm transition-colors"
+                    style={{
+                      backgroundColor: (vault.book_size ?? '12x12') === size ? '#2b2b2a' : 'transparent',
+                      color: (vault.book_size ?? '12x12') === size ? '#fefefe' : '#555555',
+                      border: '1px solid #e0deda',
+                      borderRight: size === '10x10' ? 'none' : '1px solid #e0deda',
+                    }}
+                  >
+                    {size === '10x10' ? '10×10 in' : '12×12 in'}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1.5 font-inter text-[11px] text-muted-foreground">
+                {(vault.book_size ?? '12x12') === '10x10'
+                  ? '10×10 inch — compact format, $10 less per book.'
+                  : '12×12 inch — larger premium format.'}
+              </p>
+            </div>
           </div>
 
           {/* Delete vault — owner only */}

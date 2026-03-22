@@ -30,7 +30,8 @@ export function PurchaseModal({ open, onClose, book, vault }: PurchaseModalProps
   if (!open) return null;
 
   const pricing = PRICING[tier];
-  const subtotal = pricing.base + pricing.extra * extraCopies;
+  const sizeDiscount = vault.book_size === '10x10' ? 10 : 0;
+  const subtotal = pricing.base + pricing.extra * extraCopies - sizeDiscount;
 
   async function handlePurchase() {
     if (!address.street || !address.city || !address.state || !address.zip) {
