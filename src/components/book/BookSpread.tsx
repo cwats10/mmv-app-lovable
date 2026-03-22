@@ -162,7 +162,7 @@ function SideBySideRightPage({ submission, layout }: { submission: Submission; l
         </div>
         <ContributorFooter submission={submission} />
       </div>
-      <div className="relative flex-1 overflow-hidden">
+      <div className="relative min-h-0 flex-1 overflow-hidden">
         <ImageArea submission={submission} layout={layout} />
       </div>
     </div>
