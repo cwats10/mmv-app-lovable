@@ -6,12 +6,21 @@ export function Footer() {
       <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-muted-text">
         © {new Date().getFullYear()} Mission Memory Vault · Heirloom Memory Books
       </p>
-      <Link
-        to="/terms"
-        className="mt-2 inline-block font-inter text-xs text-muted-text underline transition-colors hover:text-dark-text"
-      >
-        Terms of Service
-      </Link>
+      <div className="mt-2 flex items-center justify-center gap-3">
+        <Link
+          to="/terms"
+          className="font-inter text-xs text-muted-text underline transition-colors hover:text-dark-text"
+        >
+          Terms of Service
+        </Link>
+        <span className="text-xs text-muted-text">·</span>
+        <Link
+          to="/privacy"
+          className="font-inter text-xs text-muted-text underline transition-colors hover:text-dark-text"
+        >
+          Privacy Policy
+        </Link>
+      </div>
     </footer>
   );
 }
