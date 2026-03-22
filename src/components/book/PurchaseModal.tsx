@@ -83,8 +83,7 @@ export function PurchaseModal({ open, onClose, book, vault, approvedCount = 0 }:
   }
 
   const pricing = PRICING[tier];
-  const sizeDiscount = vault.book_size === '10x10' ? 10 : 0;
-  const subtotal = pricing.base + pricing.extra * extraCopies - sizeDiscount;
+  const subtotal = pricing.base + pricing.extra * extraCopies;
 
   function set(field: keyof DeliveryAddress, value: string) {
     setAddress((a) => ({ ...a, [field]: value }));

@@ -54,6 +54,11 @@ serve(async (req) => {
       await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', user.id);
     }
 
+    // ── Book size discount (10x10 is $10 cheaper) ────────────────────────────
+    const bookSize       = book.vaults?.book_size ?? '12x12';
+    const sizeDiscount   = bookSize === '10x10' ? 1000 : 0;
+    const baseCents      = Math.max(0, PRICE_CENTS[tier].base - sizeDiscount);
+
     // ── Build line items ────────────────────────────────────────────────────
     const tierName  = tier === 'classic' ? 'Classic' : 'Heirloom';
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
@@ -61,7 +66,7 @@ serve(async (req) => {
         quantity   : 1,
         price_data : {
           currency    : 'usd',
-          unit_amount : PRICE_CENTS[tier].base,
+          unit_amount : baseCents,
           product_data: {
             name       : `Memory Vault — ${tierName} Edition`,
             description: `Museum-quality hardcover Memory Book for ${book.vaults?.missionary_name ?? 'your missionary'}`,
@@ -85,7 +90,7 @@ serve(async (req) => {
     }
 
     // ── Reward credit discount ──────────────────────────────────────────────
-    const subtotalCents    = PRICE_CENTS[tier].base + PRICE_CENTS[tier].extra * extraCount;
+    const subtotalCents    = baseCents + PRICE_CENTS[tier].extra * extraCount;
     const rewardBalance    = profile?.reward_balance ?? 0;
     const discountCents    = Math.min(Math.round(rewardBalance * 100), subtotalCents);
     let   discounts: Stripe.Checkout.SessionCreateParams['discounts'];
