@@ -22,7 +22,7 @@ export function resolveLayout(submission?: Submission): PageLayout {
 /** Contributor attribution footer */
 function ContributorFooter({ submission }: { submission: Submission }) {
   return (
-    <div className="border-t border-border-light pt-2">
+    <div className="border-t border-primary pt-2">
       <p className="font-playfair text-sm font-semibold text-dark-text">
         {submission.contributor_name}
       </p>
