@@ -820,8 +820,9 @@ interface GoldenPayload {
   mission_name     : string;
   service_dates    : string;
   cover_image_url  : string;
+  cover_theme      : 'light' | 'dark';
   pages            : GoldenPage[];
-  book_inches?     : number;  // optional override; defaults to 11
+  book_inches?     : number;  // optional override; defaults to 12
 }
 
 /**
