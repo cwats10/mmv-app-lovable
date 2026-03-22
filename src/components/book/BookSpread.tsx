@@ -61,13 +61,13 @@ function ImageArea({ submission, layout }: { submission: Submission; layout?: Pa
 /** Full-bleed image with a caption bar at the bottom */
 function FullImageCaptionPage({ submission, layout }: { submission: Submission; layout: PageLayout }) {
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col overflow-hidden">
       <div className="relative min-h-0 flex-1 overflow-hidden" style={{ flexBasis: '78%' }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
       <Divider className="mx-3 my-1" variant="brand" />
-      <div className="flex flex-col gap-1 px-3 pb-3" style={{ flexBasis: '22%' }}>
-        <div className="flex-1 overflow-y-auto">
+      <div className="flex shrink-0 flex-col gap-1 px-3 pb-3" style={{ maxHeight: '22%' }}>
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
