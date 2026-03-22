@@ -127,7 +127,7 @@ export default function Landing() {
       <TestimonialCarousel />
 
       {/* Pricing */}
-      <section className="px-8 py-16">
+      <section className="px-4 py-10 sm:px-8 sm:py-16">
         <div className="mx-auto max-w-4xl text-center">
           <PageTag>Pricing</PageTag>
           <h2 className="mt-3 font-playfair text-3xl font-semibold text-dark-text">
