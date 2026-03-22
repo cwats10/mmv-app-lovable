@@ -1,9 +1,14 @@
 import { useState, useRef } from 'react';
 import { Upload, X, BookOpen } from 'lucide-react';
+import { toast } from 'sonner';
 import { HeirloomButton } from '@/components/common/HeirloomButton';
 import { PageTemplatePicker } from '@/components/submission/PageTemplatePicker';
 import { supabase } from '@/integrations/supabase/client';
 import type { PageLayout, PageTemplate } from '@/types';
+
+const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_TOTAL_SIZE = 25 * 1024 * 1024; // 25 MB
 
 /** Character limits by template and book size (based on 12pt / 4mm font at 10×10 or 12×12 inches) */
 const CHAR_LIMITS: Record<string, Record<PageTemplate, number>> = {
