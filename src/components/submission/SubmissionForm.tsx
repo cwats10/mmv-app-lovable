@@ -66,6 +66,7 @@ export function SubmissionForm({ vaultId, missionaryName, bookSize = '10x10', pa
   const [pageLayout, setPageLayout] = useState<PageLayout>({ template: 'image-top-text-bottom' });
   const [page2Layout, setPage2Layout] = useState<PageLayout>({ template: 'text-only' });
   const [activePage, setActivePage] = useState<1 | 2>(1);
+  const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
@@ -315,7 +316,20 @@ export function SubmissionForm({ vaultId, missionaryName, bookSize = '10x10', pa
         />
       </div>
 
-      <HeirloomButton type="submit" loading={loading} className="w-full" size="lg">
+      {/* Rights confirmation */}
+      <label className="flex items-start gap-3 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={rightsConfirmed}
+          onChange={(e) => setRightsConfirmed(e.target.checked)}
+          className="mt-0.5 h-4 w-4 accent-dark-text"
+        />
+        <span className="font-inter text-xs text-muted-text leading-relaxed">
+          I confirm that I have the right to share these photos and stories, and I grant Mission Memory Vault permission to include them in a printed book.
+        </span>
+      </label>
+
+      <HeirloomButton type="submit" loading={loading} disabled={!rightsConfirmed} className="w-full" size="lg">
         Submit Memory
       </HeirloomButton>
     </form>
