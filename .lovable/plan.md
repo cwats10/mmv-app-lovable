@@ -1,87 +1,34 @@
 
-## Remove Horizontal Side-Scrolling Across the App
 
-### What’s causing it
-From the current code, the side-scrolling is coming from several repeated responsive issues, not just one page:
+## Fix Three Issues: Text Duplication, Page Count Integrity, Book Dimensions
 
-- **Shared nav/layouts** use wide horizontal padding and non-wrapping header rows
-- **Button/tab rows** on `VaultDetail`, `BookDetail`, `Manage`, and `MessageBank` stay in one line on small widths
-- **Fixed bottom/action bars** don’t stack on mobile
-- A few sections use `justify-between` + non-shrinking side panels, which forces overflow at tablet/mobile widths
+### Problem 1: Two-page spread duplicates text
+In `BookSpread.tsx`, the spread creates `page1Submission` and `page2Submission` that both carry the full `submission.message`. Each page's template then renders the entire message. Page 2 should show the continuation of the text, not a copy.
 
-### Implementation plan
+**Fix in `BookSpread.tsx`**: Split the message text between pages. Page 1 gets the first half (by paragraph or character midpoint), page 2 gets the second half. Same approach needed in `PagePreview.tsx` for the contributor preview.
 
-#### 1. Fix shared shells first
-Update the common layout wrappers so pages don’t overflow by default:
-- `src/components/layout/AppShell.tsx`
-- `src/components/layout/DashboardNav.tsx`
-- `src/components/layout/PublicShell.tsx`
+### Problem 2: Page count must be respected regardless of submission history
+Currently `BookSpread.tsx` checks `vault.contributor_page_allowance` to decide whether to render a spread. If a contributor submitted with a 2-page allowance and the owner later changes it to 1, the book should render as 1 page. If submitted as 1 page, it stays 1 page even if allowance changes to 2.
 
-Changes:
-- Reduce horizontal padding on small screens (`px-4`, then scale up)
-- Let nav/header content **wrap or stack** on smaller breakpoints
-- Add `overflow-x-hidden` as a safety net on the top-level shell containers
+**Fix in `BookSpread.tsx`**: Render based on `vault.contributor_page_allowance` (already does this). But a submission created under a 1-page allowance should not be expanded to 2 pages. Logic: render as spread only if `pageAllowance === 2` AND the submission has `spreadPage2` layout data. If the submission lacks `spreadPage2`, render as single page regardless of vault setting.
 
-#### 2. Make Vault page fully responsive
-Update `src/pages/VaultDetail.tsx` so no section requires sideways movement:
-- Allow breadcrumb/header/actions to wrap cleanly
-- Make the tab bar fit mobile better:
-  - either smaller triggers with wrapping
-  - or switch to a 2-row layout on very small screens
-- Ensure settings toggle buttons stack if needed
-- Keep cards full-width with no fixed-width behavior
+### Problem 3: Book dimensions — add 10x10 / 12x12 selection
+The cover uses `aspect-square` (1:1) but contributor pages use `aspect-[1/1.3]` (portrait). Both should be square to match the printed book.
 
-#### 3. Fix Book page overflow sources
-Update `src/pages/BookDetail.tsx`:
-- Stack the top header and action controls on tablet/mobile
-- Make filter tabs wrap instead of forcing one row
-- Make the reorder button/list fit narrow widths
-- Convert the fixed purchase bar into a **stacked mobile layout** so text + CTA don’t push past screen width
+**Changes:**
+- **`src/types/index.ts`**: Add `book_size` field to `Vault` type (`'10x10' | '12x12'`)
+- **Database migration**: Add `book_size text not null default '12x12'` column to `vaults` table
+- **`src/components/vault/CreateVaultModal.tsx`**: Add dimension picker (10×10 or 12×12) near the top of the form
+- **`src/components/book/BookSpread.tsx`**: Change page aspect ratio from `aspect-[1/1.3]` to `aspect-square` so pages match the square cover
+- **`src/components/book/PurchaseModal.tsx`**: Reduce price by $10 when vault `book_size` is `'10x10'`
+- **`src/pages/VaultDetail.tsx`**: Show current book size in settings (read-only or editable)
 
-#### 4. Fix Manager review page overflow
-Update `src/pages/Manage.tsx`:
-- Stack the hero header content vertically on small screens
-- Remove the rigid right-side permission box layout that currently forces width
-- Make review filter buttons wrap
-- Keep submission cards fluid
+### Files to change
+1. **`src/components/book/BookSpread.tsx`** — split message text between pages; only render spread if submission has `spreadPage2` data; change page aspect to square
+2. **`src/components/submission/PagePreview.tsx`** — same text-splitting logic for contributor preview
+3. **`src/types/index.ts`** — add `book_size` to `Vault`
+4. **`src/components/vault/CreateVaultModal.tsx`** — add dimension picker
+5. **`src/components/book/PurchaseModal.tsx`** — $10 discount for 10x10
+6. **`src/pages/VaultDetail.tsx`** — show/edit book size in settings tab
+7. **Database migration** — add `book_size` column to `vaults`
 
-#### 5. Fix Message Bank tab rows
-Update `src/components/dashboard/MessageBank.tsx`:
-- Main tab row should wrap on smaller screens
-- Platform buttons should remain multi-row and compact
-- Make card headers/buttons stack if space gets tight
-
-#### 6. Tighten reusable card/content components where needed
-Review and adjust any components that commonly create overflow:
-- `src/components/submission/SubmissionCard.tsx`
-- `src/components/book/PageReorderList.tsx`
-- share link widgets if needed
-
-Changes:
-- add `min-w-0` where text must shrink
-- allow action rows to wrap
-- avoid long inline content forcing container width
-
-### Design approach
-I would fix this as a **responsive system pass**, not a one-off patch:
-- mobile-first spacing
-- wrapped/staked action rows
-- no single-line control bars unless there is room
-- small-screen-safe tabs, filters, and fixed bars
-
-### Files likely to change
-- `src/components/layout/AppShell.tsx`
-- `src/components/layout/DashboardNav.tsx`
-- `src/components/layout/PublicShell.tsx`
-- `src/pages/VaultDetail.tsx`
-- `src/pages/BookDetail.tsx`
-- `src/pages/Manage.tsx`
-- `src/components/dashboard/MessageBank.tsx`
-- `src/components/submission/SubmissionCard.tsx`
-- `src/components/book/PageReorderList.tsx`
-
-### Expected result
-After this pass, the app should:
-- have **no horizontal scrolling** on phone, tablet, or smaller desktop windows
-- keep controls readable without squeezing
-- preserve the current look/brand while feeling much cleaner and easier to use across screen sizes
