@@ -65,10 +65,12 @@ function FullImageCaptionPage({ submission, layout }: { submission: Submission; 
       <div className="relative flex-1 overflow-hidden" style={{ flexBasis: '78%' }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
-      <div className="flex flex-col gap-1 p-4" style={{ flexBasis: '22%' }}>
-        <p className="font-inter text-xs leading-relaxed text-muted-text line-clamp-3">
-          {submission.message}
-        </p>
+      <div className="flex flex-col gap-1 p-3" style={{ flexBasis: '22%' }}>
+        <div className="flex-1 overflow-y-auto">
+          <p className="font-inter text-xs leading-relaxed text-muted-text">
+            {submission.message}
+          </p>
+        </div>
         <ContributorFooter submission={submission} />
       </div>
     </div>
@@ -77,7 +79,7 @@ function FullImageCaptionPage({ submission, layout }: { submission: Submission; 
 
 /** Image on top, text on bottom */
 function ImageTopTextBottomPage({ submission, layout }: { submission: Submission; layout: PageLayout }) {
-  const ratio = layout.customSplit?.ratio ?? 0.55;
+  const ratio = layout.customSplit?.ratio ?? 0.45;
   const align = layout.textAlignment ?? 'left';
 
   return (
@@ -85,9 +87,9 @@ function ImageTopTextBottomPage({ submission, layout }: { submission: Submission
       <div className="relative overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
-      <div className="flex flex-1 flex-col justify-between p-5" style={{ textAlign: align }}>
+      <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
         <div>
-          <Divider className="my-2" />
+          <Divider className="my-1" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -100,13 +102,13 @@ function ImageTopTextBottomPage({ submission, layout }: { submission: Submission
 
 /** Text on top, image on bottom */
 function TextTopImageBottomPage({ submission, layout }: { submission: Submission; layout: PageLayout }) {
-  const ratio = layout.customSplit?.ratio ?? 0.55;
+  const ratio = layout.customSplit?.ratio ?? 0.45;
   const align = layout.textAlignment ?? 'left';
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex flex-col p-5" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
-        <Divider className="my-2" />
+      <div className="flex flex-col overflow-y-auto p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
+        <Divider className="my-1" />
         <p className="font-inter text-xs leading-relaxed text-muted-text">
           {submission.message}
         </p>
@@ -131,9 +133,9 @@ function SideBySideLeftPage({ submission, layout }: { submission: Submission; la
       <div className="relative overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
-      <div className="flex flex-1 flex-col justify-between p-5" style={{ textAlign: align }}>
+      <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
         <div>
-          <Divider className="my-2" />
+          <Divider className="my-1" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -151,9 +153,9 @@ function SideBySideRightPage({ submission, layout }: { submission: Submission; l
 
   return (
     <div className="flex h-full flex-row">
-      <div className="flex flex-col justify-between p-5" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
+      <div className="flex flex-col justify-between overflow-y-auto p-3" style={{ flex: `0 0 ${(1 - ratio) * 100}%`, textAlign: align }}>
         <div>
-          <Divider className="my-2" />
+          <Divider className="my-1" />
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
@@ -172,14 +174,9 @@ function TextOnlyPage({ submission, layout }: { submission: Submission; layout: 
   const align = layout.textAlignment ?? 'left';
 
   return (
-    <div className="flex h-full flex-col justify-between p-8" style={{ textAlign: align }}>
-      <div>
-        <Divider className="my-4" />
-        {submission.message.length > 0 && (
-          <h3 className="mb-4 font-playfair text-lg italic text-dark-text">
-            &ldquo;{submission.message.slice(0, 140)}{submission.message.length > 140 ? '...' : ''}&rdquo;
-          </h3>
-        )}
+    <div className="flex h-full flex-col justify-between p-4" style={{ textAlign: align }}>
+      <div className="flex-1 overflow-y-auto">
+        <Divider className="my-1" />
         <p className="font-inter text-sm leading-relaxed text-muted-text">
           {submission.message}
         </p>

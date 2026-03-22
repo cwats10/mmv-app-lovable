@@ -21,7 +21,7 @@ export function ImageGallery({ imageUrls, className = '', imagePosition = 'cente
   const objectPosition = imagePosition === 'center' ? 'center' : imagePosition;
   const imgStyle = { filter: 'grayscale(8%) sepia(4%)' as const, objectPosition };
 
-  const imgClass = 'h-full w-full object-contain';
+  const imgClass = 'h-full w-full object-cover';
   const cellClass = 'overflow-hidden bg-[#f0eeea]';
 
   if (imageUrls.length === 1) {
