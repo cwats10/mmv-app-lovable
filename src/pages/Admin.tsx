@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Navigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageTag } from '@/components/common/PageTag';
@@ -41,8 +42,8 @@ export default function Admin() {
         .select('*, vaults(missionary_name, mission_name)')
         .order('created_at', { ascending: false });
       setBooks((data as unknown as AdminBook[]) || []);
-    } catch (err) {
-      console.error(err);
+    } catch {
+      toast.error('Failed to trigger print pipeline.');
     } finally {
       setTriggeringId(null);
     }

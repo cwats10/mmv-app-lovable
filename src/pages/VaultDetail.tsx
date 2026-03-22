@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
@@ -180,8 +181,8 @@ export default function VaultDetail() {
                       if (vault.contributor_page_allowance !== n) {
                         try {
                           await updateSingleVault({ contributor_page_allowance: n });
-                        } catch (e) {
-                          console.error('Failed to update vault', e);
+                        } catch {
+                          toast.error('Failed to update page allowance.');
                         }
                       }
                     }}
@@ -218,8 +219,8 @@ export default function VaultDetail() {
                       if (vault.book_size !== size) {
                         try {
                           await updateSingleVault({ book_size: size });
-                        } catch (e) {
-                          console.error('Failed to update vault', e);
+                        } catch {
+                          toast.error('Failed to update book size.');
                         }
                       }
                     }}

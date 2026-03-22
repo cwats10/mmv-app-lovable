@@ -78,7 +78,6 @@ export function useSubmissions(vaultId: string | undefined) {
     );
     const failed = results.filter(r => r.error);
     if (failed.length > 0) {
-      console.error('Reorder errors:', failed.map(r => r.error));
       throw new Error(failed[0].error!.message);
     }
     await fetchSubmissions();
