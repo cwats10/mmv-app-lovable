@@ -93,7 +93,7 @@ export default function Landing() {
       </section>
 
       {/* Book Preview */}
-      <section className="px-8 py-16">
+      <section className="px-4 py-10 sm:px-8 sm:py-16">
         <div className="mx-auto max-w-4xl">
           <PageTag className="mb-4 block text-center">Museum-Grade Printed Book, 100% Heirloom Quality</PageTag>
           <BookSpread vault={DEMO_VAULT} submission={DEMO_SUBMISSION} isCover />
