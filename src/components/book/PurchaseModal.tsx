@@ -261,6 +261,10 @@ export function PurchaseModal({ open, onClose, book, vault, approvedCount = 0 }:
           </div>
         </div>
 
+        <p className="mt-4 font-inter text-xs text-muted-text">
+          Shipping included. Sales tax may apply at checkout.
+        </p>
+
         <ErrorBanner message={error} className="mt-4" />
 
         <Divider className="my-5" />
