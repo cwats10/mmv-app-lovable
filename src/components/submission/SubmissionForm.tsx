@@ -54,7 +54,7 @@ interface SubmissionFormProps {
   }) => Promise<void>;
 }
 
-export function SubmissionForm({ vaultId, missionaryName, pageAllowance = 1, onSubmit }: SubmissionFormProps) {
+export function SubmissionForm({ vaultId, missionaryName, bookSize = '10x10', pageAllowance = 1, onSubmit }: SubmissionFormProps) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<{ url: string; name: string }[]>([]);
