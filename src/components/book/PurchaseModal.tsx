@@ -53,7 +53,7 @@ const inputClass = 'w-full border border-border-light bg-stone-bg px-4 py-3 font
 const labelClass = 'mb-1 block font-space-mono text-[10px] uppercase tracking-wider text-muted-text';
 const fieldErrorClass = 'mt-1 font-inter text-xs text-red-600';
 
-export function PurchaseModal({ open, onClose, book, vault }: PurchaseModalProps) {
+export function PurchaseModal({ open, onClose, book, vault, approvedCount = 0 }: PurchaseModalProps) {
   const [tier, setTier] = useState<Tier>('classic');
   const [extraCopies, setExtraCopies] = useState(0);
   const [address, setAddress] = useState<DeliveryAddress>({ street: '', city: '', state: '', zip: '', country: 'United States' });
@@ -62,6 +62,25 @@ export function PurchaseModal({ open, onClose, book, vault }: PurchaseModalProps
   const [error, setError] = useState('');
 
   if (!open) return null;
+
+  if (approvedCount === 0) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+        <div className="relative w-full max-w-lg border border-border-light bg-white p-8 text-center">
+          <button onClick={onClose} className="absolute right-4 top-4 text-muted-text hover:text-dark-text">
+            <X className="h-5 w-5" />
+          </button>
+          <PageTag>Cannot Purchase</PageTag>
+          <p className="mt-4 font-inter text-sm text-muted-text">
+            You need at least one approved submission before purchasing a book.
+          </p>
+          <HeirloomButton variant="ghost" onClick={onClose} className="mt-6">
+            Close
+          </HeirloomButton>
+        </div>
+      </div>
+    );
+  }
 
   const pricing = PRICING[tier];
   const sizeDiscount = vault.book_size === '10x10' ? 10 : 0;
