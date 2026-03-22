@@ -65,7 +65,8 @@ function FullImageCaptionPage({ submission, layout }: { submission: Submission; 
       <div className="relative min-h-0 flex-1 overflow-hidden" style={{ flexBasis: '78%' }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
-      <div className="flex flex-col gap-1 p-3" style={{ flexBasis: '22%' }}>
+      <Divider className="mx-3 my-1" variant="brand" />
+      <div className="flex flex-col gap-1 px-3 pb-3" style={{ flexBasis: '22%' }}>
         <div className="flex-1 overflow-y-auto">
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
