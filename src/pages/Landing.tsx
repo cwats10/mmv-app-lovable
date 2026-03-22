@@ -137,7 +137,7 @@ export default function Landing() {
             Create your vault and collect stories for free. Purchase your book when you're ready, and we'll deliver a printed keepsake along with a digital PDF copy.
           </p>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="mt-8 grid gap-6 sm:grid-cols-2">
             {/* Standard */}
             <div className="border border-border-light bg-white p-8 text-left">
               <PageTag>Standard</PageTag>
