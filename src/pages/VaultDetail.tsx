@@ -31,7 +31,7 @@ export default function VaultDetail() {
   const { user, profile } = useAuth();
   const { deleteVault } = useVaults(user?.id);
   const { book } = useBook(id);
-  const { pending, approved, rejected, submissions, deleteSubmission } = useSubmissions(id);
+  const { pending, approved, rejected, submissions, totalCount, hasMore, loadMore, loadingMore, deleteSubmission } = useSubmissions(id);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -94,7 +94,7 @@ export default function VaultDetail() {
       {/* Compact stats row */}
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
-          { label: 'Total', value: submissions.length },
+          { label: 'Total', value: totalCount },
           { label: 'Pending', value: pending.length },
           { label: 'Approved', value: approved.length },
           { label: 'Rejected', value: rejected.length },
@@ -278,7 +278,19 @@ export default function VaultDetail() {
 
         {/* Message Bank Tab */}
         <TabsContent value="messages" className="mt-6">
+          {totalCount > 0 && (
+            <p className="mb-3 font-inter text-xs text-muted-foreground">
+              Showing {submissions.length} of {totalCount} submission{totalCount !== 1 ? 's' : ''}
+            </p>
+          )}
           <MessageBank vaults={[vault]} profile={profile} />
+          {hasMore && (
+            <div className="mt-6 text-center">
+              <HeirloomButton variant="ghost" size="sm" loading={loadingMore} onClick={loadMore}>
+                Load More
+              </HeirloomButton>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 

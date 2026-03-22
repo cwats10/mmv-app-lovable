@@ -2,21 +2,44 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Submission, PageLayout } from '@/types';
 
+const PAGE_SIZE = 20;
+
 export function useSubmissions(vaultId: string | undefined) {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const fetchSubmissions = useCallback(async () => {
     if (!vaultId) { setLoading(false); return; }
+    const { data, count } = await supabase
+      .from('submissions')
+      .select('*', { count: 'exact' })
+      .eq('vault_id', vaultId)
+      .order('page_order', { ascending: true, nullsFirst: false })
+      .order('created_at', { ascending: false })
+      .range(0, PAGE_SIZE - 1);
+    setSubmissions((data as unknown as Submission[]) || []);
+    setTotalCount(count ?? 0);
+    setLoading(false);
+  }, [vaultId]);
+
+  const loadMore = useCallback(async () => {
+    if (!vaultId || loadingMore) return;
+    setLoadingMore(true);
+    const from = submissions.length;
     const { data } = await supabase
       .from('submissions')
       .select('*')
       .eq('vault_id', vaultId)
       .order('page_order', { ascending: true, nullsFirst: false })
-      .order('created_at', { ascending: false });
-    setSubmissions((data as unknown as Submission[]) || []);
-    setLoading(false);
-  }, [vaultId]);
+      .order('created_at', { ascending: false })
+      .range(from, from + PAGE_SIZE - 1);
+    if (data) {
+      setSubmissions((prev) => [...prev, ...(data as unknown as Submission[])]);
+    }
+    setLoadingMore(false);
+  }, [vaultId, submissions.length, loadingMore]);
 
   useEffect(() => { fetchSubmissions(); }, [fetchSubmissions]);
 
@@ -92,6 +115,7 @@ export function useSubmissions(vaultId: string | undefined) {
   const pending = submissions.filter((s) => s.status === 'pending');
   const approved = submissions.filter((s) => s.status === 'approved');
   const rejected = submissions.filter((s) => s.status === 'rejected');
+  const hasMore = submissions.length < totalCount;
 
-  return { submissions, loading, approve, reject, deleteSubmission, submitContribution, reorderSubmissions, pending, approved, rejected, refetch: fetchSubmissions };
+  return { submissions, totalCount, hasMore, loadMore, loadingMore, loading, approve, reject, deleteSubmission, submitContribution, reorderSubmissions, pending, approved, rejected, refetch: fetchSubmissions };
 }
