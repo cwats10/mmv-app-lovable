@@ -130,13 +130,13 @@ function SideBySideLeftPage({ submission, layout }: { submission: Submission; la
   const align = layout.textAlignment ?? 'left';
 
   return (
-    <div className="flex h-full flex-row">
+    <div className="flex h-full flex-row overflow-hidden">
       <div className="relative min-h-0 overflow-hidden" style={{ flex: `0 0 ${ratio * 100}%` }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
-      <div className="flex flex-1 flex-col justify-between overflow-y-auto p-3" style={{ textAlign: align }}>
-        <div>
-          <Divider className="my-1" variant="brand" />
+      <div className="flex min-h-0 flex-1 flex-col p-3" style={{ textAlign: align }}>
+        <Divider className="my-1" variant="brand" />
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <p className="font-inter text-xs leading-relaxed text-muted-text">
             {submission.message}
           </p>
