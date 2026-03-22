@@ -104,6 +104,9 @@ serve(async (req) => {
       };
     });
 
+    const bookSizeMap: Record<string, number> = { '10x10': 10, '12x12': 12 };
+    const bookInches = bookSizeMap[vault.book_size] ?? 12;
+
     const goldenPayload = {
       book_id        : book.id,
       client_id      : vault.owner_id,
@@ -111,8 +114,10 @@ serve(async (req) => {
       mission_name   : vault.mission_name,
       service_dates  : serviceDates,
       cover_image_url: vault.cover_image_url || '',
+      cover_theme    : vault.cover_theme || 'dark',
       design_theme   : 'museum_archive_elegant',
-      book_inches    : book_inches ?? 11,
+      book_inches    : book_inches ?? bookInches,
+      pages          : [coverPage, ...contentPages],
       pages          : [coverPage, ...contentPages],
       metadata: {
         total_pages     : contentPages.length + 1,

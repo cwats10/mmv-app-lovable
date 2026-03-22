@@ -799,6 +799,7 @@ interface PageLayout {
   customSplit?   : { direction: 'horizontal' | 'vertical'; ratio: number };
   imagePosition? : string;
   textAlignment? : 'left' | 'center' | 'right';
+  spreadPage2?   : PageLayout;
 }
 
 interface GoldenPage {
