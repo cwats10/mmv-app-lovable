@@ -71,10 +71,16 @@ export function useSubmissions(vaultId: string | undefined) {
   }
 
   async function reorderSubmissions(orderedIds: string[]) {
-    const updates = orderedIds.map((id, index) =>
-      supabase.from('submissions').update({ page_order: index } as any).eq('id', id)
+    const results = await Promise.all(
+      orderedIds.map((id, index) =>
+        supabase.from('submissions').update({ page_order: index } as any).eq('id', id)
+      )
     );
-    await Promise.all(updates);
+    const failed = results.filter(r => r.error);
+    if (failed.length > 0) {
+      console.error('Reorder errors:', failed.map(r => r.error));
+      throw new Error(failed[0].error!.message);
+    }
     await fetchSubmissions();
   }
 
