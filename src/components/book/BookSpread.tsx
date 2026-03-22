@@ -175,9 +175,9 @@ function TextOnlyPage({ submission, layout }: { submission: Submission; layout: 
   const align = layout.textAlignment ?? 'left';
 
   return (
-    <div className="flex h-full flex-col justify-between p-4" style={{ textAlign: align }}>
-      <div className="flex-1 overflow-y-auto">
-        <Divider className="my-1" variant="brand" />
+    <div className="flex h-full flex-col overflow-hidden p-4" style={{ textAlign: align }}>
+      <Divider className="my-1" variant="brand" />
+      <div className="min-h-0 flex-1 overflow-y-auto">
         <p className="font-inter text-sm leading-relaxed text-muted-text">
           {submission.message}
         </p>
