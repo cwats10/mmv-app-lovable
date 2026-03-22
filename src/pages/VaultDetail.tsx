@@ -278,7 +278,19 @@ export default function VaultDetail() {
 
         {/* Message Bank Tab */}
         <TabsContent value="messages" className="mt-6">
+          {totalCount > 0 && (
+            <p className="mb-3 font-inter text-xs text-muted-foreground">
+              Showing {submissions.length} of {totalCount} submission{totalCount !== 1 ? 's' : ''}
+            </p>
+          )}
           <MessageBank vaults={[vault]} profile={profile} />
+          {hasMore && (
+            <div className="mt-6 text-center">
+              <HeirloomButton variant="ghost" size="sm" loading={loadingMore} onClick={loadMore}>
+                Load More
+              </HeirloomButton>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 
