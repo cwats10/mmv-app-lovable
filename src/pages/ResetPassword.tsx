@@ -123,11 +123,7 @@ export default function ResetPassword() {
                 />
               </div>
 
-              {error && (
-                <div className="mb-4 border border-red-200 bg-red-50 px-4 py-2">
-                  <p className="font-inter text-sm text-red-600">{error}</p>
-                </div>
-              )}
+              <ErrorBanner message={error} className="mb-4" />
 
               <HeirloomButton type="submit" loading={loading} className="w-full">
                 Update Password

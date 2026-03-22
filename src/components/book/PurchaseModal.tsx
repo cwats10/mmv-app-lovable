@@ -142,11 +142,7 @@ export function PurchaseModal({ open, onClose, book, vault }: PurchaseModalProps
           ))}
         </div>
 
-        {error && (
-          <div className="mt-4 border border-red-200 bg-red-50 px-4 py-2">
-            <p className="font-inter text-sm text-red-600">{error}</p>
-          </div>
-        )}
+        <ErrorBanner message={error} className="mt-4" />
 
         <Divider className="my-5" />
 
