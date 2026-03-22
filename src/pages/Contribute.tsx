@@ -89,7 +89,7 @@ export default function Contribute() {
   return (
     <div className="min-h-screen bg-stone-bg">
       {/* Book-style header */}
-      <section className="relative border-b border-border-light px-8 py-16 text-center">
+      <section className="relative border-b border-border-light px-4 py-10 text-center sm:px-8 sm:py-16">
         
         <div className="relative z-10 mx-auto max-w-2xl">
           <div className="flex items-center justify-center text-dark-text">
