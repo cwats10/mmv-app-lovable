@@ -80,7 +80,7 @@ export default function VaultDetail() {
       {/* Header */}
       <div>
         <PageTag>{vault.vault_type === 'post' ? 'Post-Mission Vault' : 'Pre-Mission Vault'}</PageTag>
-        <h1 className="mt-1 font-playfair text-3xl font-semibold text-foreground">
+        <h1 className="mt-1 font-playfair text-2xl font-semibold text-foreground sm:text-3xl">
           {vault.missionary_name}
         </h1>
         <p className="font-inter text-sm text-muted-foreground">{vault.mission_name}</p>
