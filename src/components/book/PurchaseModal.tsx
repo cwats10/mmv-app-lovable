@@ -46,6 +46,7 @@ interface PurchaseModalProps {
   onClose: () => void;
   book: Book;
   vault: Vault;
+  approvedCount?: number;
 }
 
 const inputClass = 'w-full border border-border-light bg-stone-bg px-4 py-3 font-inter text-sm text-dark-text outline-none';
