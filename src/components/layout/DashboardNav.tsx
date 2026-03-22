@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Home, Gift, LogOut, Menu, X } from 'lucide-react';
+import { Home, Gift, Settings, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const links = [
   { to: '/dashboard', label: 'Vaults', icon: Home },
   { to: '/referral', label: 'Referrals', icon: Gift },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function DashboardNav() {
