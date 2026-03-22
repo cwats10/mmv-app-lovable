@@ -215,9 +215,9 @@ export default function VaultDetail() {
                     type="button"
                     key={size}
                     onClick={async () => {
-                      if ((vault as any).book_size !== size) {
+                      if (vault.book_size !== size) {
                         try {
-                          await updateSingleVault({ book_size: size } as any);
+                          await updateSingleVault({ book_size: size });
                         } catch (e) {
                           console.error('Failed to update vault', e);
                         }
@@ -225,8 +225,8 @@ export default function VaultDetail() {
                     }}
                     className="flex-1 py-2 font-inter text-sm transition-colors"
                     style={{
-                      backgroundColor: ((vault as any).book_size ?? '12x12') === size ? '#2b2b2a' : 'transparent',
-                      color: ((vault as any).book_size ?? '12x12') === size ? '#fefefe' : '#555555',
+                      backgroundColor: (vault.book_size ?? '12x12') === size ? '#2b2b2a' : 'transparent',
+                      color: (vault.book_size ?? '12x12') === size ? '#fefefe' : '#555555',
                       border: '1px solid #e0deda',
                       borderRight: size === '10x10' ? 'none' : '1px solid #e0deda',
                     }}
@@ -236,7 +236,7 @@ export default function VaultDetail() {
                 ))}
               </div>
               <p className="mt-1.5 font-inter text-[11px] text-muted-foreground">
-                {((vault as any).book_size ?? '12x12') === '10x10'
+                {(vault.book_size ?? '12x12') === '10x10'
                   ? '10×10 inch — compact format, $10 less per book.'
                   : '12×12 inch — larger premium format.'}
               </p>
