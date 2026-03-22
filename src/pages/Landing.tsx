@@ -169,7 +169,7 @@ export default function Landing() {
             {/* Heirloom */}
             <div className="relative border-2 border-dark-text bg-dark-text p-8 text-left shadow-lg ring-1 ring-dark-text/5">
               <span className="absolute -top-3 right-6 bg-accent-gold px-3 py-0.5 font-space-mono text-[10px] uppercase tracking-widest text-white">
-                Client Preferred
+                Client's Choice
               </span>
               <PageTag className="text-stone-400">Heirloom</PageTag>
               <p className="mt-2 font-playfair text-5xl font-semibold text-white">$449</p>
