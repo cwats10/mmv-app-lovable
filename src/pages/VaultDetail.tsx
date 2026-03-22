@@ -181,8 +181,8 @@ export default function VaultDetail() {
                       if (vault.contributor_page_allowance !== n) {
                         try {
                           await updateSingleVault({ contributor_page_allowance: n });
-                        } catch (e) {
-                          console.error('Failed to update vault', e);
+                        } catch {
+                          toast.error('Failed to update page allowance.');
                         }
                       }
                     }}
