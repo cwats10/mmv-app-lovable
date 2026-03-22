@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { VaultShareWidget } from '@/components/vault/VaultShareWidget';
