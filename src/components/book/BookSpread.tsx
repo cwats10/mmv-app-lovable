@@ -62,7 +62,7 @@ function ImageArea({ submission, layout }: { submission: Submission; layout?: Pa
 function FullImageCaptionPage({ submission, layout }: { submission: Submission; layout: PageLayout }) {
   return (
     <div className="flex h-full flex-col">
-      <div className="relative flex-1 overflow-hidden" style={{ flexBasis: '78%' }}>
+      <div className="relative min-h-0 flex-1 overflow-hidden" style={{ flexBasis: '78%' }}>
         <ImageArea submission={submission} layout={layout} />
       </div>
       <div className="flex flex-col gap-1 p-3" style={{ flexBasis: '22%' }}>
