@@ -281,7 +281,7 @@ export function BookSpread({ vault, submission, pageNumber, isCover, isBackCover
     const page2Submission: Submission = { ...submission, media_urls: page2Images.length > 0 ? page2Images : [], message: msg2 };
 
     return (
-      <div className="relative mx-auto flex aspect-square w-full max-w-4xl overflow-hidden border border-border-light bg-white shadow-xl">
+      <div className="relative mx-auto flex aspect-[2/1] w-full max-w-4xl overflow-hidden border border-border-light bg-white shadow-xl">
         {/* Binding crease */}
         <div className="absolute inset-y-0 left-1/2 z-10 w-px -translate-x-1/2 bg-border-light" />
 
