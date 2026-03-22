@@ -22,11 +22,11 @@ export function resolveLayout(submission?: Submission): PageLayout {
 /** Contributor attribution footer */
 function ContributorFooter({ submission }: { submission: Submission }) {
   return (
-    <div className="shrink-0 border-t border-primary pt-2">
-      <p className="font-playfair text-sm font-semibold text-dark-text">
+    <div className="shrink-0 border-t border-primary pt-1">
+      <p className="font-playfair text-xs font-semibold text-dark-text">
         {submission.contributor_name}
       </p>
-      <p className="font-space-mono text-[10px] uppercase tracking-wider text-muted-text">
+      <p className="font-space-mono text-[9px] uppercase tracking-wider text-muted-text">
         {submission.relation}
       </p>
     </div>
