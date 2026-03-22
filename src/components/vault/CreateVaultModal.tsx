@@ -15,6 +15,7 @@ interface CreateVaultModalProps {
     vault_type: 'pre' | 'post';
     cover_theme: 'light' | 'dark';
     contributor_page_allowance: 1 | 2;
+    book_size: '10x10' | '12x12';
   }) => Promise<unknown>;
 }
 
