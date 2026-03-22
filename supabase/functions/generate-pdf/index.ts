@@ -858,7 +858,7 @@ function resolveEffectivePosition(
 // ─── Main build function ──────────────────────────────────────────────────────
 
 async function buildPdf(payload: GoldenPayload): Promise<Uint8Array> {
-  const bookIn  = payload.book_inches ?? 11;
+  const bookIn  = payload.book_inches ?? 12;
   const { pagePt, safePt, contSize } = dims(bookIn);
 
   // ── Load fonts ────────────────────────────────────────────────────────────────
